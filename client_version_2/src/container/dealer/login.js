@@ -49,14 +49,14 @@ const Dealer = (props) => {
 
 	return (
 		<Container component="main" maxWidth="xs">
-			{props.token ? <Redirect to="/admin/login" /> : null}
+			{props.token ? <Redirect to="/dealer/dash" /> : null}
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
 				</Avatar>
 				<img src={logo} />
-				{props.error ? <Typography>Wrong Password or Username</Typography> : null}
+				{props.error ? <Typography>Wrong Password or Username or Server Down</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Dealer Panel
 				</Typography>

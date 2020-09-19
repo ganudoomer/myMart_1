@@ -5,15 +5,13 @@ const { isAuth } = require('../middleware');
 const bcrypt = require('bcrypt');
 //Login the admin
 router.post('/login', async (req, res) => {
-	console.log(req.body);
+	const password = req.body.password;
 	try {
+		console.log(req.body);
 		const database = req.app.locals.db;
-		 const mass =await database.dealer.findOne({username:"shibu"})
-		console.log(await mass);
 		const collection = database.collection('dealer');
-		const reslut = await collection.findOne({username:"shibu"});
-		console.log(await reslut);
-		bcrypt.compare(req.body.password, reslut.password).then((ress) => {
+		const reslut = await collection.findOne({ username: req.body.username });
+		bcrypt.compare(password, reslut.password).then((ress) => {
 			if (ress) {
 				const token = jwt.sign(
 					{
@@ -47,17 +45,26 @@ router.post('/auth', (req, res) => {
 });
 //Get all the products
 router
-	.post('/products', isAuth, async (req, res) => {
-		try {
-			const database = req.app.locals.db;
-			const collection = database.collection('dealer');
-			const reslut = await collection.find({ username: req.body.username }).project({ products: 1 });
-			const response = [];
-			await reslut.forEach((doc) => response.push(doc));
-			await res.json(response);
-		} catch (err) {
-			console(err);
-		}
+	.post('/products', isAuth, (req, res) => {
+		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const reslut = await collection.find({ username: decoded.username }).project({ products: 1 });
+					const response = [];
+					await reslut.forEach((doc) => response.push(doc));
+					await res.json(response);
+				} catch (err) {
+					console(err);
+				}
+				console.log(decoded);
+				res.sendStatus(200);
+			}
+		});
 	}) //Create a new product
 	.post('/product', isAuth, async (req, res) => {
 		const product = {

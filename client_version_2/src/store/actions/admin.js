@@ -44,7 +44,7 @@ export const auth = (username, password) => {
 			})
 			.catch((err) => {
 				console.log(err);
-				dispatch(authFail(err.response.data.error));
+				dispatch(authFail('Server Down'));
 			});
 	};
 };

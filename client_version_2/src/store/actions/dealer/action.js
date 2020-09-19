@@ -44,7 +44,7 @@ export const authDealer = (username, password) => {
 			})
 			.catch((err) => {
 				console.log(err);
-				dispatch(authFailDealer(err.response.data.error));
+				dispatch(authFailDealer('Server Down'));
 			});
 	};
 };
