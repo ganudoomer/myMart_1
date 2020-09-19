@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = (props) => {
 	const [ state, setState ] = useState({
-		data: []
+		data: null
 	});
 
 	useEffect(() => {
@@ -102,9 +102,10 @@ const Dashboard = (props) => {
 			const data = {
 				token: localStorage.getItem('dToken')
 			};
-			const result = await axios.post('http://localhost:5050/dealer/products', data);
-			setState({
-				data: result.data
+			axios.post('http://localhost:5050/dealer/products', data).then((res) => {
+				setState({
+					data: res.data[0].products
+				});
 			});
 		})();
 	}, []);
@@ -123,7 +124,7 @@ const Dashboard = (props) => {
 	const delHandler = (id) => {
 		console.log(state.data);
 		console.log(id);
-		let result = state.data.filter((dealer) => dealer._id !== id);
+		let result = state.data.filter((products) => products._id !== id);
 		console.log(result);
 		setState({
 			data: result
@@ -136,7 +137,7 @@ const Dashboard = (props) => {
 
 			<Container maxWidth="lg" className={classes.container}>
 				<Box pt={4} />
-				<NavLink to="/admin/dash/add">
+				<NavLink to="/dealer/dash/product/add">
 					<Button variant="contained" color="primary">
 						Add
 					</Button>

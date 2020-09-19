@@ -22,7 +22,7 @@ export const authFailDealer = (error) => {
 };
 
 export const logoutDealer = () => {
-	localStorage.removeItem('aToken');
+	localStorage.removeItem('dToken');
 	return {
 		type: actionTypes.AUTH_LOGOUT_DEALER
 	};

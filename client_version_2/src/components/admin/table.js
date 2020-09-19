@@ -102,7 +102,7 @@ const useStyles = makeStyles({
 const Tables = (props) => {
 	const onEditHandler = (id) => {
 		console.log('yess');
-		props.history.push(`/admin/dash/dealer/${id}`);
+		props.history.push(`/dealer/products/${id}`);
 	};
 	const onDeleteHandler = (id) => {
 		const token = localStorage.getItem('aToken');

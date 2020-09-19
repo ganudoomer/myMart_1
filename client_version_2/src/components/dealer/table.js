@@ -43,9 +43,10 @@ const Tables = (props) => {
 		props.history.push(`/admin/dash/dealer/${id}`);
 	};
 	const onDeleteHandler = (id) => {
-		const token = localStorage.getItem('aToken');
+		const token = localStorage.getItem('dToken');
+		console.log(token);
 		axios
-			.delete(`http://localhost:5050/admin/dealers/${id}`, {
+			.delete(`http://localhost:5050/dealer/product/${id}`, {
 				headers: {
 					authorization: `Brearer ${token}`
 				}
@@ -57,14 +58,13 @@ const Tables = (props) => {
 	};
 
 	const classes = useStyles();
-	console.log(props.data + '{Tabele');
 	let table = null;
 	table = props.data.map((data) => (
 		<StyledTableRow key={data._id}>
-			<StyledTableCell align="right">
-				<img src={data.image} />
+			<StyledTableCell align="left">
+				<img width="100px" height="100px" src={data.image} />
 			</StyledTableCell>
-			<StyledTableCell align="right">{data._id}</StyledTableCell>
+			<StyledTableCell align="left">{data.title}</StyledTableCell>
 			<StyledTableCell align="left">{data.name}</StyledTableCell>
 			<StyledTableCell align="right"> ₹{data.price}</StyledTableCell>
 			<StyledTableCell align="right">{data.unit}</StyledTableCell>
@@ -85,14 +85,14 @@ const Tables = (props) => {
 	return (
 		<TableContainer component={Paper}>
 			<Typography component="h2" variant="h6" color="secondary" gutterBottom>
-				All Dealers
+				All Products
 			</Typography>
 			<Table className={classes.table} aria-label="customized table">
 				<TableHead>
 					<TableRow>
-						<StyledTableCell>ID </StyledTableCell>
 						<StyledTableCell align="left">Image</StyledTableCell>
-						<StyledTableCell align="right">Product</StyledTableCell>
+						<StyledTableCell align="left">Title</StyledTableCell>
+						<StyledTableCell align="left">Product</StyledTableCell>
 						<StyledTableCell align="right">Price </StyledTableCell>
 						<StyledTableCell align="right">Unit </StyledTableCell>
 						<StyledTableCell align="right">Category</StyledTableCell>

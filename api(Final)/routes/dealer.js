@@ -62,7 +62,6 @@ router
 					console(err);
 				}
 				console.log(decoded);
-				res.sendStatus(200);
 			}
 		});
 	}) //Create a new product
@@ -77,17 +76,27 @@ router
 			unit: req.body.unit,
 			cat: req.body.cat
 		};
-		try {
+		jwt.verify(req.body.token, 'secret',async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				console.log(decoded +"[POST PRODUCt]");				
+		 try {
 			const database = req.app.locals.db;
 			const collection = database.collection('dealer');
-			const reslut = await collection.updateOne({ username: 'mass' }, { $push: { products: product } });
+			const reslut = await collection.updateOne({ username: decoded.username }, { $push: { products: product } });
 			console.dir(reslut.insertedCount);
 			res.sendStatus(200);
 		} catch (err) {
 			console.log(err);
 		}
+			}
+		});
 	}) //Edit a product
 	.put('/product/:id', isAuth, async (req, res) => {
+		
+		
 		const filter = { username: 'mass', 'products._id': ObjectID(req.params.id) };
 		console.log(filter);
 		const updateDoc = {
@@ -112,12 +121,22 @@ router
 			console(err);
 		}
 	}) // Delete a vendor
-	.delete('/product/:id', isAuth, async (req, res) => {
+	.delete('/product/:id',  async (req, res) => {
+	     const bearerHeader = req.headers['authorization'];
+	     const bearer = bearerHeader.split(' ');
+	     const bearerToken = bearer[1];
+	     console.log(bearerToken)
+	     jwt.verify(bearerToken, 'secret', async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
 		try {
 			const database = req.app.locals.db;
 			const collection = database.collection('dealer');
 			const result = await collection.updateOne(
-				{ username: req.body.username },
+				{ username: decoded.username },
 				{ $pull: { products: { _id: ObjectID(req.params.id) } } }
 			);
 			console.log(
@@ -127,6 +146,9 @@ router
 		} catch (err) {
 			console(err);
 		}
+			
+		}
+	});
 	});
 router
 	.post('/settings', isAuth, async (req, res) => {

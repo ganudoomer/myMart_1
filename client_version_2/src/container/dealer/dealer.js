@@ -136,7 +136,7 @@ const Admin = (props) => {
 						Dashboard
 					</Typography>
 					<IconButton onClick={props.logoutHandler} color="inherit">
-						<a href="/admin/logout">
+						<a href="/dealer/logout">
 							<ExitToAppIcon />
 						</a>
 					</IconButton>
@@ -162,7 +162,7 @@ const Admin = (props) => {
 				<List>
 					<ListItem button>
 						<ListItemIcon>
-							<Link to="/admin/dash">
+							<Link to="/dealer/dash">
 								<StorefrontIcon />
 							</Link>
 						</ListItemIcon>
@@ -170,7 +170,7 @@ const Admin = (props) => {
 					</ListItem>
 					<ListItem button>
 						<ListItemIcon>
-							<Link to="/admin/dash/setting">
+							<Link to="/dealer/dash/setting">
 								<ToggleOffIcon />
 							</Link>
 						</ListItemIcon>

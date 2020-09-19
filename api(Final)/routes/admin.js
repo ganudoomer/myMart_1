@@ -46,6 +46,7 @@ router
 			next(err);
 		}
 	})
+	//Get a single dealer
 	.post('/dealers/:id', async (req, res) => {
 		try {
 			const database = req.app.locals.db;
