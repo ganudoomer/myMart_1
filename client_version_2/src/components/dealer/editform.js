@@ -68,7 +68,7 @@ const Edit = (props) => {
 	const onSubmitHandler = (e) => {
 		e.preventDefault();
 		const data = {
-			token: localStorage.getItem('aToken'),
+			token: localStorage.getItem('dToken'),
 			name: state.name,
 			title: state.title,
 			description: state.description,
@@ -78,10 +78,10 @@ const Edit = (props) => {
 			cat: state.cat
 		};
 		axios
-			.put(`http://localhost:5050/dealers/product/${props.match.params.id}`, data)
+			.put(`http://localhost:5050/dealer/product/${props.match.params.id}`, data)
 			.then((res) => {
 				console.log(res);
-				props.history.push('/admin/dash/');
+				props.history.push('/dealer/dash/');
 			})
 			.catch((err) => {
 				console.log(err);

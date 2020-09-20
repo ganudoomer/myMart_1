@@ -104,7 +104,7 @@ router
 		});
 	}) //Edit a product
 	.put('/product/:id', isAuth, async (req, res) => {
-		const filter = { username: 'mass', 'products._id': ObjectID(req.params.id) };
+		const filter = { 'products._id': ObjectID(req.params.id) };
 		console.log(filter);
 		const updateDoc = {
 			$set: {
@@ -132,7 +132,6 @@ router
 		const bearerHeader = req.headers['authorization'];
 		const bearer = bearerHeader.split(' ');
 		const bearerToken = bearer[1];
-		console.log(bearerToken);
 		jwt.verify(bearerToken, 'secret', async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
