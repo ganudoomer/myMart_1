@@ -18,6 +18,19 @@ router.get('/items/:store', async (req, res) => {
 	}
 });
 
+router.get('/store/', async (req, res) => {
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('dealer');
+		const reslut = await collection.find({}).project({ dealer_name: 1, _id: 0 });
+		const response = [];
+		await reslut.forEach((doc) => response.push(doc));
+		await res.json(response);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 router.post('/register', async (req, res) => {
 	try {
 		const database = req.app.locals.db;

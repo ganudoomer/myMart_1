@@ -34,8 +34,9 @@ const reducer = (state = initialState, action) => {
 				loading: false,
 				token: null
 			};
+		default:
+			return state;
 	}
-	return state;
 };
 
 export default reducer;

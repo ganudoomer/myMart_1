@@ -22,7 +22,7 @@ export const authFailUSer = (error) => {
 };
 
 export const logoutUser = () => {
-	localStorage.removeItem('dToken');
+	localStorage.removeItem('uToken');
 	return {
 		type: actionTypes.AUTH_LOGOUT_USER
 	};
@@ -39,7 +39,7 @@ export const authUser = (username, password) => {
 			.post('http://localhost:5050/dealer/login', authData)
 			.then((response) => {
 				console.log(response);
-				localStorage.setItem('dToken', response.data.token);
+				localStorage.setItem('uToken', response.data.token);
 				dispatch(authSuccessDealer(response.data.token));
 			})
 			.catch((err) => {
