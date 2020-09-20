@@ -59,7 +59,6 @@ export const authUserOtpVerify = (otp, password) => {
 		axios
 			.post('http://localhost:5050/user/register/auth', authData)
 			.then((response) => {
-				console.log(response);
 				dispatch(authSuccessOtp());
 			})
 			.catch((err) => {

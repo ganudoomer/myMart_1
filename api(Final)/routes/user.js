@@ -70,7 +70,7 @@ router.post('/register', async (req, res) => {
 				res.json({ temp: token });
 			});
 		} else {
-			res.json({ message: 'Already Exists' });
+			res.sendStatus(401);
 		}
 	} catch (err) {
 		console.log(err);
