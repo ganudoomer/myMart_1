@@ -50,7 +50,7 @@ router.post('/register', async (req, res) => {
 					mobile: phone,
 					sender_id: 'SMSINFO',
 					message: 'Your otp code is {code}',
-					expiry: '900'
+					expiry: '1800'
 				}
 			};
 			request(options, function(error, response) {
@@ -65,7 +65,7 @@ router.post('/register', async (req, res) => {
 						otp_id: data.otp_id
 					},
 					'secret',
-					{ expiresIn: '180s' }
+					{ expiresIn: '600s' }
 				);
 				res.json({ temp: token });
 			});

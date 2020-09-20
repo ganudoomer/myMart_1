@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from '../../SuperMart.svg';
 import { connect } from 'react-redux';
-import * as actionCreators from '../../store/actions/dealer/action';
+import * as actionCreators from '../../store/actions/user/action';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -43,7 +43,7 @@ const Dealer = (props) => {
 	};
 	const onSubmitHandler = (e) => {
 		e.preventDefault();
-		props.onSubmitForm(state.username, state.password);
+		props.onSubmitForm(state.phone, state.password);
 	};
 
 	return (
@@ -100,7 +100,7 @@ const Dealer = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
-		token: state.user.token,
+		token: state.user.login,
 		error: state.user.error,
 		loading: state.user.loading
 	};
@@ -108,7 +108,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onSubmitForm: (userame, password) => dispatch(actionCreators.authDealer(userame, password))
+		onSubmitForm: (phone, password) => dispatch(actionCreators.authUSer(phone, password))
 	};
 };
 

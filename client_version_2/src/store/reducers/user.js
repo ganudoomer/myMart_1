@@ -2,12 +2,13 @@ import * as actionTypes from '../actions/user/actionTypes';
 
 const initialState = {
 	token: null,
+	login: null,
 	error: false,
 	loading: false,
 	otp: null,
-	otpToken: null
+	otpToken: null,
+	otperror: false
 };
-
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
 		case actionTypes.AUTH_START_USER_REGISTER_OTP:
@@ -15,6 +16,27 @@ const reducer = (state = initialState, action) => {
 				...state,
 				loading: true,
 				error: null
+			};
+		case actionTypes.Auth_USER_OTP_SUCCESS:
+			return {
+				...state,
+				loading: false,
+				error: null,
+				otpToken: null,
+				token: true
+			};
+		case actionTypes.AUTH_USER_REGISTER_OTP_FAIL_OTP:
+			return {
+				...state,
+				loading: false,
+				error: true
+			};
+		case actionTypes.AUTH_START_USER_REGISTER_OTP_SUCCESS:
+			return {
+				...state,
+				loading: true,
+				error: null,
+				otpToken: action.token
 			};
 		case actionTypes.AUTH_START_USER:
 			return {
@@ -25,7 +47,7 @@ const reducer = (state = initialState, action) => {
 		case actionTypes.AUTH_SUCCESS_USER:
 			return {
 				...state,
-				token: action.token,
+				login: action.token,
 				error: null,
 				loading: false
 			};
@@ -38,9 +60,13 @@ const reducer = (state = initialState, action) => {
 		case actionTypes.AUTH_LOGOUT_USER:
 			return {
 				...state,
+				token: null,
+				login: null,
 				error: false,
 				loading: false,
-				token: null
+				otp: null,
+				otpToken: null,
+				otperror: false
 			};
 		default:
 			return state;

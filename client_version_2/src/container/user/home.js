@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
@@ -17,11 +18,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Link from '@material-ui/core/Link';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import logo from '../../SuperMart.svg';
 import axios from 'axios';
 import Model from '../../components/user/model';
+import { connect } from 'react-redux';
+import * as actionCreators from '../../store/actions/user/action';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -68,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
 const cards = [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ];
 
-export default function Album() {
+const Home = (props) => {
 	const [ state, setState ] = useState({
 		select: '',
 		store: null,
@@ -101,6 +103,23 @@ export default function Album() {
 		});
 	};
 	const classes = useStyles();
+	let button = (
+		<Fragment>
+			<Link to="/login">
+				<Button className={classes.button}>Login</Button>
+			</Link>
+			<Link to="/register">
+				<Button className={classes.button}>Register</Button>
+			</Link>
+		</Fragment>
+	);
+	if (props.token) {
+		button = (
+			<Link onClick={() => props.onLogout()} to="/logout">
+				<Button className={classes.button}>Logout</Button>
+			</Link>
+		);
+	}
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -109,8 +128,7 @@ export default function Album() {
 					<Typography variant="h6" color="inherit" noWrap>
 						<img src={logo} />
 					</Typography>
-					<Button className={classes.button}>Login</Button>
-					<Button className={classes.button}>Register</Button>
+					{button}
 				</Toolbar>
 			</AppBar>
 			<main>
@@ -179,4 +197,20 @@ export default function Album() {
 			</main>
 		</React.Fragment>
 	);
-}
+};
+
+const mapStateToProps = (state) => {
+	return {
+		token: state.user.login,
+		error: state.user.error,
+		loading: state.user.loading
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onLogout: () => dispatch(actionCreators.logoutUser())
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

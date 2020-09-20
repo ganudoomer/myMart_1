@@ -10,10 +10,12 @@ import LogoutDealer from './container/dealer/logout';
 import Home from './container/user/home';
 import LoginUser from './container/user/login';
 import RegisterUser from './container/user/register';
+import LogoutUser from './container/user/logout';
 function App() {
 	return (
 		<div classNameName="App">
 			<Route path="/" exact component={Home} />
+			<Route path="/logout" exact component={LogoutUser} />
 			<Route path="/login" exact component={LoginUser} />
 			<Route path="/register" exact component={RegisterUser} />
 			<Route path="/dealer/login" component={LoginDealer} />
