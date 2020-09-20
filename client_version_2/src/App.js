@@ -8,10 +8,14 @@ import LoginDealer from './container/dealer/login';
 import DashDealer from './container/dealer/dealer';
 import LogoutDealer from './container/dealer/logout';
 import Home from './container/user/home';
+import LoginUser from './container/user/login';
+import RegisterUser from './container/user/register';
 function App() {
 	return (
 		<div classNameName="App">
 			<Route path="/" exact component={Home} />
+			<Route path="/login" exact component={LoginUser} />
+			<Route path="/register" exact component={RegisterUser} />
 			<Route path="/dealer/login" component={LoginDealer} />
 			<Route path="/dealer/dash" component={DashDealer} />
 			<Route path="/dealer/logout" component={LogoutDealer} />

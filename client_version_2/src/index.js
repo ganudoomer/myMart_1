@@ -9,9 +9,11 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import adminReducer from './store/reducers/admin';
 import dealerReducer from './store/reducers/dealer';
+import userReducer from './store/reducers/user';
 const rootReduser = combineReducers({
 	admin: adminReducer,
-	dealer: dealerReducer
+	dealer: dealerReducer,
+	user: userReducer
 });
 const store = createStore(rootReduser, applyMiddleware(thunk));
 ReactDOM.render(

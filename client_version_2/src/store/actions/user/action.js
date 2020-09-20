@@ -6,7 +6,11 @@ export const authStartUser = () => {
 		type: actionTypes.AUTH_START_USER
 	};
 };
-
+export const authStartUserOtp = () => {
+	return {
+		type: actionTypes.AUTH_START_USER_REGISTER_OTP
+	};
+};
 export const authSuccessUser = (token) => {
 	return {
 		type: actionTypes.AUTH_SUCCESS_USER,
@@ -28,6 +32,28 @@ export const logoutUser = () => {
 	};
 };
 
+export const authUserOtp = (phone, name, location) => {
+	return (dispatch) => {
+		dispatch(authStartUser());
+		const authData = {
+			phone: phone,
+			name: name,
+			location: location
+		};
+		axios
+			.post('http://localhost:5050/dealer/login', authData)
+			.then((response) => {
+				console.log(response);
+				localStorage.setItem('uToken', response.data.token);
+				dispatch(authSuccessUser(response.data.token));
+			})
+			.catch((err) => {
+				console.log(err);
+				dispatch(authFailUSer('Server Down'));
+			});
+	};
+};
+
 export const authUser = (username, password) => {
 	return (dispatch) => {
 		dispatch(authStartUser());
@@ -40,11 +66,11 @@ export const authUser = (username, password) => {
 			.then((response) => {
 				console.log(response);
 				localStorage.setItem('uToken', response.data.token);
-				dispatch(authSuccessDealer(response.data.token));
+				dispatch(authSuccessUser(response.data.token));
 			})
 			.catch((err) => {
 				console.log(err);
-				dispatch(authFailDealer('Server Down'));
+				dispatch(authFailUSer('Server Down'));
 			});
 	};
 };

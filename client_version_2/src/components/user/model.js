@@ -8,7 +8,8 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-
+import CardMedia from '@material-ui/core/CardMedia';
+import DialogContentText from '@material-ui/core/DialogContentText';
 const styles = (theme) => ({
 	root: {
 		margin: 0,
@@ -49,7 +50,7 @@ const DialogActions = withStyles((theme) => ({
 	}
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs() {
+export default function CustomizedDialogs(props) {
 	const [ open, setOpen ] = React.useState(false);
 
 	const handleClickOpen = () => {
@@ -66,18 +67,17 @@ export default function CustomizedDialogs() {
 			</Button>
 			<Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
-					Modal title
+					{props.data.name}
+				</DialogTitle>
+				<img width="300rem" height="200px" src={props.data.image} />
+
+				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
+					{props.data.title} <br /> ₹{props.data.price}/{props.data.unit}
 				</DialogTitle>
 				<DialogContent dividers>
-					<img src="https://i.stack.imgur.com/cDnD7.png" />
-					<Typography gutterBottom>
-						Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in,
-						egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-					</Typography>
-					<Typography gutterBottom>
-						Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel
-						augue laoreet rutrum faucibus dolor auctor.
-					</Typography>
+					<DialogContentText id="alert-dialog-description">{props.data.cat}</DialogContentText>
+					<Typography gutterBottom>{props.data.title}</Typography>
+					<Typography gutterBottom>{props.data.description}</Typography>
 					<Typography gutterBottom>
 						Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque
 						nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
@@ -85,7 +85,7 @@ export default function CustomizedDialogs() {
 				</DialogContent>
 				<DialogActions>
 					<Button autoFocus onClick={handleClose} color="primary">
-						Save changes
+						Add to cart
 					</Button>
 				</DialogActions>
 			</Dialog>

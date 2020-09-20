@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
 							id: reslut._id
 						},
 						'secret',
-						{ expiresIn: 60 * 60 }
+						{ expiresIn: 60 * 1600 }
 					);
 					res.json({ token });
 				} else {

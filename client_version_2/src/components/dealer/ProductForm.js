@@ -77,8 +77,10 @@ const Add = (props) => {
 						onChange={onChangeHandeler}
 						className={classes.form}
 						label="Product name"
+						required
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="title"
 						value={state.title}
@@ -87,6 +89,7 @@ const Add = (props) => {
 						label="Title for the product"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="description"
 						value={state.description}
@@ -94,6 +97,7 @@ const Add = (props) => {
 						label="Description"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="image"
 						value={state.image}
@@ -101,6 +105,7 @@ const Add = (props) => {
 						label="Image URl"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="price"
 						value={state.price}
@@ -109,6 +114,7 @@ const Add = (props) => {
 						label="Price: ₹"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="unit"
 						value={state.unit}
@@ -117,6 +123,7 @@ const Add = (props) => {
 						label="Unit eg:Kg,Ltr"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="cat"
 						value={state.cat}

@@ -12,7 +12,7 @@ router.post('/login', (req, res) => {
 				data: 'admin'
 			},
 			'secret',
-			{ expiresIn: 60 * 60 }
+			{ expiresIn: 60 * 1600 }
 		);
 		res.json({ token });
 	} else {
@@ -47,7 +47,7 @@ router
 		}
 	})
 	//Get a single dealer
-	.post('/dealers/:id', isAuth,async (req, res) => {
+	.post('/dealers/:id', isAuth, async (req, res) => {
 		try {
 			const database = req.app.locals.db;
 			console.log(req.params.id);

@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
 		marginLeft: 125,
 		minWidth: 300
 	},
+	button: {
+		marginLeft: 20
+	},
 	selectEmpty: {
 		marginTop: theme.spacing(2)
 	},
@@ -106,6 +109,8 @@ export default function Album() {
 					<Typography variant="h6" color="inherit" noWrap>
 						<img src={logo} />
 					</Typography>
+					<Button className={classes.button}>Login</Button>
+					<Button className={classes.button}>Register</Button>
 				</Toolbar>
 			</AppBar>
 			<main>
@@ -152,7 +157,7 @@ export default function Album() {
 											<Typography>{card.description}</Typography>
 										</CardContent>
 										<CardActions>
-											<Model />
+											<Model data={card} />
 											<Button size="small" color="primary">
 												₹{card.price}/{card.unit}
 											</Button>

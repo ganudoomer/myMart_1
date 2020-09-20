@@ -3,11 +3,19 @@ import * as actionTypes from '../actions/user/actionTypes';
 const initialState = {
 	token: null,
 	error: false,
-	loading: false
+	loading: false,
+	otp: null,
+	otpToken: null
 };
 
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
+		case actionTypes.AUTH_START_USER_REGISTER_OTP:
+			return {
+				...state,
+				loading: true,
+				error: null
+			};
 		case actionTypes.AUTH_START_USER:
 			return {
 				...state,
