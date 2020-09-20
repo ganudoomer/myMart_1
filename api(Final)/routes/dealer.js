@@ -82,28 +82,26 @@ router
 			unit: req.body.unit,
 			cat: req.body.cat
 		};
-		jwt
-			.verify(req.body.token, 'secret', async (err, decoded) => {
-				if (err) {
-					console.log(err.message);
-					res.sendStatus(401);
-				} else {
-					console.log(decoded + '[POST PRODUCt]');
-					try {
-						const database = req.app.locals.db;
-						const collection = database.collection('dealer');
-						const reslut = await collection.updateOne(
-							{ username: decoded.username },
-							{ $push: { products: product } }
-						);
-						console.dir(reslut.insertedCount);
-						res.sendStatus(200);
-					} catch (err) {
-						console.log(err);
-					}
+		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				console.log(decoded + '[POST PRODUCt]');
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const reslut = await collection.updateOne(
+						{ username: decoded.username },
+						{ $push: { products: product } }
+					);
+					console.dir(reslut.insertedCount);
+					res.sendStatus(200);
+				} catch (err) {
+					console.log(err);
 				}
-			})
-			.post('/product/single/:id', isAuth, async(req, (res) => {}));
+			}
+		});
 	}) //Edit a product
 	.put('/product/:id', isAuth, async (req, res) => {
 		const filter = { username: 'mass', 'products._id': ObjectID(req.params.id) };
@@ -186,6 +184,30 @@ router
 		} catch (err) {
 			console.log(err);
 		}
+	})
+	.post('/productsingle/:id', (req, res) => {
+		const id = req.params.id;
+		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				console.log(decoded);
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const result = await collection.findOne({
+						username: decoded.username,
+						'products._id': ObjectID(id)
+					});
+					const arr = result.products;
+					const response = arr.filter((products) => products._id == id);
+					res.json(response);
+				} catch (err) {
+					console.log(err);
+				}
+			}
+		});
 	});
 
 module.exports = router;

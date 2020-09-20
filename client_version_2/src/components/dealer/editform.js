@@ -31,27 +31,30 @@ const Edit = (props) => {
 	useEffect(() => {
 		(async function getData() {
 			const data = {
-				token: localStorage.getItem('aToken')
+				token: localStorage.getItem('dToken')
 			};
-			const result = await axios.post(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data);
+			const res = await axios.post(`http://localhost:5050/dealer/productsingle/${props.match.params.id}`, data);
+			const result = res.data[0];
 			setState({
-				name: state.name,
-				title: state.title,
-				description: state.description,
-				image: state.image,
-				price: state.price,
-				unit: state.unit,
-				cat: state.cat
+				name: result.name,
+				title: result.title,
+				description: result.description,
+				image: result.image,
+				price: result.price,
+				unit: result.unit,
+				cat: result.cat
 			});
 		})();
 	}, []);
 
 	const [ state, setState ] = useState({
-		dealer_name: ' ',
-		username: ' ',
-		phone: '',
-		email: '',
-		address: ''
+		name: '',
+		title: '',
+		description: '',
+		image: '',
+		price: '',
+		unit: '',
+		cat: ''
 	});
 
 	const classes = useStyles();
@@ -66,15 +69,16 @@ const Edit = (props) => {
 		e.preventDefault();
 		const data = {
 			token: localStorage.getItem('aToken'),
-			dealer_name: state.dealer_name,
-			username: state.username,
-			phone: state.phone,
-			email: state.email,
-			address: state.address,
-			password: state.password
+			name: state.name,
+			title: state.title,
+			description: state.description,
+			image: state.image,
+			price: state.price,
+			unit: state.unit,
+			cat: state.cat
 		};
 		axios
-			.put(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data)
+			.put(`http://localhost:5050/dealers/product/${props.match.params.id}`, data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/admin/dash/');
@@ -89,49 +93,57 @@ const Edit = (props) => {
 				<h1>Edit Form</h1>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
-						name="username"
-						value={state.username}
+						name="name"
+						value={state.name}
 						onChange={onChangeHandeler}
 						className={classes.form}
-						label="Username"
+						label="Product name"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="password"
-						value={state.password}
-						type="password"
+						name="title"
+						value={state.title}
+						type="text"
 						className={classes.form}
-						label="Password"
+						label="Title for the product"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="address"
-						value={state.address}
+						name="description"
+						value={state.description}
 						className={classes.form}
-						label="Address"
+						label="Description"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="dealer_name"
-						value={state.dealer_name}
+						name="image"
+						value={state.image}
 						className={classes.form}
-						label="Dealer_name"
+						label="Image URl"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="phone"
-						value={state.phone}
+						name="price"
+						value={state.price}
 						className={classes.form}
 						type="number"
-						label="Phone"
+						label="Price: ₹"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="email"
-						value={state.email}
+						name="unit"
+						value={state.unit}
 						className={classes.form}
-						type="email"
-						label="Email"
+						type="text"
+						label="Unit eg:Kg,Ltr"
+					/>
+					<TextField
+						onChange={onChangeHandeler}
+						name="cat"
+						value={state.cat}
+						className={classes.form}
+						type="text"
+						label="category"
 					/>
 					<br />
 					<br />
