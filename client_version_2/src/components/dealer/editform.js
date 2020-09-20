@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import { withRouter } from 'react-router-dom';
 import { Button, Paper, Container } from '@material-ui/core/';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -26,16 +27,33 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Add = (props) => {
+const Edit = (props) => {
+	useEffect(() => {
+		(async function getData() {
+			const data = {
+				token: localStorage.getItem('aToken')
+			};
+			const result = await axios.post(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data);
+			setState({
+				name: state.name,
+				title: state.title,
+				description: state.description,
+				image: state.image,
+				price: state.price,
+				unit: state.unit,
+				cat: state.cat
+			});
+		})();
+	}, []);
+
 	const [ state, setState ] = useState({
-		name: '',
-		title: '',
-		description: '',
-		image: '',
-		price: '',
-		unit: '',
-		cat: ''
+		dealer_name: ' ',
+		username: ' ',
+		phone: '',
+		email: '',
+		address: ''
 	});
+
 	const classes = useStyles();
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 	const onChangeHandeler = (e) => {
@@ -47,20 +65,19 @@ const Add = (props) => {
 	const onSubmitHandler = (e) => {
 		e.preventDefault();
 		const data = {
-			token: localStorage.getItem('dToken'),
-			name: state.name,
-			title: state.title,
-			description: state.description,
-			image: state.image,
-			price: state.price,
-			unit: state.unit,
-			cat: state.cat
+			token: localStorage.getItem('aToken'),
+			dealer_name: state.dealer_name,
+			username: state.username,
+			phone: state.phone,
+			email: state.email,
+			address: state.address,
+			password: state.password
 		};
 		axios
-			.post('http://localhost:5050/dealer/product', data)
+			.put(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data)
 			.then((res) => {
 				console.log(res);
-				props.history.push('/dealer/dash/');
+				props.history.push('/admin/dash/');
 			})
 			.catch((err) => {
 				console.log(err);
@@ -69,60 +86,52 @@ const Add = (props) => {
 	return (
 		<Container>
 			<Paper className={fixedHeightPaper}>
-				<h1>Add Product</h1>
+				<h1>Edit Form</h1>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
-						name="name"
-						value={state.name}
+						name="username"
+						value={state.username}
 						onChange={onChangeHandeler}
 						className={classes.form}
-						label="Product name"
+						label="Username"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="title"
-						value={state.title}
-						type="text"
+						name="password"
+						value={state.password}
+						type="password"
 						className={classes.form}
-						label="Title for the product"
+						label="Password"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="description"
-						value={state.description}
+						name="address"
+						value={state.address}
 						className={classes.form}
-						label="Description"
+						label="Address"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="image"
-						value={state.image}
+						name="dealer_name"
+						value={state.dealer_name}
 						className={classes.form}
-						label="Image URl"
+						label="Dealer_name"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="price"
-						value={state.price}
+						name="phone"
+						value={state.phone}
 						className={classes.form}
 						type="number"
-						label="Price: ₹"
+						label="Phone"
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="unit"
-						value={state.unit}
+						name="email"
+						value={state.email}
 						className={classes.form}
-						type="text"
-						label="Unit eg:Kg,Ltr"
-					/>
-					<TextField
-						onChange={onChangeHandeler}
-						name="cat"
-						value={state.cat}
-						className={classes.form}
-						type="text"
-						label="category"
+						type="email"
+						label="Email"
 					/>
 					<br />
 					<br />
@@ -135,4 +144,4 @@ const Add = (props) => {
 	);
 };
 
-export default Add;
+export default withRouter(Edit);

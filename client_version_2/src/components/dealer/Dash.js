@@ -10,6 +10,8 @@ import Button from '@material-ui/core/Button';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Table from './table';
+import { Route } from 'react-router-dom';
+import EditForm from '../dealer/editform';
 import * as actionCreators from '../../store/actions/dealer/action';
 import axios from 'axios';
 const drawerWidth = 240;
@@ -122,8 +124,6 @@ const Dashboard = (props) => {
 		console.log(state.data);
 	}
 	const delHandler = (id) => {
-		console.log(state.data);
-		console.log(id);
 		let result = state.data.filter((products) => products._id !== id);
 		console.log(result);
 		setState({

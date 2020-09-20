@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 const Tables = (props) => {
 	const onEditHandler = (id) => {
 		console.log('yess');
-		props.history.push(`/admin/dash/dealer/${id}`);
+		props.history.push(`/dealer/dash/product/${id}`);
 	};
 	const onDeleteHandler = (id) => {
 		const token = localStorage.getItem('dToken');

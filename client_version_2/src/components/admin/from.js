@@ -28,8 +28,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Add = (props) => {
 	const [ state, setState ] = useState({
-		dealer_name: ' ',
-		username: ' ',
+		dealer_name: '',
+		username: '',
 		phone: '',
 		email: '',
 		address: '',

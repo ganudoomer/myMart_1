@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/dealer/action';
 import clsx from 'clsx';
+import EditForm from '../../components/dealer/editform';
 import { makeStyles } from '@material-ui/core/styles';
 import {
 	ListItemText,
@@ -182,6 +183,7 @@ const Admin = (props) => {
 			<div className={classes.appBarSpacer} />
 			<Switch>
 				<Route path="/dealer/dash/product/add" exact component={ProductForm} />
+				<Route path="/dealer/dash/product/:id" component={EditForm} />
 				<Route path="/dealer/dash" component={Dash} />
 			</Switch>
 		</div>

@@ -47,7 +47,7 @@ router
 		}
 	})
 	//Get a single dealer
-	.post('/dealers/:id', async (req, res) => {
+	.post('/dealers/:id', isAuth,async (req, res) => {
 		try {
 			const database = req.app.locals.db;
 			console.log(req.params.id);

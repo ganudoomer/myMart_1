@@ -1,31 +1,36 @@
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const ObjectID = require('mongodb').ObjectID;
-const { isAuth } = require('../middleware');
+const { isAuth, isAuthHeader } = require('../middleware');
 const bcrypt = require('bcrypt');
 //Login the admin
 router.post('/login', async (req, res) => {
 	const password = req.body.password;
+	const username = req.body.username;
 	try {
 		console.log(req.body);
 		const database = req.app.locals.db;
 		const collection = database.collection('dealer');
-		const reslut = await collection.findOne({ username: req.body.username });
-		bcrypt.compare(password, reslut.password).then((ress) => {
-			if (ress) {
-				const token = jwt.sign(
-					{
-						username: reslut.username,
-						id: reslut._id
-					},
-					'secret',
-					{ expiresIn: 60 * 60 }
-				);
-				res.json({ token });
-			} else {
-				res.sendStatus(401);
-			}
-		});
+		const reslut = await collection.findOne({ username: username });
+		if (reslut) {
+			bcrypt.compare(password, reslut.password).then((ress) => {
+				if (ress) {
+					const token = jwt.sign(
+						{
+							username: reslut.username,
+							id: reslut._id
+						},
+						'secret',
+						{ expiresIn: 60 * 60 }
+					);
+					res.json({ token });
+				} else {
+					res.sendStatus(401);
+				}
+			});
+		} else {
+			res.sendStatus(401);
+		}
 	} catch (err) {
 		console.log(err);
 	}
@@ -64,7 +69,8 @@ router
 				console.log(decoded);
 			}
 		});
-	}) //Create a new product
+	})
+	//Create a new product
 	.post('/product', isAuth, async (req, res) => {
 		const product = {
 			name: req.body.name,
@@ -76,27 +82,30 @@ router
 			unit: req.body.unit,
 			cat: req.body.cat
 		};
-		jwt.verify(req.body.token, 'secret',async (err, decoded) => {
-			if (err) {
-				console.log(err.message);
-				res.sendStatus(401);
-			} else {
-				console.log(decoded +"[POST PRODUCt]");				
-		 try {
-			const database = req.app.locals.db;
-			const collection = database.collection('dealer');
-			const reslut = await collection.updateOne({ username: decoded.username }, { $push: { products: product } });
-			console.dir(reslut.insertedCount);
-			res.sendStatus(200);
-		} catch (err) {
-			console.log(err);
-		}
-			}
-		});
+		jwt
+			.verify(req.body.token, 'secret', async (err, decoded) => {
+				if (err) {
+					console.log(err.message);
+					res.sendStatus(401);
+				} else {
+					console.log(decoded + '[POST PRODUCt]');
+					try {
+						const database = req.app.locals.db;
+						const collection = database.collection('dealer');
+						const reslut = await collection.updateOne(
+							{ username: decoded.username },
+							{ $push: { products: product } }
+						);
+						console.dir(reslut.insertedCount);
+						res.sendStatus(200);
+					} catch (err) {
+						console.log(err);
+					}
+				}
+			})
+			.post('/product/single/:id', isAuth, async(req, (res) => {}));
 	}) //Edit a product
 	.put('/product/:id', isAuth, async (req, res) => {
-		
-		
 		const filter = { username: 'mass', 'products._id': ObjectID(req.params.id) };
 		console.log(filter);
 		const updateDoc = {
@@ -120,35 +129,34 @@ router
 		} catch (err) {
 			console(err);
 		}
-	}) // Delete a vendor
-	.delete('/product/:id',  async (req, res) => {
-	     const bearerHeader = req.headers['authorization'];
-	     const bearer = bearerHeader.split(' ');
-	     const bearerToken = bearer[1];
-	     console.log(bearerToken)
-	     jwt.verify(bearerToken, 'secret', async (err, decoded) => {
-		if (err) {
-			console.log(err.message);
-			res.sendStatus(401);
-		} else {
-			console.log(decoded);
-		try {
-			const database = req.app.locals.db;
-			const collection = database.collection('dealer');
-			const result = await collection.updateOne(
-				{ username: decoded.username },
-				{ $pull: { products: { _id: ObjectID(req.params.id) } } }
-			);
-			console.log(
-				`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-			);
-			res.sendStatus(200);
-		} catch (err) {
-			console(err);
-		}
-			
-		}
-	});
+	}) // Delete a product
+	.delete('/product/:id', isAuthHeader, async (req, res) => {
+		const bearerHeader = req.headers['authorization'];
+		const bearer = bearerHeader.split(' ');
+		const bearerToken = bearer[1];
+		console.log(bearerToken);
+		jwt.verify(bearerToken, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				console.log(decoded);
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const result = await collection.updateOne(
+						{ username: decoded.username },
+						{ $pull: { products: { _id: ObjectID(req.params.id) } } }
+					);
+					console.log(
+						`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+					);
+					res.sendStatus(200);
+				} catch (err) {
+					console(err);
+				}
+			}
+		});
 	});
 router
 	.post('/settings', isAuth, async (req, res) => {
