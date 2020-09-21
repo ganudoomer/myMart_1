@@ -101,7 +101,6 @@ router.post('/register/auth', (req, res) => {
 				}
 			};
 			request(options, async function(error, response) {
-				console.log(response.body);
 				if (error) throw new Error(error);
 				if (JSON.parse(response.body).status === 'success') {
 					const hash = await bcrypt.hash(password, 8);
@@ -121,6 +120,8 @@ router.post('/register/auth', (req, res) => {
 						console.log(err);
 						res.sendStatus(501);
 					}
+				} else {
+					res.sendStatus(401);
 				}
 			});
 		}

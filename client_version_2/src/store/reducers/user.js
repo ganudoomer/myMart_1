@@ -9,6 +9,7 @@ const initialState = {
 	otpToken: null,
 	otperror: false
 };
+
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
 		case actionTypes.AUTH_START_USER_REGISTER_OTP:

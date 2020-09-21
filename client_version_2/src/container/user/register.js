@@ -89,13 +89,13 @@ const Dealer = (props) => {
 	}
 	return (
 		<Container component="main" maxWidth="xs">
-			{props.token ? <Redirect to="/login" /> : null}
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
 					<AccountCircleIcon />
 				</Avatar>
 				<img alt="" src={logo} />
+				{props.otperror ? <Typography>OTP ERROR</Typography> : null}
 				{props.error ? <Typography>Server Down Try again after some time</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Register with your phone number

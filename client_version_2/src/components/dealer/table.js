@@ -62,7 +62,7 @@ const Tables = (props) => {
 	table = props.data.map((data) => (
 		<StyledTableRow key={data._id}>
 			<StyledTableCell align="left">
-				<img width="100px" alt="logo" height="100px" src={data.image} />
+				<img alt="logo" width="100px" height="100px" src={data.image} />
 			</StyledTableCell>
 			<StyledTableCell align="left">{data.title}</StyledTableCell>
 			<StyledTableCell align="left">{data.name}</StyledTableCell>
