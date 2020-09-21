@@ -29,7 +29,7 @@ const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				loading: false,
-				error: true
+				otperror: true
 			};
 		case actionTypes.AUTH_START_USER_REGISTER_OTP_SUCCESS:
 			return {

@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Login from './container/admin/login/login';
 import Dash from './container/admin/admin';
 import Logout from './container/admin/logout';
@@ -11,7 +12,7 @@ import Home from './container/user/home';
 import LoginUser from './container/user/login';
 import RegisterUser from './container/user/register';
 import LogoutUser from './container/user/logout';
-function App() {
+function App(props) {
 	return (
 		<div classNameName="App">
 			<Route path="/" exact component={Home} />
@@ -28,4 +29,12 @@ function App() {
 	);
 }
 
-export default App;
+const mapStateToProps = (state) => {
+	return {
+		adminAuth: state.admin.token,
+		dealerAuth: state.dealer.token,
+		userAuth: state.user.loading
+	};
+};
+
+export default connect(mapStateToProps)(App);

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import { Button, Paper, Container } from '@material-ui/core/';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -27,21 +23,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Edit = (props) => {
-	useEffect(() => {
-		(async function getData() {
-			const data = {
-				token: localStorage.getItem('aToken')
-			};
-			const result = await axios.post(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data);
-			setState({
-				dealer_name: result.data.dealer_name,
-				username: result.data.username,
-				phone: result.data.phone,
-				email: result.data.email,
-				address: result.data.address
-			});
-		})();
-	}, []);
+	let params = props.match.params.id ? props.match.params.id : '';
+	useEffect(
+		() => {
+			(async function getData() {
+				const data = {
+					token: localStorage.getItem('aToken')
+				};
+				const result = await axios.post(`http://localhost:5050/admin/dealers/${params}`, data);
+				setState({
+					dealer_name: result.data.dealer_name,
+					username: result.data.username,
+					phone: result.data.phone,
+					email: result.data.email,
+					address: result.data.address
+				});
+			})();
+		},
+		[ params ]
+	);
 
 	const [ state, setState ] = useState({
 		dealer_name: ' ',

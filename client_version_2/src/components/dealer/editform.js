@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Avatar from '@material-ui/core/Avatar';
+
 import { withRouter } from 'react-router-dom';
 import { Button, Paper, Container } from '@material-ui/core/';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -28,24 +25,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Edit = (props) => {
-	useEffect(() => {
-		(async function getData() {
-			const data = {
-				token: localStorage.getItem('dToken')
-			};
-			const res = await axios.post(`http://localhost:5050/dealer/productsingle/${props.match.params.id}`, data);
-			const result = res.data[0];
-			setState({
-				name: result.name,
-				title: result.title,
-				description: result.description,
-				image: result.image,
-				price: result.price,
-				unit: result.unit,
-				cat: result.cat
-			});
-		})();
-	}, []);
+	let params = props.match.params.id ? props.match.params.id : '';
+	useEffect(
+		() => {
+			(async function getData() {
+				const data = {
+					token: localStorage.getItem('dToken')
+				};
+				const res = await axios.post(`http://localhost:5050/dealer/productsingle/${params}`, data);
+				const result = res.data[0];
+				setState({
+					name: result.name,
+					title: result.title,
+					description: result.description,
+					image: result.image,
+					price: result.price,
+					unit: result.unit,
+					cat: result.cat
+				});
+			})();
+		},
+		[ params ]
+	);
 
 	const [ state, setState ] = useState({
 		name: '',
@@ -148,7 +149,7 @@ const Edit = (props) => {
 					<br />
 					<br />
 					<Button type="submit" variant="contained" color="primary">
-						Add Dealer
+						Edit
 					</Button>
 				</form>
 			</Paper>

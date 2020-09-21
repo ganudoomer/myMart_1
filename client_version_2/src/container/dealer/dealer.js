@@ -22,10 +22,8 @@ import StorefrontIcon from '@material-ui/icons/Storefront';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
-import { Route, Switch, NavLink } from 'react-router-dom';
-import PeopleIcon from '@material-ui/icons/People';
+import { Link, Route, Switch } from 'react-router-dom';
 import ToggleOffIcon from '@material-ui/icons/ToggleOff';
-import { Link } from 'react-router-dom';
 import Dash from '../../components/dealer/Dash';
 import ProductForm from '../../components/dealer/ProductForm';
 const drawerWidth = 240;
@@ -117,7 +115,6 @@ const Admin = (props) => {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
-	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
 	return (
 		<div className={classes.root}>

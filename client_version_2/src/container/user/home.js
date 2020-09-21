@@ -2,7 +2,6 @@ import React, { useEffect, useState, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
-import CameraIcon from '@material-ui/icons/PhotoCamera';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -15,7 +14,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
@@ -68,8 +66,6 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const cards = [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ];
-
 const Home = (props) => {
 	const [ state, setState ] = useState({
 		select: '',
@@ -77,12 +73,14 @@ const Home = (props) => {
 		data: null
 	});
 	useEffect(() => {
-		axios.get('http://localhost:5050/user/store/').then((res) => {
-			setState({
-				...state,
-				store: res.data
+		(function getData() {
+			axios.get('http://localhost:5050/user/store/').then((res) => {
+				setState({
+					...state,
+					store: res.data
+				});
 			});
-		});
+		})();
 	}, []);
 	let select = null;
 	if (state.store) {
@@ -126,7 +124,7 @@ const Home = (props) => {
 			<AppBar color="transparent" position="relative">
 				<Toolbar>
 					<Typography variant="h6" color="inherit" noWrap>
-						<img src={logo} />
+						<img alt="logo" src={logo} />
 					</Typography>
 					{button}
 				</Toolbar>

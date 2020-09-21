@@ -54,7 +54,7 @@ const Admin = (props) => {
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
 				</Avatar>
-				<img src={logo} />
+				<img alt="logo" src={logo} />
 				{props.error ? <Typography>Wrong Password or Username</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Admin Panel

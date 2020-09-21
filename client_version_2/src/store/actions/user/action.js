@@ -14,6 +14,7 @@ export const authStartOtpGet = (token) => {
 	};
 };
 export const authFailUSerOtp = (error) => {
+	localStorage.removeItem('OToken');
 	return {
 		type: actionTypes.AUTH_USER_REGISTER_OTP_FAIL_OTP,
 		error: error
@@ -21,6 +22,7 @@ export const authFailUSerOtp = (error) => {
 };
 
 export const authSuccessOtp = (error) => {
+	localStorage.removeItem('OToken');
 	return {
 		type: actionTypes.Auth_USER_OTP_SUCCESS,
 		error: error
@@ -29,7 +31,7 @@ export const authSuccessOtp = (error) => {
 
 export const authUserOtp = (phone, name, location) => {
 	return (dispatch) => {
-		dispatch(authStartUserOtp());
+		dispatch(authStartUserOtp('OToken'));
 		const authData = {
 			phone: phone,
 			name: name,

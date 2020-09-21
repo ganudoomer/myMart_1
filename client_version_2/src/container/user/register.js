@@ -6,7 +6,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -96,7 +95,7 @@ const Dealer = (props) => {
 				<Avatar className={classes.avatar}>
 					<AccountCircleIcon />
 				</Avatar>
-				<img src={logo} />
+				<img alt="" src={logo} />
 				{props.error ? <Typography>Server Down Try again after some time</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Register with your phone number

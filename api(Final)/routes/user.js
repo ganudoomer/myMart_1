@@ -36,6 +36,7 @@ router.post('/register', async (req, res) => {
 		const database = req.app.locals.db;
 		const collection = database.collection('users');
 		const reslut = await collection.findOne({ phone: req.body.phone });
+		console.log(req.body.phone);
 		if (!reslut) {
 			const name = req.body.name;
 			const location = req.body.location;
@@ -49,7 +50,7 @@ router.post('/register', async (req, res) => {
 				formData: {
 					mobile: phone,
 					sender_id: 'SMSINFO',
-					message: 'Your otp code is {code}',
+					message: 'Your otp code for MyMart register is {code}',
 					expiry: '1800'
 				}
 			};

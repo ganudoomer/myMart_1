@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { Container, Paper, Checkbox, makeStyles, withWidth } from '@material-ui/core';
+import { Container, Paper, Checkbox, makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		margin: 100,
@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
 function Settings() {
 	const classes = useStyles();
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-	console.log(fixedHeightPaper);
 	return (
 		<Container>
 			<Paper className={fixedHeightPaper}>

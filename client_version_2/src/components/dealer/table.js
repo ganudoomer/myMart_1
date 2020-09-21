@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -62,7 +62,7 @@ const Tables = (props) => {
 	table = props.data.map((data) => (
 		<StyledTableRow key={data._id}>
 			<StyledTableCell align="left">
-				<img width="100px" height="100px" src={data.image} />
+				<img width="100px" alt="logo" height="100px" src={data.image} />
 			</StyledTableCell>
 			<StyledTableCell align="left">{data.title}</StyledTableCell>
 			<StyledTableCell align="left">{data.name}</StyledTableCell>

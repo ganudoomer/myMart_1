@@ -8,7 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import CardMedia from '@material-ui/core/CardMedia';
 import DialogContentText from '@material-ui/core/DialogContentText';
 const styles = (theme) => ({
 	root: {
@@ -69,7 +68,7 @@ export default function CustomizedDialogs(props) {
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
 					{props.data.name}
 				</DialogTitle>
-				<img width="300rem" height="200px" src={props.data.image} />
+				<img width="300rem" alt="logo" height="200px" src={props.data.image} />
 
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
 					{props.data.title} <br /> ₹{props.data.price}/{props.data.unit}
