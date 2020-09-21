@@ -48,3 +48,22 @@ export const auth = (username, password) => {
 			});
 	};
 };
+
+export const check = () => {
+	return (dispatch) => {
+		dispatch(authStart());
+		const data = {
+			token: localStorage.getItem('aToken')
+		};
+		axios
+			.post('http://localhost:5050/admin/auth', data)
+			.then((response) => {
+				console.log(response);
+				const token = localStorage.getItem('aToken');
+				dispatch(authSuccess(token));
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+};

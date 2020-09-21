@@ -72,6 +72,7 @@ const Home = (props) => {
 		store: null,
 		data: null
 	});
+	props.checkAuth();
 	useEffect(() => {
 		(function getData() {
 			axios.get('http://localhost:5050/user/store/').then((res) => {
@@ -207,7 +208,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onLogout: () => dispatch(actionCreators.logoutUser())
+		onLogout: () => dispatch(actionCreators.logoutUser()),
+		checkAuth: () => dispatch(actionCreators.check())
 	};
 };
 

@@ -120,3 +120,21 @@ export const authUSer = (phone, password) => {
 			});
 	};
 };
+
+export const check = () => {
+	return (dispatch) => {
+		const data = {
+			token: localStorage.getItem('uToken')
+		};
+		axios
+			.post('http://localhost:5050/user/auth', data)
+			.then((response) => {
+				console.log('mass');
+				const token = localStorage.getItem('uToken');
+				dispatch(authSuccessUser(token));
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+};

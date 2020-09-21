@@ -48,3 +48,21 @@ export const authDealer = (username, password) => {
 			});
 	};
 };
+
+export const check = () => {
+	return (dispatch) => {
+		const data = {
+			token: localStorage.getItem('dToken')
+		};
+		axios
+			.post('http://localhost:5050/dealer/auth', data)
+			.then((response) => {
+				console.log(response);
+				const token = localStorage.getItem('dToken');
+				dispatch(authSuccessDealer());
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+};

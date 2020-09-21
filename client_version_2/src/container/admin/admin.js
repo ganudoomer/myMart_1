@@ -133,11 +133,11 @@ const Admin = (props) => {
 					<Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
 						Dashboard
 					</Typography>
-					<IconButton onClick={props.logoutHandler} color="inherit">
-						<a href="/admin/logout">
+					<a href="/admin/logout">
+						<IconButton onClick={props.logoutHandler} color="inherit">
 							<ExitToAppIcon />
-						</a>
-					</IconButton>
+						</IconButton>
+					</a>
 				</Toolbar>
 			</AppBar>
 			<Drawer
