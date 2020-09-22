@@ -97,17 +97,18 @@ const Home = (props) => {
 			setState({
 				...state,
 				select: e.target.value,
-				data: res.data[0].products
+				data: res.data[0].products,
+				live: res.data[0].live
 			});
 		});
 	};
 	const classes = useStyles();
 	let button = (
 		<Fragment>
-			<Link to="/login">
+			<Link style={{ textDecoration: 'none' }} to="/login">
 				<Button className={classes.button}>Login</Button>
 			</Link>
-			<Link to="/register">
+			<Link style={{ textDecoration: 'none' }} to="/register">
 				<Button className={classes.button}>Register</Button>
 			</Link>
 		</Fragment>
@@ -151,7 +152,15 @@ const Home = (props) => {
 								{select}
 							</Select>
 						</FormControl>
-						<div className={classes.heroButtons} />
+						<div className={classes.heroButtons}>
+							{state.data ? state.live ? (
+								<Button variant="contained" color="primary">
+									Open
+								</Button>
+							) : (
+								<Button variant="contained">Closed</Button>
+							) : null}
+						</div>
 					</Container>
 				</div>
 				<Container className={classes.cardGrid} maxWidth="md">

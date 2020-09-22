@@ -4,6 +4,7 @@ import * as actionCreators from '../../store/actions/dealer/action';
 import clsx from 'clsx';
 import EditForm from '../../components/dealer/editform';
 import { makeStyles } from '@material-ui/core/styles';
+import Setting from '../../components/dealer/setting';
 import {
 	ListItemText,
 	ListItemIcon,
@@ -26,6 +27,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import Dash from '../../components/dealer/Dash';
 import ProductForm from '../../components/dealer/ProductForm';
+import Settings from '../../components/admin/settings';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -158,19 +160,16 @@ const Admin = (props) => {
 				</div>
 				<Divider />
 				<List>
-					<ListItem button>
+					<ListItem component={Link} to="/dealer/dash" button>
 						<ListItemIcon>
-							<Link to="/dealer/dash">
-								<StorefrontIcon />
-							</Link>
+							<StorefrontIcon style={{ color: '#3f51b5' }} />
 						</ListItemIcon>
 						<ListItemText primary="Products" />
 					</ListItem>
-					<ListItem button>
+
+					<ListItem component={Link} to="/dealer/dash/setting" button>
 						<ListItemIcon>
-							<Link to="/dealer/dash/setting">
-								<ToggleOffIcon />
-							</Link>
+							<ToggleOffIcon style={{ color: '#3f51b5' }} />
 						</ListItemIcon>
 						<ListItemText primary="Settings" />
 					</ListItem>
@@ -181,6 +180,7 @@ const Admin = (props) => {
 			<Switch>
 				<Route path="/dealer/dash/product/add" exact component={ProductForm} />
 				<Route path="/dealer/dash/product/:id" component={EditForm} />
+				<Route path="/dealer/dash/setting" component={Setting} />
 				<Route path="/dealer/dash" component={Dash} />
 			</Switch>
 		</div>

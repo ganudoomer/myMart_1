@@ -156,33 +156,54 @@ router
 		});
 	});
 router
-	.post('/settings', isAuth, async (req, res) => {
-		try {
-			const database = req.app.locals.db;
-			const collection = database.collection('dealer');
-			const reslut = await collection.find({ username: req.body.username }).project({ live: 1 });
-			const response = [];
-			await reslut.forEach((doc) => response.push(doc));
-			await res.json(response);
-			console.log(reslut);
-		} catch (err) {
-			console.log(err);
-		}
+	.post('/settings', isAuth, (req, res) => {
+		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const reslut = await collection.find({ username: decoded.username }).project({ live: 1 });
+					const response = [];
+					await reslut.forEach((doc) => response.push(doc));
+					await res.json(response);
+					console.log(reslut);
+				} catch (err) {
+					console.log(err);
+				}
+				console.log(decoded);
+				res.sendStatus(200);
+			}
+		});
 	})
 	.put('/settings', isAuth, async (req, res) => {
-		try {
-			const database = req.app.locals.db;
-			const collection = database.collection('dealer');
-			const updateDoc = { $set: { live: req.body.set } };
-			const options = { upsert: true };
-			const result = await collection.updateOne({ username: req.body.username }, updateDoc, options);
-			console.log(
-				`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-			);
-			res.sendStatus(200);
-		} catch (err) {
-			console.log(err);
-		}
+		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+				res.sendStatus(401);
+			} else {
+				let set = false;
+				console.log(decoded);
+				if (req.body.set === 'true') {
+					set = true;
+				}
+				try {
+					const database = req.app.locals.db;
+					const collection = database.collection('dealer');
+					const updateDoc = { $set: { live: set } };
+					const options = { upsert: true };
+					const result = await collection.updateOne({ username: decoded.username }, updateDoc, options);
+					console.log(
+						`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+					);
+					res.sendStatus(200);
+				} catch (err) {
+					console.log(err);
+				}
+			}
+		});
 	})
 	.post('/productsingle/:id', (req, res) => {
 		const id = req.params.id;

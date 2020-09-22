@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = (props) => {
 	const [ state, setState ] = useState({
-		data: []
+		data: null
 	});
 
 	useEffect(() => {
@@ -123,7 +123,34 @@ const Dashboard = (props) => {
 			data: result
 		});
 	};
-
+	const countItemsTrue = (arry) => {
+		if (arry) {
+			var result = 0;
+			for (let x = 0; arry.length - 1 >= x; x++) {
+				if (arry[x]['live']) {
+					result++;
+				}
+			}
+			return result;
+		}
+	};
+	const countItemsFalse = (arry) => {
+		if (arry) {
+			var result = 0;
+			for (let x = 0; arry.length - 1 >= x; x++) {
+				if (arry[x]['live'] === false) {
+					result++;
+				}
+			}
+			return result;
+		}
+	};
+	let open = null;
+	let close = null;
+	if (state.data) {
+		open = countItemsTrue(state.data);
+		close = countItemsFalse(state.data);
+	}
 	return (
 		<main className={classes.content}>
 			<div className={classes.appBarSpacer} />
@@ -136,10 +163,10 @@ const Dashboard = (props) => {
 								Total
 							</Typography>
 							<Typography component="p" variant="h4">
-								11
+								{state.data ? state.data.length : 0}
 							</Typography>
 							<Typography color="textSecondary" className={classes.depositContext}>
-								on 15 March, 2019
+								Dealers
 							</Typography>
 						</Paper>
 					</Grid>
@@ -150,10 +177,10 @@ const Dashboard = (props) => {
 								Open
 							</Typography>
 							<Typography component="p" variant="h4">
-								10
+								{open}
 							</Typography>
 							<Typography color="textSecondary" className={classes.depositContext}>
-								on 15 March, 2019
+								Dealers
 							</Typography>
 						</Paper>
 					</Grid>
@@ -163,10 +190,10 @@ const Dashboard = (props) => {
 								Close
 							</Typography>
 							<Typography component="p" variant="h4">
-								11
+								{close}
 							</Typography>
 							<Typography color="textSecondary" className={classes.depositContext}>
-								on 15 March, 2019
+								Dealers
 							</Typography>
 						</Paper>
 					</Grid>

@@ -9,7 +9,7 @@ router.get('/items/:store', async (req, res) => {
 	try {
 		const database = req.app.locals.db;
 		const collection = database.collection('dealer');
-		const reslut = await collection.find({ dealer_name: store }).project({ products: 1, _id: 0 });
+		const reslut = await collection.find({ dealer_name: store }).project({ products: 1, _id: 0, live: 1 });
 		const response = [];
 		await reslut.forEach((doc) => response.push(doc));
 		await res.json(response);

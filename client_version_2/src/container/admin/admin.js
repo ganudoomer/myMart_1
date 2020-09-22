@@ -158,19 +158,15 @@ const Admin = (props) => {
 				</div>
 				<Divider />
 				<List>
-					<ListItem button>
+					<ListItem to="/admin/dash" component={Link} button>
 						<ListItemIcon>
-							<Link to="/admin/dash">
-								<PeopleIcon />
-							</Link>
+							<PeopleIcon style={{ color: '#3f51b5' }} />
 						</ListItemIcon>
 						<ListItemText primary="Dealers" />
 					</ListItem>
-					<ListItem button>
+					<ListItem to="/admin/dash/setting" component={Link} button>
 						<ListItemIcon>
-							<Link to="/admin/dash/setting">
-								<ToggleOffIcon />
-							</Link>
+							<ToggleOffIcon style={{ color: '#3f51b5' }} />
 						</ListItemIcon>
 						<ListItemText primary="Settings" />
 					</ListItem>
