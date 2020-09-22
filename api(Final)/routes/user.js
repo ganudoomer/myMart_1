@@ -31,10 +31,8 @@ router.get('/store/', async (req, res) => {
 	}
 });
 
-router.post('/auth',  (req, res) => {
-	
-
-jwt.verify(req.body.token, 'secret', (err, decoded) => {
+router.post('/auth', (req, res) => {
+	jwt.verify(req.body.token, 'secret', (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -70,6 +68,7 @@ router.post('/register', async (req, res) => {
 			};
 			request(options, function(error, response) {
 				if (error) throw new Error(error);
+				console.log(error);
 				const data = JSON.parse(response.body);
 				console.log(data.otp_id);
 				const token = jwt.sign(
