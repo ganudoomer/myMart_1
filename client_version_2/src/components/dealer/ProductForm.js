@@ -130,7 +130,7 @@ const Add = (props) => {
 					<br />
 					<br />
 					<Button type="submit" variant="contained" color="primary">
-						Add Dealer
+						Add Product
 					</Button>
 				</form>
 			</Paper>

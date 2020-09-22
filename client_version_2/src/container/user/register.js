@@ -89,6 +89,7 @@ const Dealer = (props) => {
 	}
 	return (
 		<Container component="main" maxWidth="xs">
+			{props.success ? <Redirect to="/login" /> : null}
 			<CssBaseline />
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
@@ -161,7 +162,8 @@ const mapStateToProps = (state) => {
 		token: state.user.token,
 		error: state.user.error,
 		loading: state.user.loading,
-		otperror: state.user.otperror
+		otperror: state.user.otperror,
+		success: state.user.success
 	};
 };
 

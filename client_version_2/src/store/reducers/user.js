@@ -7,7 +7,8 @@ const initialState = {
 	loading: false,
 	otp: null,
 	otpToken: null,
-	otperror: false
+	otperror: false,
+	success: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -24,7 +25,8 @@ const reducer = (state = initialState, action) => {
 				loading: false,
 				error: null,
 				otpToken: null,
-				token: true
+				token: true,
+				success: true
 			};
 		case actionTypes.AUTH_USER_REGISTER_OTP_FAIL_OTP:
 			return {
