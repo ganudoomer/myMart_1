@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import { Button, Paper, Container } from '@material-ui/core/';
+import { Button, Paper, Container, Select } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -44,10 +44,21 @@ const Edit = (props) => {
 					cat: result.cat
 				});
 			})();
+			const data = {
+				token: localStorage.getItem('dToken')
+			};
+			axios.post('http://localhost:5050/dealer/unit', data).then((res) => {
+				console.log(res.data[0].units);
+				setUnit({
+					units: res.data[0].units
+				});
+			});
 		},
 		[ params ]
 	);
-
+	const [ unit, setUnit ] = useState({
+		units: null
+	});
 	const [ state, setState ] = useState({
 		name: '',
 		title: '',
@@ -132,20 +143,23 @@ const Edit = (props) => {
 					/>
 					<TextField
 						onChange={onChangeHandeler}
-						name="unit"
-						value={state.unit}
-						className={classes.form}
-						type="text"
-						label="Unit eg:Kg,Ltr"
-					/>
-					<TextField
-						onChange={onChangeHandeler}
 						name="cat"
 						value={state.cat}
 						className={classes.form}
 						type="text"
 						label="category"
 					/>
+					<br />
+					<br />
+					<Select
+						name="unit"
+						onChange={onChangeHandeler}
+						value={state.unit}
+						style={{ minWidth: 500, marginLeft: 10 }}
+						native
+					>
+						{unit.units ? unit.units.map((unit) => <option value={unit}>{unit}</option>) : null}
+					</Select>
 					<br />
 					<br />
 					<Button type="submit" variant="contained" color="primary">

@@ -29,28 +29,9 @@ app.use('/user', user);
 app.get('/mongotest', async (req, res, next) => {
 	try {
 		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const bismi = [
-			{
-				dealer_name: 'bismi',
-				username: 'shibu',
-				phone: 9088797878,
-				email: 'shibu@gmail.com',
-				address: 'calicut',
-				no_of_orders: '0',
-				password: 'mass'
-			},
-			{
-				dealer_name: 'marginfree',
-				username: 'shibu',
-				phone: 9088797878,
-				email: 'shibu@gmail.com',
-				address: 'calicut',
-				no_of_orders: '0',
-				password: 'machan'
-			}
-		];
-		const reslut = await collection.insertMany(bismi);
+		const collection = database.collection('unit');
+		const bismi = { units: [ 'Kg', 'Gram', 'Unit' ] };
+		const reslut = await collection.insertOne(bismi);
 		console.dir(reslut.insertedCount);
 	} catch (err) {
 		next(err);

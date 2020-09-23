@@ -112,9 +112,12 @@ router
 				'products.$.title': req.body.title,
 				'products.$.description': req.body.description,
 				'products.$.image': req.body.image,
-				'products.$.price': req.body.price
+				'products.$.price': req.body.price,
+				'products.$.unit': req.body.unit,
+				'products.$.cat': req.body.cat
 			}
 		};
+
 		const options = { upsert: false };
 		try {
 			const database = req.app.locals.db;
@@ -228,6 +231,18 @@ router
 				}
 			}
 		});
+	})
+	.post('/unit', isAuth, async (req, res) => {
+		try {
+			const database = req.app.locals.db;
+			const collection = database.collection('unit');
+			const reslut = await collection.find({}).project({ units: 1 });
+			const response = [];
+			await reslut.forEach((doc) => response.push(doc));
+			await res.json(response);
+		} catch (err) {
+			console(err);
+		}
 	});
 
 module.exports = router;

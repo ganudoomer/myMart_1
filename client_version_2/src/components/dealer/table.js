@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import axios from 'axios';
+import Deletemodel from './model';
 const StyledTableCell = withStyles((theme) => ({
 	head: {
 		backgroundColor: theme.palette.common.black,
@@ -70,9 +71,7 @@ const Tables = (props) => {
 			<StyledTableCell align="right">{data.unit}</StyledTableCell>
 			<StyledTableCell align="right">{data.cat}</StyledTableCell>
 			<StyledTableCell align="right">
-				<IconButton onClick={() => onDeleteHandler(data._id)} aria-label="delete">
-					<DeleteIcon />
-				</IconButton>
+				<Deletemodel click={() => onDeleteHandler(data._id)} />
 			</StyledTableCell>
 			<StyledTableCell align="right">
 				<IconButton onClick={() => onEditHandler(data._id)} aria-label="delete">

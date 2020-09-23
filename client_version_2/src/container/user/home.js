@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import Divider from '@material-ui/core/Divider';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -71,6 +72,9 @@ const Home = (props) => {
 		select: '',
 		store: null,
 		data: null
+	});
+	const [ open, setSate ] = useState({
+		card: null
 	});
 	props.checkAuth();
 	useEffect(() => {
@@ -170,27 +174,49 @@ const Home = (props) => {
 							state.data.map((card) => (
 								<Grid item key={card} xs={12} sm={6} md={4}>
 									<Card className={classes.card}>
-										<CardMedia
-											className={classes.cardMedia}
-											image={card.image}
-											title="Image title"
-										/>
-										<CardContent className={classes.cardContent}>
-											<Typography gutterBottom variant="h5" component="h2">
-												{card.name}
-											</Typography>
-											<Typography>({card.title})</Typography>
-											<Typography>{card.description}</Typography>
-										</CardContent>
+										<Model view data={card}>
+											<CardMedia
+												className={classes.cardMedia}
+												image={card.image}
+												title="Image title"
+											/>
+											<CardContent className={classes.cardContent}>
+												<Typography gutterBottom variant="h5" component="h2">
+													{card.name}
+													<Typography style={{ display: 'inline ', marginLeft: '40%' }}>
+														₹{card.price}/{card.unit}
+													</Typography>
+												</Typography>
+												<Typography>({card.title})</Typography>
+												<Typography variant="caption">{card.description}</Typography>
+											</CardContent>
+										</Model>
+
+										<Divider className={classes.divider} light />
 										<CardActions>
 											<Model data={card} />
-											<Button size="small" color="primary">
-												₹{card.price}/{card.unit}
-											</Button>
-											<Button size="small" color="primary">
+											<Button
+												style={{
+													borderRadius: 30,
+													backgroundColor: '#2FEF92',
+													padding: '15px 15px',
+													fontSize: '10px',
+													marginLeft: 20
+												}}
+												variant="contained"
+											>
 												{card.cat}
 											</Button>
-											<Button size="small" color="primary">
+											<Button
+												style={{
+													borderRadius: 35,
+													backgroundColor: '#2FEF92',
+													padding: '18px 36px',
+													fontSize: '10px',
+													marginLeft: 20
+												}}
+												variant="contained"
+											>
 												<AddShoppingCartIcon />
 											</Button>
 										</CardActions>

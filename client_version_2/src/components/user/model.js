@@ -9,6 +9,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+
 const styles = (theme) => ({
 	root: {
 		margin: 0,
@@ -59,11 +61,17 @@ export default function CustomizedDialogs(props) {
 		setOpen(false);
 	};
 
+	let click = (
+		<Button color="primary" onClick={handleClickOpen}>
+			view
+		</Button>
+	);
+	if (props.view) {
+		click = <div onClick={() => handleClickOpen()}>{props.children}</div>;
+	}
 	return (
 		<div>
-			<Button color="primary" onClick={handleClickOpen}>
-				view
-			</Button>
+			{click}
 			<Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
 					{props.data.name}
@@ -83,8 +91,19 @@ export default function CustomizedDialogs(props) {
 					</Typography>
 				</DialogContent>
 				<DialogActions>
-					<Button autoFocus onClick={handleClose} color="primary">
-						Add to cart
+					<Button
+						autoFocus
+						onClick={handleClose}
+						style={{
+							borderRadius: 35,
+							backgroundColor: '#2FEF92',
+							padding: '18px 36px',
+							fontSize: '10px',
+							marginLeft: 20
+						}}
+						variant="contained"
+					>
+						<AddShoppingCartIcon />
 					</Button>
 				</DialogActions>
 			</Dialog>
