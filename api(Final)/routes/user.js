@@ -53,9 +53,10 @@ router.post('/register', async (req, res) => {
 			const name = req.body.name;
 			const location = req.body.location;
 			const phone = req.body.phone;
+			const password = req.body.password;
 			const options = {
 				method: 'POST',
-				url: 'https://d7networks.com/api/verifier/send',
+				url: 'https://d7networks.comsadf/api/verifier/send',
 				headers: {
 					Authorization: 'Token  f5310ff5049a0cc967c0206eddd4819248961442'
 				},
@@ -67,38 +68,41 @@ router.post('/register', async (req, res) => {
 				}
 			};
 			request(options, function(error, response) {
-				if (error) throw new Error(error);
-				console.log(error);
-				const data = JSON.parse(response.body);
-				console.log(data.otp_id);
-				const token = jwt.sign(
-					{
-						name: name,
-						location: location,
-						phone: phone,
-						otp_id: data.otp_id
-					},
-					'secret',
-					{ expiresIn: '600s' }
-				);
-				res.json({ temp: token });
+				if (!error) {
+					const data = JSON.parse(response.body);
+					console.log(data.otp_id);
+					const token = jwt.sign(
+						{
+							name: name,
+							location: location,
+							phone: phone,
+							otp_id: data.otp_id,
+							password: password
+						},
+						'secret',
+						{ expiresIn: '600s' }
+					);
+					console.log(token);
+					res.json({ temp: token });
+				} else {
+					res.json({ status: 'error', message: 'Error while sending otp' });
+				}
 			});
 		} else {
-			res.sendStatus(401);
+			res.json({ status: 'error', message: 'User already exists ' });
 		}
 	} catch (err) {
-		console.log(err);
+		res.json({ status: 'error', message: 'Server is done  ' });
 	}
 });
 router.post('/register/auth', (req, res) => {
 	const database = req.app.locals.db;
-	const password = req.body.password;
 	const otp = req.body.otp;
 	console.log(otp);
 	jwt.verify(req.body.token, 'secret', (err, decoded) => {
 		if (err) {
 			console.log(err.message);
-			res.sendStatus(401);
+			res.json({ status: 'error', message: 'Error' });
 		} else {
 			console.log(decoded);
 			const request = require('request');
@@ -115,8 +119,8 @@ router.post('/register/auth', (req, res) => {
 			};
 			request(options, async function(error, response) {
 				if (error) throw new Error(error);
-				if (JSON.parse(response.body).status === 'success') {
-					const hash = await bcrypt.hash(password, 8);
+				if (!error && JSON.parse(response.body).status === 'success') {
+					const hash = await bcrypt.hash(decoded.password, 8);
 					const user = {
 						name: decoded.name,
 						phone: decoded.phone,
