@@ -9,6 +9,7 @@ const user = require('./routes/user');
 app.use(cros());
 app.use(express.json());
 
+app.use(express.static('public'));
 //Providing mongodb instance globally===================================================//
 const uri = 'mongodb://127.0.0.1:27017';
 const client = new MongoClient(uri, { useUnifiedTopology: true });
