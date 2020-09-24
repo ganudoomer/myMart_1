@@ -181,6 +181,17 @@ router
 		} catch (err) {
 			console(err);
 		}
+	})
+	.post('/addunit', isAuth, async (req, res) => {
+		try {
+			const database = req.app.locals.db;
+			const collection = database.collection('unit');
+			const reslut = await collection.updateOne({}, { $push: { units: req.body.unit } });
+			console.dir(reslut.insertedCount);
+			res.sendStatus(200);
+		} catch (err) {
+			console.log(err);
+		}
 	});
 
 module.exports = router;
