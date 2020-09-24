@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from '../../SuperMart.svg';
 import { connect } from 'react-redux';
-import * as actionCreators from '../../store/actions/user/action';
+import * as actionCreators from '../../store/actions/user/register';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +12,7 @@ import Container from '@material-ui/core/Container';
 import { Redirect, Link } from 'react-router-dom';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Otp from '../../components/user/otp';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -51,7 +52,7 @@ const Dealer = (props) => {
 	const onSubmitHandler = (e) => {
 		e.preventDefault();
 		console.log('He');
-		props.onSubmitForm(state.phone, state.name, state.location);
+		props.onSubmitForm(state.phone, state.name, state.location, state.password);
 	};
 	const onChangeHandeler = (e) => {
 		setState({
@@ -64,7 +65,7 @@ const Dealer = (props) => {
 		otp = <CircularProgress color="secondary" />;
 	}
 	let verify = null;
-	if (props.loading) {
+	if (props.sendOtp) {
 		verify = (
 			<form onSubmit={onOtpsubmit}>
 				<TextField
@@ -75,18 +76,13 @@ const Dealer = (props) => {
 					required
 					label="otp"
 				/>
-				<TextField
-					name="password"
-					onChange={onChangeHandeler}
-					value={state.password}
-					required
-					type="password"
-					label="password  for your account"
-				/>
 				<Button type="submit">Verify OTP</Button>
 			</form>
 		);
 	}
+	console.log('====================================');
+	console.log(props.verifyError + ' ' + props.verifySuccess + ' ' + props.loadingVerify);
+	console.log('====================================');
 	return (
 		<Container component="main" maxWidth="xs">
 			{props.success ? <Redirect to="/login" /> : null}
@@ -96,7 +92,7 @@ const Dealer = (props) => {
 					<AccountCircleIcon />
 				</Avatar>
 				<img alt="" src={logo} />
-				{props.otperror ? <Typography>OTP ERROR</Typography> : null}
+				{props.errorOtp ? <Typography>{props.errorOtp}</Typography> : null}
 				{props.error ? <Typography>Server Down Try again after some time</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Register with your phone number
@@ -136,22 +132,36 @@ const Dealer = (props) => {
 						label="Location"
 						id="name"
 					/>
-					{!props.loading ? (
+					<TextField
+						name="password"
+						onChange={onChangeHandeler}
+						value={state.password}
+						required
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						type="password"
+						label="password  for your account"
+					/>
+					{props.loadingOtp ? <h1>Sending OTP </h1> : null}
+					{!props.loadingOtp ? (
 						<Button type="submit" variant="contained" color="primary" className={classes.submit}>
 							Send OTP
 						</Button>
 					) : null}
 				</form>
-				{verify}
 				<br />
-				{otp}
-				{!props.loading ? (
+
+				{props.sendOtp ? <Otp onOtpsubmitHandler={(e) => props.verifyOTP(e)} view /> : null}
+				{!props.loadingOtp ? (
 					<Typography component="h4">
 						{' '}
-						if you have an account <Link to="/register">Sign in</Link>
+						if you have an account <Link to="/login">Sign in</Link>
 					</Typography>
 				) : null}
 			</div>
+
 			<div className={classes.root} />
 		</Container>
 	);
@@ -159,18 +169,20 @@ const Dealer = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
-		token: state.user.token,
-		error: state.user.error,
-		loading: state.user.loading,
-		otperror: state.user.otperror,
-		success: state.user.success
+		errorOtp: state.user.errorOtp,
+		loadingOtp: state.user.loadingOtp,
+		sendOtp: state.user.sendOtp,
+		loadingVerify: state.user.loadingVerify,
+		verifyError: state.user.verifyError,
+		verifySuccess: state.user.verifySuccess
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onOtpsubmitHandler: (otp, password) => dispatch(actionCreators.authUserOtpVerify(otp, password)),
-		onSubmitForm: (phone, name, location) => dispatch(actionCreators.authUserOtp(phone, name, location))
+		verifyOTP: (otp) => dispatch(actionCreators.UserOtpVerify(otp)),
+		onSubmitForm: (phone, name, location, password) =>
+			dispatch(actionCreators.register(phone, name, location, password))
 	};
 };
 

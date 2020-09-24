@@ -48,7 +48,7 @@ router.post('/register', async (req, res) => {
 		const database = req.app.locals.db;
 		const collection = database.collection('users');
 		const reslut = await collection.findOne({ phone: req.body.phone });
-		console.log(req.body.phone);
+		console.log(req.body);
 		if (!reslut) {
 			const name = req.body.name;
 			const location = req.body.location;
@@ -56,9 +56,9 @@ router.post('/register', async (req, res) => {
 			const password = req.body.password;
 			const options = {
 				method: 'POST',
-				url: 'https://d7networks.comsadf/api/verifier/send',
+				url: 'https://d7networks.com/api/verifier/send',
 				headers: {
-					Authorization: 'Token  f5310ff5049a0cc967c0206eddd4819248961442'
+					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
 				},
 				formData: {
 					mobile: phone,
@@ -68,6 +68,7 @@ router.post('/register', async (req, res) => {
 				}
 			};
 			request(options, function(error, response) {
+				console.log(error);
 				if (!error) {
 					const data = JSON.parse(response.body);
 					console.log(data.otp_id);
@@ -110,7 +111,7 @@ router.post('/register/auth', (req, res) => {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/verify',
 				headers: {
-					Authorization: 'Token  f5310ff5049a0cc967c0206eddd4819248961442'
+					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
 				},
 				formData: {
 					otp_id: decoded.otp_id,
@@ -118,7 +119,8 @@ router.post('/register/auth', (req, res) => {
 				}
 			};
 			request(options, async function(error, response) {
-				if (error) throw new Error(error);
+				console.log(response.body);
+				console.log(error + '[ERROR]');
 				if (!error && JSON.parse(response.body).status === 'success') {
 					const hash = await bcrypt.hash(decoded.password, 8);
 					const user = {
@@ -138,7 +140,7 @@ router.post('/register/auth', (req, res) => {
 						res.sendStatus(501);
 					}
 				} else {
-					res.sendStatus(401);
+					res.json({ status: 'error', message: JSON.parse(response.body).otp_code });
 				}
 			});
 		}
