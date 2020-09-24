@@ -6,6 +6,7 @@ const cros = require('cors');
 const { MongoClient } = require('mongodb');
 const dealer = require('./routes/dealer');
 const user = require('./routes/user');
+const multer = require('multer');
 app.use(cros());
 app.use(express.json());
 
@@ -23,6 +24,30 @@ const client = new MongoClient(uri, { useUnifiedTopology: true });
 	}
 })();
 //=======================================================================================//
+
+//===============================================================================//
+var storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, 'public/images');
+	},
+	filename: function(req, file, cb) {
+		cb(null, Date.now() + '-' + file.originalname);
+	}
+});
+var upload = multer({ storage: storage }).single('file');
+
+app.post('/upload', function(req, res) {
+	upload(req, res, function(err) {
+		if (err instanceof multer.MulterError) {
+			return res.status(500).json(err);
+		} else if (err) {
+			return res.status(500).json(err);
+		}
+		console.log(req.file.path);
+		return res.status(200).send(req.file);
+	});
+});
+//=================================================================================//
 
 app.use('/admin', admin);
 app.use('/dealer', dealer);
