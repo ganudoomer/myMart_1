@@ -100,7 +100,7 @@ const Add = (props) => {
 			thumbnail: images.thumbnail
 		};
 		axios
-			.post('http://localhost:5050/createTest', data)
+			.post('http://localhost:5050/dealer/product', data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/dealer/dash/');

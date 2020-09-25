@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import { Button, Paper, Container, Select } from '@material-ui/core/';
+import { Button, Paper, Avatar, Container, Select, Input } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -21,10 +21,43 @@ const useStyles = makeStyles((theme) => ({
 	form: {
 		margin: theme.spacing(1),
 		width: '100ch'
+	},
+	large: {
+		width: theme.spacing(20),
+		height: theme.spacing(20)
 	}
 }));
 
 const Edit = (props) => {
+	const [ file, setFile ] = useState({
+		select: null
+	});
+	const onChangeHandler = (event) => {
+		console.log(event.target.files[0]);
+		setFile({
+			select: event.target.files[0]
+		});
+	};
+	const [ images, setImage ] = useState({
+		image: null,
+		thumbnail: null
+	});
+	const onsubmit = () => {
+		const data = new FormData();
+		data.append('file', file.select);
+		axios.post('http://localhost:5050/dealer/upload', data).then((res) => {
+			console.log(res.data.imageName);
+			console.log(res.data.thumbnail);
+			setState({
+				...state,
+				image: { imageName: res.data.imageName, thumbnail: res.data.thumbnail }
+			});
+			setImage({
+				image: res.data.imageName,
+				thumbnail: res.data.thumbnail
+			});
+		});
+	};
 	let params = props.match.params.id ? props.match.params.id : '';
 	useEffect(
 		() => {
@@ -103,6 +136,11 @@ const Edit = (props) => {
 		<Container>
 			<Paper className={fixedHeightPaper}>
 				<h1>Edit Form</h1>
+				<Avatar alt="Upload the image" src={state.image.thumbnail} className={classes.large}>
+					PHOTO
+				</Avatar>
+				<Input required type="file" name="file" onChange={onChangeHandler} />
+				<Button onClick={onsubmit}>Upload Photo</Button>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
 						name="name"
