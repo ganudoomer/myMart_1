@@ -133,6 +133,7 @@ const Dealer = (props) => {
 							Send OTP
 						</Button>
 					) : null}
+					{props.loadingVerify ? <CircularProgress color="secondary" /> : null}
 				</form>
 				<br />
 

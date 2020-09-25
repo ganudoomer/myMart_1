@@ -7,6 +7,7 @@ const { MongoClient } = require('mongodb');
 const dealer = require('./routes/dealer');
 const user = require('./routes/user');
 const multer = require('multer');
+const sharp = require('sharp');
 app.use(cros());
 app.use(express.json());
 
@@ -37,14 +38,38 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }).single('file');
 
 app.post('/upload', function(req, res) {
-	upload(req, res, function(err) {
+	const url = req.protocol + '://' + req.get('host') + '/images/';
+	console.log(url);
+	upload(req, res, async function(err) {
 		if (err instanceof multer.MulterError) {
 			return res.status(500).json(err);
 		} else if (err) {
 			return res.status(500).json(err);
 		}
-		console.log(req.file.path);
-		return res.status(200).send(req.file);
+		try {
+			const database = req.app.locals.db;
+			const collection = database.collection('images');
+			const bismi = {
+				imageName: url + req.file.filename,
+				thumbnail: url + 'thumbnails/' + 'thumbnails-' + req.file.filename
+			};
+			const reslut = await collection.insertOne(bismi);
+			console.dir(reslut.insertedCount);
+			sharp(req.file.path)
+				.resize(416, 234)
+				.toFile('public/images/thumbnails/' + 'thumbnails-' + req.file.filename, (err, resizeImage) => {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(resizeImage);
+					}
+				});
+			return res.status(201).json({
+				message: 'File uploded successfully'
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	});
 });
 //=================================================================================//

@@ -15,7 +15,7 @@ const Logout = () => {
 		const data = new FormData();
 		data.append('file', file.select);
 		axios.post('http://localhost:5050/upload', data).then((res) => {
-			console.log(res.statusText);
+			console.log(res.data);
 		});
 	};
 	return (
