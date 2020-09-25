@@ -13,6 +13,7 @@ import { Redirect, Link } from 'react-router-dom';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Otp from '../../components/user/otp';
+import Success from '../../components/user/success';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -60,29 +61,10 @@ const Dealer = (props) => {
 			[e.target.name]: e.target.value
 		});
 	};
-	let otp = null;
-	if (props.loading) {
-		otp = <CircularProgress color="secondary" />;
-	}
-	let verify = null;
-	if (props.sendOtp) {
-		verify = (
-			<form onSubmit={onOtpsubmit}>
-				<TextField
-					type="number"
-					name="otp"
-					value={state.otp}
-					onChange={onChangeHandeler}
-					required
-					label="otp"
-				/>
-				<Button type="submit">Verify OTP</Button>
-			</form>
-		);
-	}
-	console.log('====================================');
-	console.log(props.verifyError + ' ' + props.verifySuccess + ' ' + props.loadingVerify);
-	console.log('====================================');
+	const onSucces = () => {
+		props.history.push('/login');
+	};
+
 	return (
 		<Container component="main" maxWidth="xs">
 			{props.success ? <Redirect to="/login" /> : null}
@@ -92,6 +74,7 @@ const Dealer = (props) => {
 					<AccountCircleIcon />
 				</Avatar>
 				<img alt="" src={logo} />
+				{props.verifyError ? <Typography>{props.verifyError}</Typography> : null}
 				{props.errorOtp ? <Typography>{props.errorOtp}</Typography> : null}
 				{props.error ? <Typography>Server Down Try again after some time</Typography> : null}
 				<Typography component="h1" variant="h5">
@@ -144,7 +127,7 @@ const Dealer = (props) => {
 						type="password"
 						label="password  for your account"
 					/>
-					{props.loadingOtp ? <h1>Sending OTP </h1> : null}
+					{props.loadingOtp ? <CircularProgress color="secondary" /> : null}
 					{!props.loadingOtp ? (
 						<Button type="submit" variant="contained" color="primary" className={classes.submit}>
 							Send OTP
@@ -161,7 +144,7 @@ const Dealer = (props) => {
 					</Typography>
 				) : null}
 			</div>
-
+			{props.verifySuccess ? <Success clcikOn={() => onSucces()} view /> : null}
 			<div className={classes.root} />
 		</Container>
 	);

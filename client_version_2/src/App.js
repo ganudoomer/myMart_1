@@ -17,6 +17,7 @@ import DealerProtectedRoute from './components/hoc/DealerAuth';
 import * as dealerAction from './store/actions/dealer/action';
 import * as adminAction from './store/actions/admin';
 import * as userAction from './store/actions/user/action';
+import Test from './Test';
 function App(props) {
 	const admin = props.checkAdmin;
 	const dealer = props.checkDealer;
@@ -31,6 +32,7 @@ function App(props) {
 		<div className="App">
 			<Switch>
 				<Route path="/" exact component={Home} />
+				<Route path="/test" exact component={Test} />
 				<Route path="/logout" exact component={LogoutUser} />
 				<Route path="/login" exact component={LoginUser} />
 				<Route path="/register" exact component={RegisterUser} />

@@ -32,11 +32,12 @@ export const register = (phone, name, location, password) => {
 		axios
 			.post('http://localhost:5050/user/register/', authData)
 			.then((response) => {
-				console.log(response.data);
-				dispatch(registerOtpsend());
 				localStorage.setItem('OToken', response.data.temp);
 				if (response.data.status === 'error') {
 					dispatch(registerFail(response.data.message));
+				} else {
+					console.log(response.data);
+					dispatch(registerOtpsend());
 				}
 			})
 			.catch((err) => {
@@ -58,9 +59,10 @@ export const UserOtpVerify = (otp) => {
 		axios
 			.post('http://localhost:5050/user/register/auth', authData)
 			.then((response) => {
-				dispatch(verifyOTPsuccess());
 				if (response.data.status === 'error') {
 					dispatch(failUserOtp(response.data.message));
+				} else {
+					dispatch(verifyOTPsuccess());
 				}
 			})
 			.catch((err) => {

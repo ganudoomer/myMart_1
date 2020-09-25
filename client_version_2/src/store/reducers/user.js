@@ -65,34 +65,6 @@ const reducer = (state = initialState, action) => {
 				loadingOtp: false,
 				sendOtp: false
 			};
-		case actionTypes.AUTH_START_USER_REGISTER_OTP:
-			return {
-				...state,
-				loading: true,
-				error: null
-			};
-		case actionTypes.Auth_USER_OTP_SUCCESS:
-			return {
-				...state,
-				loading: false,
-				error: null,
-				otpToken: null,
-				token: true,
-				success: true
-			};
-		case actionTypes.AUTH_USER_REGISTER_OTP_FAIL_OTP:
-			return {
-				...state,
-				loading: false,
-				otperror: true
-			};
-		case actionTypes.AUTH_START_USER_REGISTER_OTP_SUCCESS:
-			return {
-				...state,
-				loading: true,
-				error: null,
-				otpToken: action.token
-			};
 		case actionTypes.AUTH_START_USER:
 			return {
 				...state,

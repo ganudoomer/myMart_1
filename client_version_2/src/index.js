@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
 import adminReducer from './store/reducers/admin';
 import dealerReducer from './store/reducers/dealer';
@@ -15,7 +15,9 @@ const rootReduser = combineReducers({
 	dealer: dealerReducer,
 	user: userReducer
 });
-const store = createStore(rootReduser, applyMiddleware(thunk));
+const composeEnhancers =
+	process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
+const store = createStore(rootReduser, composeEnhancers(applyMiddleware(thunk)));
 ReactDOM.render(
 	<BrowserRouter>
 		<Provider store={store}>
