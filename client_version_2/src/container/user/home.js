@@ -177,7 +177,7 @@ const Home = (props) => {
 										<Model view data={card}>
 											<CardMedia
 												className={classes.cardMedia}
-												image={card.image}
+												image={card.image.thumbnail}
 												title="Image title"
 											/>
 											<CardContent className={classes.cardContent}>

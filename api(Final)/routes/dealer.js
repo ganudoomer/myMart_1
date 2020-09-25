@@ -3,6 +3,19 @@ const jwt = require('jsonwebtoken');
 const ObjectID = require('mongodb').ObjectID;
 const { isAuth, isAuthHeader } = require('../middleware');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const sharp = require('sharp');
+//MUlter Config
+const storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, 'public/images');
+	},
+	filename: function(req, file, cb) {
+		cb(null, Date.now() + '-' + file.originalname);
+	}
+});
+const upload = multer({ storage: storage }).single('file');
+
 //Login the admin
 router.post('/login', async (req, res) => {
 	const password = req.body.password;
@@ -77,7 +90,7 @@ router
 			_id: ObjectID(),
 			title: req.body.title,
 			description: req.body.description,
-			image: req.body.image,
+			image: { imageName: req.body.image, thumbnail: req.body.thumbnail },
 			price: req.body.price,
 			unit: req.body.unit,
 			cat: req.body.cat
@@ -243,6 +256,37 @@ router
 		} catch (err) {
 			console(err);
 		}
+	})
+	.post('/upload', (req, res) => {
+		const url = req.protocol + '://' + req.get('host') + '/images/';
+		upload(req, res, async function(err) {
+			if (!req.file) {
+				return { status: 'failed', message: 'No image to upload' };
+			}
+			if (err instanceof multer.MulterError) {
+				return res.status(500).json(err);
+			} else if (err) {
+				return res.status(500).json(err);
+			}
+			try {
+				const bismi = {
+					imageName: url + req.file.filename,
+					thumbnail: url + 'thumbnails/' + 'thumbnails-' + req.file.filename
+				};
+				sharp(req.file.path)
+					.resize(416, 234)
+					.toFile('public/images/thumbnails/' + 'thumbnails-' + req.file.filename, (err, resizeImage) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(resizeImage);
+							return res.json(bismi);
+						}
+					});
+			} catch (error) {
+				console.error(error);
+			}
+		});
 	});
 
 module.exports = router;

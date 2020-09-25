@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Paper, Container, Select } from '@material-ui/core/';
+import { Input } from '@material-ui/core';
+import { Button, Avatar, Paper, Container, Select } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -19,10 +20,40 @@ const useStyles = makeStyles((theme) => ({
 	form: {
 		margin: theme.spacing(1),
 		width: '100ch'
+	},
+	large: {
+		width: theme.spacing(20),
+		height: theme.spacing(20)
 	}
 }));
 
 const Add = (props) => {
+	const [ file, setFile ] = useState({
+		select: null
+	});
+	const onChangeHandler = (event) => {
+		console.log(event.target.files[0]);
+		setFile({
+			select: event.target.files[0]
+		});
+	};
+	const [ images, setImage ] = useState({
+		image: null,
+		thumbnail: null
+	});
+	const onsubmit = () => {
+		const data = new FormData();
+		data.append('file', file.select);
+		axios.post('http://localhost:5050/dealer/upload', data).then((res) => {
+			console.log(res.data.imageName);
+			console.log(res.data.thumbnail);
+
+			setImage({
+				image: res.data.imageName,
+				thumbnail: res.data.thumbnail
+			});
+		});
+	};
 	const [ state, setState ] = useState({
 		name: '',
 		title: '',
@@ -62,13 +93,14 @@ const Add = (props) => {
 			name: state.name,
 			title: state.title,
 			description: state.description,
-			image: state.image,
 			price: state.price,
 			unit: state.unit,
-			cat: state.cat
+			cat: state.cat,
+			image: images.image,
+			thumbnail: images.thumbnail
 		};
 		axios
-			.post('http://localhost:5050/dealer/product', data)
+			.post('http://localhost:5050/createTest', data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/dealer/dash/');
@@ -81,7 +113,12 @@ const Add = (props) => {
 		<Container>
 			<Paper className={fixedHeightPaper}>
 				<h1>Add Product</h1>
+				<Avatar alt="Upload the image" src={images.thumbnail} className={classes.large}>
+					PHOTO
+				</Avatar>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
+					<Input required type="file" name="file" onChange={onChangeHandler} />
+					<Button onClick={onsubmit}>Upload Photo</Button>
 					<TextField
 						name="name"
 						value={state.name}
@@ -106,14 +143,6 @@ const Add = (props) => {
 						value={state.description}
 						className={classes.form}
 						label="Description"
-					/>
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="image"
-						value={state.image}
-						className={classes.form}
-						label="Image URl"
 					/>
 					<TextField
 						required
@@ -150,6 +179,7 @@ const Add = (props) => {
 						Add Product
 					</Button>
 				</form>
+				<div />
 			</Paper>
 		</Container>
 	);

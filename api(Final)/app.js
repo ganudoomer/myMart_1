@@ -8,6 +8,7 @@ const dealer = require('./routes/dealer');
 const user = require('./routes/user');
 const multer = require('multer');
 const sharp = require('sharp');
+const ObjectID = require('mongodb').ObjectID;
 app.use(cros());
 app.use(express.json());
 
@@ -39,7 +40,6 @@ var upload = multer({ storage: storage }).single('file');
 
 app.post('/upload', function(req, res) {
 	const url = req.protocol + '://' + req.get('host') + '/images/';
-	console.log(url);
 	upload(req, res, async function(err) {
 		if (err instanceof multer.MulterError) {
 			return res.status(500).json(err);
@@ -72,6 +72,61 @@ app.post('/upload', function(req, res) {
 		}
 	});
 });
+
+app.post('/uploadtest', function(req, res) {
+	const url = req.protocol + '://' + req.get('host') + '/images/';
+	upload(req, res, async function(err) {
+		if (!req.file) {
+			return { status: 'failed', message: 'No image to upload' };
+		}
+		if (err instanceof multer.MulterError) {
+			return res.status(500).json(err);
+		} else if (err) {
+			return res.status(500).json(err);
+		}
+		try {
+			const bismi = {
+				imageName: url + req.file.filename,
+				thumbnail: url + 'thumbnails/' + 'thumbnails-' + req.file.filename
+			};
+			sharp(req.file.path)
+				.resize(416, 234)
+				.toFile('public/images/thumbnails/' + 'thumbnails-' + req.file.filename, (err, resizeImage) => {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(resizeImage);
+						return res.json(bismi);
+					}
+				});
+		} catch (error) {
+			console.error(error);
+		}
+	});
+});
+
+app.post('/createTest', async (req, res) => {
+	const product = {
+		name: req.body.name,
+		_id: ObjectID(),
+		title: req.body.title,
+		description: req.body.description,
+		image: { imageName: req.body.image, thumbnail: req.body.thumbnail },
+		price: req.body.price,
+		unit: req.body.unit,
+		cat: req.body.cat
+	};
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('dealer');
+		const reslut = await collection.updateOne({ username: 'bismi' }, { $push: { products: product } });
+		console.dir(reslut.insertedCount);
+		res.sendStatus(200);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 //=================================================================================//
 
 app.use('/admin', admin);
