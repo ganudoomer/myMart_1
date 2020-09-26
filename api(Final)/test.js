@@ -120,28 +120,20 @@ const { MongoClient } = require('mongodb');
 // 	}
 // });
 
-const objectId = require('mongodb').ObjectId;
-const original_id = objectId;
+const ObjectId = require('mongodb').ObjectId;
 const uri = 'mongodb://127.0.0.1:27017';
 const client = new MongoClient(uri, { useUnifiedTopology: true });
 (async function run() {
 	try {
 		await client.connect().then(() => console.log('Mongodb has connected'));
 		const db = client.db('myMart');
-		db.collection('people').insert({
-			_id: original_id,
-			name: 'Broadway Center',
-			url: 'bc.example.net'
-		});
-
-		db.collection('people').insert({
-			name: 'Erin',
-			places_id: original_id,
-			url: 'bc.example.net/Erin'
+		db.collection('oders').insert({
+			dealer_name: 'bismi',
+			username: 'ganesh',
+			payment: 'cod',
+			item: [ { name: 'Laptop-Edited' }, { name: 'Laptop' }, { name: 'Phone' } ]
 		});
 	} catch (e) {
 		console.log(e);
 	}
 })();
-
-console.log(objectId());
