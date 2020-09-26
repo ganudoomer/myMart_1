@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@material-ui/core';
-import { Button, Avatar, Paper, Container, Select } from '@material-ui/core/';
+import { Button, Avatar, Paper, Container, Select, LinearProgress } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -28,10 +28,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Add = (props) => {
+	const [ progress, setProgress ] = useState(0);
 	const [ file, setFile ] = useState({
 		select: null
 	});
 	const onChangeHandler = (event) => {
+		setProgress(0);
 		console.log(event.target.files[0]);
 		setFile({
 			select: event.target.files[0]
@@ -42,9 +44,21 @@ const Add = (props) => {
 		thumbnail: null
 	});
 	const onsubmit = () => {
+		const config = {
+			onUploadProgress: (progressEvent) => {
+				const totalLength = progressEvent.lengthComputable
+					? progressEvent.total
+					: progressEvent.target.getResponseHeader('content-length') ||
+						progressEvent.target.getResponseHeader('x-decompressed-content-length');
+				console.log('onUploadProgress', totalLength);
+				if (totalLength !== null) {
+					setProgress(Math.round(progressEvent.loaded * 100 / totalLength));
+				}
+			}
+		};
 		const data = new FormData();
 		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data).then((res) => {
+		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
 			console.log(res.data.imageName);
 			console.log(res.data.thumbnail);
 
@@ -119,6 +133,9 @@ const Add = (props) => {
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<Input required type="file" name="file" onChange={onChangeHandler} />
 					<Button onClick={onsubmit}>Upload Photo</Button>
+					<br />
+					<br />
+					<LinearProgress style={{ width: '60%' }} variant="determinate" value={progress} />
 					<TextField
 						name="name"
 						value={state.name}

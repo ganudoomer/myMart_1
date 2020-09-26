@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import Avatar from '@material-ui/core/Avatar';
 import axios from 'axios';
 import Deletemodel from './model';
 const StyledTableCell = withStyles((theme) => ({
@@ -35,6 +36,10 @@ const StyledTableRow = withStyles((theme) => ({
 const useStyles = makeStyles({
 	table: {
 		minWidth: 700
+	},
+	large: {
+		width: 100,
+		height: 100
 	}
 });
 
@@ -63,7 +68,9 @@ const Tables = (props) => {
 	table = props.data.map((data) => (
 		<StyledTableRow key={data._id}>
 			<StyledTableCell align="left">
-				<img alt="logo" width="100px" height="100px" src={data.image.thumbnail} />
+				<Avatar alt="Upload the image" src={data.image.thumbnail} className={classes.large}>
+					PHOTO
+				</Avatar>
 			</StyledTableCell>
 			<StyledTableCell align="left">{data.title}</StyledTableCell>
 			<StyledTableCell align="left">{data.name}</StyledTableCell>
