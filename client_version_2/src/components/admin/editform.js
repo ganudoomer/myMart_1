@@ -86,6 +86,7 @@ const Edit = (props) => {
 				<h1>Edit Form</h1>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
+						required
 						name="username"
 						value={state.username}
 						onChange={onChangeHandeler}
@@ -101,6 +102,7 @@ const Edit = (props) => {
 						label="Password"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="address"
 						value={state.address}
@@ -108,6 +110,7 @@ const Edit = (props) => {
 						label="Address"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="dealer_name"
 						value={state.dealer_name}
@@ -115,6 +118,7 @@ const Edit = (props) => {
 						label="Dealer_name"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="phone"
 						value={state.phone}
@@ -123,6 +127,7 @@ const Edit = (props) => {
 						label="Phone"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="email"
 						value={state.email}

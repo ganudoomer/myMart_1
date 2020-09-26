@@ -66,6 +66,7 @@ const Add = (props) => {
 				<h1>Add Form</h1>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
+						required
 						name="username"
 						value={state.username}
 						onChange={onChangeHandeler}
@@ -73,6 +74,7 @@ const Add = (props) => {
 						label="Username"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="password"
 						value={state.password}
@@ -81,6 +83,7 @@ const Add = (props) => {
 						label="Password"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="address"
 						value={state.address}
@@ -88,6 +91,7 @@ const Add = (props) => {
 						label="Address"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="dealer_name"
 						value={state.dealer_name}
@@ -95,6 +99,7 @@ const Add = (props) => {
 						label="Dealer_name"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="phone"
 						value={state.phone}
@@ -103,6 +108,7 @@ const Add = (props) => {
 						label="Phone"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="email"
 						value={state.email}

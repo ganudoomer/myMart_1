@@ -143,6 +143,7 @@ const Edit = (props) => {
 				<Button onClick={onsubmit}>Upload Photo</Button>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<TextField
+						required
 						name="name"
 						value={state.name}
 						onChange={onChangeHandeler}
@@ -150,6 +151,7 @@ const Edit = (props) => {
 						label="Product name"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="title"
 						value={state.title}
@@ -158,20 +160,16 @@ const Edit = (props) => {
 						label="Title for the product"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="description"
 						value={state.description}
 						className={classes.form}
 						label="Description"
 					/>
+
 					<TextField
-						onChange={onChangeHandeler}
-						name="image"
-						value={state.image}
-						className={classes.form}
-						label="Image URl"
-					/>
-					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="price"
 						value={state.price}
@@ -180,6 +178,7 @@ const Edit = (props) => {
 						label="Price: ₹"
 					/>
 					<TextField
+						required
 						onChange={onChangeHandeler}
 						name="cat"
 						value={state.cat}
