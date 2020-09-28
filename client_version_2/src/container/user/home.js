@@ -23,6 +23,8 @@ import axios from 'axios';
 import Model from '../../components/user/model';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/user/action';
+import Shop from '../../Buy.svg';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -71,7 +73,8 @@ const Home = (props) => {
 	const [ state, setState ] = useState({
 		select: '',
 		store: null,
-		data: null
+		data: null,
+		select: null
 	});
 	const [ open, setSate ] = useState({
 		card: null
@@ -93,11 +96,18 @@ const Home = (props) => {
 	}
 	const onSelectChange = (e) => {
 		console.log(e.target.value);
+		if (localStorage.getItem('cart')) {
+			let cart = JSON.parse(localStorage.getItem('cart'));
+			if (cart[0].dealer_name !== e.target.value) {
+				localStorage.removeItem('cart');
+			}
+		}
 		setState({
 			...state,
 			select: e.target.value
 		});
 		axios.get(`http://localhost:5050/user/items/${e.target.value}`).then((res) => {
+			console.log(res.data[0].products);
 			setState({
 				...state,
 				select: e.target.value,
@@ -124,6 +134,26 @@ const Home = (props) => {
 			</Link>
 		);
 	}
+	const onCartClick = (cart) => {
+		let localCart = [];
+		if (localStorage.getItem('cart')) {
+			localCart = JSON.parse(localStorage.getItem('cart'));
+			const exist = Boolean(localCart.find((item) => item._id === cart._id));
+			if (!exist) {
+				cart.count = 1;
+				cart.dealer_name = state.select;
+				localCart.push(cart);
+				localStorage.removeItem('cart');
+				localStorage.setItem('cart', JSON.stringify(localCart));
+				console.log(localCart);
+			}
+		} else {
+			cart.dealer_name = state.select;
+			cart.count = 1;
+			localCart.push(cart);
+			localStorage.setItem('cart', JSON.stringify(localCart));
+		}
+	};
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -132,7 +162,12 @@ const Home = (props) => {
 					<Typography variant="h6" color="inherit" noWrap>
 						<img alt="logo" src={logo} />
 					</Typography>
-					{button}
+					<div style={{ marginLeft: 'auto' }}>
+						<IconButton>
+							<img width="30px" src={Shop} />
+						</IconButton>
+						{button}
+					</div>
 				</Toolbar>
 			</AppBar>
 			<main>
@@ -208,6 +243,7 @@ const Home = (props) => {
 												{card.cat}
 											</Button>
 											<Button
+												onClick={() => onCartClick(card)}
 												style={{
 													borderRadius: 35,
 													backgroundColor: '#2FEF92',

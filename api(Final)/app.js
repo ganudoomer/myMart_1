@@ -6,9 +6,9 @@ const cros = require('cors');
 const { MongoClient } = require('mongodb');
 const dealer = require('./routes/dealer');
 const user = require('./routes/user');
-const multer = require('multer');
-const sharp = require('sharp');
+const Razorpay = require('razorpay');
 const ObjectID = require('mongodb').ObjectID;
+const request = require('request');
 app.use(cros());
 app.use(express.json());
 
@@ -26,6 +26,85 @@ const client = new MongoClient(uri, { useUnifiedTopology: true });
 	}
 })();
 //=======================================================================================//
+
+app.post('/orders', (req, res) => {
+	const instance = new Razorpay({
+		key_id: 'rzp_test_pD7pyj5JpXOA5a',
+		key_secret: 'kxSNiaFxtvlBNBwXT7pBSp8f'
+	});
+	const price = req.body.price;
+	console.log(price);
+	try {
+		const options = {
+			amount: price * 100,
+			currency: 'INR',
+			receipt: 'receipt#1',
+			payment_capture: 0
+		};
+		instance.orders.create(options, async function(err, order) {
+			console.log(err);
+			console.log(order);
+			return res.status(200).json(order);
+		});
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+app.post('/capture/:paymentId', (req, res) => {
+	const database = req.app.locals.db;
+	const price = req.body.price;
+	const order = JSON.parse(req.body.order);
+	const address = req.body.address;
+	try {
+		return request(
+			{
+				method: 'POST',
+				url: `https://rzp_test_pD7pyj5JpXOA5a:kxSNiaFxtvlBNBwXT7pBSp8f@api.razorpay.com/v1/payments/${req.params
+					.paymentId}/capture`,
+				form: {
+					amount: price * 100, // amount == Rs 10 // Same As Order amount
+					currency: 'INR'
+				}
+			},
+			async function(err, response, body) {
+				console.log(err);
+				if (err) {
+					return res.status(500).json({
+						message: 'Something Went Wrong'
+					});
+				}
+				try {
+					const collection = database.collection('orders');
+					const result = collection.insertOne({ order, price, address });
+					console.dir(result.insertedCount);
+				} catch (err) {
+					console.log(err);
+				}
+				console.log('Status:', response.statusCode);
+				console.log('Headers:', JSON.stringify(response.headers));
+				console.log('Response:', body);
+				return res.status(200).json(body);
+			}
+		);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({
+			message: 'Something Went Wrong'
+		});
+	}
+});
+
+app.post('/dealerorder', async (req, res) => {
+	const dealerName = req.body.dealer;
+	console.log(dealerName);
+	const database = req.app.locals.db;
+	const collection = database.collection('orders');
+	const result = await collection.find({ 'order.dealer_name': 'bismi' });
+	const response = [];
+	await result.forEach((doc) => response.push(doc));
+	res.json(response);
+});
 
 //=================================================================================//
 

@@ -31,7 +31,8 @@ router.post('/login', async (req, res) => {
 					const token = jwt.sign(
 						{
 							username: reslut.username,
-							id: reslut._id
+							id: reslut._id,
+							dealer: reslut.dealer_name
 						},
 						'secret',
 						{ expiresIn: 60 * 1600 }
