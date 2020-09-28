@@ -28,6 +28,8 @@ import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import Dash from '../../components/dealer/Dash';
 import ProductForm from '../../components/dealer/ProductForm';
 import Settings from '../../components/admin/settings';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Test from '../../test';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -166,6 +168,12 @@ const Admin = (props) => {
 						</ListItemIcon>
 						<ListItemText primary="Products" />
 					</ListItem>
+					<ListItem component={Link} to="/dealer/dash/test" button>
+						<ListItemIcon>
+							<AddShoppingCartIcon style={{ color: '#3f51b5' }} />
+						</ListItemIcon>
+						<ListItemText primary="Orders" />
+					</ListItem>
 
 					<ListItem component={Link} to="/dealer/dash/setting" button>
 						<ListItemIcon>
@@ -175,11 +183,13 @@ const Admin = (props) => {
 					</ListItem>
 				</List>
 				<Divider />
+				<Link to="/dealer/dash/test">mass</Link>
 			</Drawer>
 			<div className={classes.appBarSpacer} />
 			<Switch>
 				<Route path="/dealer/dash/product/add" exact component={ProductForm} />
 				<Route path="/dealer/dash/product/:id" component={EditForm} />
+				<Route path="/dealer/dash/test" component={Test} />
 				<Route path="/dealer/dash/setting" component={Setting} />
 				<Route path="/dealer/dash" component={Dash} />
 			</Switch>

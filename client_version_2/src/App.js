@@ -17,6 +17,7 @@ import DealerProtectedRoute from './components/hoc/DealerAuth';
 import * as dealerAction from './store/actions/dealer/action';
 import * as adminAction from './store/actions/admin';
 import * as userAction from './store/actions/user/action';
+import Cart from './container/user/cart';
 import Test from './Test';
 function App(props) {
 	const admin = props.checkAdmin;
@@ -32,12 +33,13 @@ function App(props) {
 		<div className="App">
 			<Switch>
 				<Route path="/" exact component={Home} />
+				<Route path="/cart" exact component={Cart} />
 				<Route path="/test" exact component={Test} />
 				<Route path="/logout" exact component={LogoutUser} />
 				<Route path="/login" exact component={LoginUser} />
 				<Route path="/register" exact component={RegisterUser} />
 				<Route path="/dealer/login" component={LoginDealer} />
-				<DealerProtectedRoute path="/dealer/dash" auth={props.dealerAuth} component={DashDealer} />
+				<DealerProtectedRoute path="/dealer/" auth={props.dealerAuth} component={DashDealer} />
 				<Route path="/dealer/logout" component={LogoutDealer} />
 				<Route path="/admin/login" component={Login} />
 				<AdminProtectedRoute path="/admin/dash" auth={props.adminAuth} component={Dash} />

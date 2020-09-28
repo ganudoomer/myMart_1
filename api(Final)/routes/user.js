@@ -210,7 +210,7 @@ router.post('/capture/:paymentId', (req, res) => {
 				url: `https://rzp_test_pD7pyj5JpXOA5a:kxSNiaFxtvlBNBwXT7pBSp8f@api.razorpay.com/v1/payments/${req.params
 					.paymentId}/capture`,
 				form: {
-					amount: price * 100, // amount == Rs 10 // Same As Order amount
+					amount: price * 100,
 					currency: 'INR'
 				}
 			},
@@ -232,7 +232,14 @@ router.post('/capture/:paymentId', (req, res) => {
 						};
 						try {
 							const collection = database.collection('orders');
-							const result = collection.insertOne({ order, price, address, user });
+							const result = collection.insertOne({
+								order,
+								price,
+								address,
+								user,
+								status: 'Pending',
+								payment: { mode: 'Online ', id: req.params.paymentId }
+							});
 							console.dir(result.insertedCount);
 						} catch (err) {
 							console.log(err);
@@ -267,9 +274,12 @@ router.post('/ordercod', (req, res) => {
 				phone: decoded.phone,
 				name: decoded.name
 			};
+			const status = {
+				status: 'Pending'
+			};
 			try {
 				const collection = database.collection('orders');
-				const result = collection.insertOne({ order, price, address, user });
+				const result = collection.insertOne({ order, price, address, user, status, payment: { mode: 'COD' } });
 				console.dir(result.insertedCount);
 				res.json({ message: 'Order Placed' });
 			} catch (err) {

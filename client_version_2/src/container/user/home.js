@@ -96,7 +96,7 @@ const Home = (props) => {
 	}
 	const onSelectChange = (e) => {
 		console.log(e.target.value);
-		if (localStorage.getItem('cart')) {
+		if (localStorage.getItem('cart') && JSON.parse(localStorage.getItem('cart')).length > 0) {
 			let cart = JSON.parse(localStorage.getItem('cart'));
 			if (cart[0].dealer_name !== e.target.value) {
 				localStorage.removeItem('cart');
@@ -129,7 +129,7 @@ const Home = (props) => {
 	);
 	if (props.token) {
 		button = (
-			<Link onClick={() => props.onLogout()} to="/logout">
+			<Link style={{ textDecoration: 'none' }} onClick={() => props.onLogout()} to="/logout">
 				<Button className={classes.button}>Logout</Button>
 			</Link>
 		);
@@ -163,9 +163,11 @@ const Home = (props) => {
 						<img alt="logo" src={logo} />
 					</Typography>
 					<div style={{ marginLeft: 'auto' }}>
-						<IconButton>
-							<img width="30px" src={Shop} />
-						</IconButton>
+						<Link to="/cart" style={{ textDecoration: 'none' }}>
+							<IconButton>
+								<img width="30px" src={Shop} />
+							</IconButton>
+						</Link>
 						{button}
 					</div>
 				</Toolbar>
@@ -191,7 +193,7 @@ const Home = (props) => {
 								{select}
 							</Select>
 						</FormControl>
-						<div className={classes.heroButtons}>
+						<div style={{ margin: 'auto' }}>
 							{state.data ? state.live ? (
 								<Button variant="contained" color="primary">
 									Open

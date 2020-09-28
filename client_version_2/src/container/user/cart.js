@@ -10,10 +10,12 @@ import { Toolbar, ListItem, IconButton, Card, CardContent, TextField, Select } f
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import logo from './SuperMart.svg';
+import logo from '../../SuperMart.svg';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import * as actionCreators from './../../store/actions/user/action';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -34,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Test = (props) => {
+const Cart = (props) => {
 	const [ order, setData ] = useState({
 		data: []
 	});
@@ -42,6 +44,7 @@ const Test = (props) => {
 	const [ count, setCount ] = useState();
 	const [ select, setSelect ] = useState();
 	const [ address, setAddress ] = useState();
+	props.checkAuth();
 	useEffect(() => {
 		let cart = JSON.parse(localStorage.getItem('cart'));
 		setData({
@@ -82,13 +85,14 @@ const Test = (props) => {
 					const url = `${API_URL}capture/${paymentId}`;
 					const captureResponse = await axios.post(url, data);
 					console.log(captureResponse.data);
+					alert(`Your order has been placed `);
 					props.history.push('/');
 				} catch (err) {
 					console.log(err);
 				}
 			},
 			theme: {
-				color: '#686CFD'
+				color: '#000'
 			}
 		};
 		const rzp1 = new window.Razorpay(options);
@@ -109,6 +113,7 @@ const Test = (props) => {
 			axios.post('http://localhost:5050/user/ordercod', data).then((res) => {
 				console.log(res);
 				props.history.push('/');
+				alert(`Your order has been placed `);
 			});
 		}
 	};
@@ -171,7 +176,7 @@ const Test = (props) => {
 	);
 	if (props.token) {
 		button = (
-			<Link onClick={() => props.onLogout()} to="/logout">
+			<Link style={{ textDecoration: 'none' }} onClick={() => props.onLogout()} to="/logout">
 				<Button className={classes.button}>Logout</Button>
 			</Link>
 		);
@@ -271,9 +276,25 @@ const Test = (props) => {
 														</CardContent>
 
 														<CardContent style={{ margin: 'auto' }}>
-															<Button variant="contained" color="primary" type="submit">
-																ORDER NOW
-															</Button>
+															{props.token ? (
+																<Button
+																	variant="contained"
+																	color="primary"
+																	type="submit"
+																>
+																	ORDER NOW
+																</Button>
+															) : (
+																<Link to="/login" style={{ textDecoration: 'none' }}>
+																	<Button
+																		variant="contained"
+																		color="primary"
+																		type="submit"
+																	>
+																		LOGIN TO ORDER
+																	</Button>
+																</Link>
+															)}
 														</CardContent>
 													</Card>
 												</form>
@@ -294,53 +315,31 @@ const Test = (props) => {
 			<AppBar color="transparent" position="relative">
 				<Toolbar>
 					<Typography variant="h6" color="inherit" noWrap>
-						<img alt="logo" src={logo} />
+						<Link to="/">
+							<img alt="logo" src={logo} />
+						</Link>
 					</Typography>
 					<div style={{ marginLeft: 'auto' }}>{button}</div>
 				</Toolbar>
 			</AppBar>
 			{cards}
-			<button onClick={paymentHandler}>Pay Now</button>
 		</Fragment>
 	);
 };
 
-export default Test;
+const mapStateToProps = (state) => {
+	return {
+		token: state.user.login,
+		error: state.user.error,
+		loading: state.user.loading
+	};
+};
 
-// import React, { useState, useEffect } from 'react';
-// import { Input } from '@material-ui/core';
-// import { Button, Avatar, Paper, Container, Select } from '@material-ui/core/';
-// import TextField from '@material-ui/core/TextField';
-// import { makeStyles } from '@material-ui/core/styles';
-// import axios from 'axios';
-// import clsx from 'clsx';
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onLogout: () => dispatch(actionCreators.logoutUser()),
+		checkAuth: () => dispatch(actionCreators.check())
+	};
+};
 
-// const Test = (props) => {
-// 	const [ cart, setCart ] = useState();
-// 	const onChangeHandler = (e) => {
-// 		setCart(e.target.value);
-// 		console.log(localStorage.getItem('orders').orders);
-// 	};
-// 	const onSubmit = () => {
-// 		const mass = { orders: 'massdaf', order: 'adfa;sd' };
-// 		localStorage.setItem('orders', JSON.stringify(mass));
-// 		console.log(cart);
-// 	};
-// 	return (
-// 		<div style={{ margin: 'auto' }}>
-// 			<input onChange={onChangeHandler} type="text" placeholder="cart" />
-// 			<button onClick={onSubmit}>add</button>
-// 		</div>
-// 	);
-// };
-
-// export default Test;
-// if (localStorage.getItem('cart')) {
-// 	localCart = JSON.parse(localStorage.getItem('cart'));
-// 	const mass = Boolean(localCart.find((item) => item._id === cart._id));
-// 	console.log(mass);
-// } else {
-// 	localCart.push(cart);
-// 	console.log(localCart);
-// 	localStorage.setItem('cart', JSON.stringify(localCart));
-// }
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);
