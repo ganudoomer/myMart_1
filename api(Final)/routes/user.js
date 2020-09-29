@@ -274,12 +274,17 @@ router.post('/ordercod', (req, res) => {
 				phone: decoded.phone,
 				name: decoded.name
 			};
-			const status = {
-				status: 'Pending'
-			};
+
 			try {
 				const collection = database.collection('orders');
-				const result = collection.insertOne({ order, price, address, user, status, payment: { mode: 'COD' } });
+				const result = collection.insertOne({
+					order,
+					price,
+					address,
+					user,
+					status: 'Pending',
+					payment: { mode: 'COD' }
+				});
 				console.dir(result.insertedCount);
 				res.json({ message: 'Order Placed' });
 			} catch (err) {
