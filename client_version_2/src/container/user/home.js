@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/user/action';
 import Shop from '../../Buy.svg';
 import IconButton from '@material-ui/core/IconButton';
+import Snackbar from '../../components/user/snackbar';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -79,8 +80,15 @@ const Home = (props) => {
 	const [ open, setSate ] = useState({
 		card: null
 	});
+	const [ count, setCount ] = useState();
 	props.checkAuth();
 	useEffect(() => {
+		let cart = JSON.parse(localStorage.getItem('cart'));
+		if (cart) {
+			const totalArrCount = cart.map((item) => item.count);
+			const totalCount = totalArrCount.reduce((a, b) => a + b, 0);
+			setCount(totalCount);
+		}
 		(function getData() {
 			axios.get('http://localhost:5050/user/store/').then((res) => {
 				setState({
@@ -100,6 +108,7 @@ const Home = (props) => {
 			let cart = JSON.parse(localStorage.getItem('cart'));
 			if (cart[0].dealer_name !== e.target.value) {
 				localStorage.removeItem('cart');
+				setCount(null);
 			}
 		}
 		setState({
@@ -134,7 +143,9 @@ const Home = (props) => {
 			</Link>
 		);
 	}
+	const [ cart, setCart ] = useState(false);
 	const onCartClick = (cart) => {
+		setCart(true);
 		let localCart = [];
 		if (localStorage.getItem('cart')) {
 			localCart = JSON.parse(localStorage.getItem('cart'));
@@ -153,6 +164,13 @@ const Home = (props) => {
 			localCart.push(cart);
 			localStorage.setItem('cart', JSON.stringify(localCart));
 		}
+		setTimeout(() => {
+			setCart(false);
+		}, 1000);
+		let carts = JSON.parse(localStorage.getItem('cart'));
+		const totalArrCount = carts.map((item) => item.count);
+		const totalCount = totalArrCount.reduce((a, b) => a + b, 0);
+		setCount(totalCount);
 	};
 	return (
 		<React.Fragment>
@@ -165,6 +183,7 @@ const Home = (props) => {
 					<div style={{ marginLeft: 'auto' }}>
 						<Link to="/cart" style={{ textDecoration: 'none' }}>
 							<IconButton>
+								<Typography variant="subtitle1">{count}</Typography>
 								<img width="30px" src={Shop} />
 							</IconButton>
 						</Link>
@@ -173,6 +192,7 @@ const Home = (props) => {
 				</Toolbar>
 			</AppBar>
 			<main>
+				{cart ? <Snackbar open={true} message="Item added  to cart" /> : null}
 				{/* Hero unit */}
 				<div className={classes.heroContent}>
 					<Container maxWidth="sm">

@@ -15,7 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import Avatar from '@material-ui/core/Avatar';
 import PageviewIcon from '@material-ui/icons/Pageview';
 import axios from 'axios';
-import Model from '../../test';
+import Model from './ItemModel';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {

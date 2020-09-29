@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
 		cb(null, 'public/images');
 	},
 	filename: function(req, file, cb) {
-		cb(null, Date.now() + '-' + file.originalname);
+		cb(null, ObjectID() + '-' + file.originalname);
 	}
 });
 const upload = multer({ storage: storage }).single('file');
@@ -269,6 +269,7 @@ router
 			} else if (err) {
 				return res.status(500).json(err);
 			}
+
 			try {
 				const bismi = {
 					imageName: url + req.file.filename,
