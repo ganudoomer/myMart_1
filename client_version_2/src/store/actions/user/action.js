@@ -118,7 +118,7 @@ export const loginOTP = (phone) => {
 
 export const UserOtpVerify = (otp) => {
 	return (dispatch) => {
-		dispatch(otpCheckStart());
+		dispatch(otpVerifyCheckStart());
 		const authData = {
 			token: localStorage.getItem('LToken'),
 			otp: otp
@@ -129,6 +129,7 @@ export const UserOtpVerify = (otp) => {
 				if (response.data.status === 'error') {
 					dispatch(failUserOtp(response.data.message));
 				} else {
+					localStorage.setItem('uToken', response.data.token);
 					dispatch(verifyOTPsuccess());
 				}
 			})
@@ -138,7 +139,7 @@ export const UserOtpVerify = (otp) => {
 			});
 	};
 };
-export const otpCheckStart = () => {
+export const otpVerifyCheckStart = () => {
 	console.log('Start');
 	return {
 		type: actionTypes.LOGIN_OTP_VERIFY_START

@@ -81,8 +81,8 @@ const Home = (props) => {
 		card: null
 	});
 	const [ count, setCount ] = useState();
-	props.checkAuth();
 	useEffect(() => {
+		props.checkAuth();
 		let cart = JSON.parse(localStorage.getItem('cart'));
 		if (cart) {
 			const totalArrCount = cart.map((item) => item.count);

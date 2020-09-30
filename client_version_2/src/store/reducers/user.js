@@ -132,7 +132,8 @@ const reducer = (state = initialState, action) => {
 				...state,
 				verifyOtp: false,
 				verifyOtpLoading: false,
-				verifyOtpSuccess: true
+				verifyOtpSuccess: true,
+				login: true
 			};
 		case actionTypes.LOGIN_OTP_VERIFY_FAIL:
 			return {
