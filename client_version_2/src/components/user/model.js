@@ -60,7 +60,10 @@ export default function CustomizedDialogs(props) {
 	const handleClose = () => {
 		setOpen(false);
 	};
-
+	const onButtonClick = () => {
+		props.cart();
+		handleClose();
+	};
 	let click = (
 		<Button color="primary" onClick={handleClickOpen}>
 			view
@@ -93,7 +96,7 @@ export default function CustomizedDialogs(props) {
 				<DialogActions>
 					<Button
 						autoFocus
-						onClick={handleClose}
+						onClick={onButtonClick}
 						style={{
 							borderRadius: 35,
 							backgroundColor: '#2FEF92',

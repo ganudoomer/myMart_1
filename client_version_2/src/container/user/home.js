@@ -231,7 +231,7 @@ const Home = (props) => {
 							state.data.map((card) => (
 								<Grid item key={card} xs={12} sm={6} md={4}>
 									<Card className={classes.card}>
-										<Model view data={card}>
+										<Model cart={() => onCartClick(card)} view data={card}>
 											<CardMedia
 												className={classes.cardMedia}
 												image={card.image.thumbnail}
@@ -251,7 +251,7 @@ const Home = (props) => {
 
 										<Divider className={classes.divider} light />
 										<CardActions>
-											<Model data={card} />
+											<Model cart={() => onCartClick(card)} data={card} />
 											<Button
 												style={{
 													borderRadius: 30,
