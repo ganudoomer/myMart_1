@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Redirect, Link } from 'react-router-dom';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import OTP from './components/user/otp';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -51,6 +52,7 @@ const Dealer = (props) => {
 		<Container component="main" maxWidth="xs">
 			{props.token ? <Redirect to="/" /> : null}
 			<CssBaseline />
+			{props.otpSend ? <OTP onOtpsubmitHandler={(e) => props.onOTPsubmit(e)} /> : null}
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}>
 					<AccountCircleIcon />
@@ -110,7 +112,7 @@ const Dealer = (props) => {
 				</form>
 				{otp ? (
 					<React.Fragment>
-						<Button variant="contained" type="submit">
+						<Button onClick={() => props.onOTPsubmit(state.phone)} variant="contained" type="submit">
 							Send OTP
 						</Button>
 						<Button onClick={() => setOtp(false)}>Go back</Button>
@@ -128,13 +130,16 @@ const mapStateToProps = (state) => {
 	return {
 		token: state.user.login,
 		error: state.user.error,
-		loading: state.user.loading
+		loading: state.user.loading,
+		otpSend: state.user.otpSend
 	};
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		onSubmitForm: (phone, password) => dispatch(actionCreators.authUSer(phone, password))
+		onSubmitForm: (phone, password) => dispatch(actionCreators.authUSer(phone, password)),
+		onOTPsubmit: (phone) => dispatch(actionCreators.loginOTP(phone)),
+		onVerifyOTP: (otp) => dispatch(actionCreators.otpCheckStart(otp))
 	};
 };
 

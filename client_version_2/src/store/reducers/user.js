@@ -14,7 +14,14 @@ const initialState = {
 	sendOtp: false,
 	loadingVerify: false,
 	verifyError: null,
-	verifySuccess: false
+	verifySuccess: false,
+	otpStart: false,
+	otpLoading: false,
+	otpSend: false,
+	verifyOtp: false,
+	verifyOtpLoading: false,
+	verifyOtpFail: false,
+	verifyOtpSuccess: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -94,6 +101,45 @@ const reducer = (state = initialState, action) => {
 				otp: null,
 				otpToken: null,
 				otperror: false
+			};
+		case actionTypes.LOGIN_OTP_START:
+			return {
+				...state,
+				otpStart: true,
+				otpLoading: true
+			};
+		case actionTypes.LOGIN_OTP_SEND:
+			return {
+				...state,
+				otpStart: false,
+				otpLoading: false,
+				otpSend: true
+			};
+		case actionTypes.LOGIN_OTP_FAIL:
+			return {
+				...state,
+				otpStart: false,
+				otpLoading: false
+			};
+		case actionTypes.LOGIN_OTP_VERIFY_START:
+			return {
+				...state,
+				verifyOtp: true,
+				verifyOtpLoading: true
+			};
+		case actionTypes.LOGIN_OTP_VERIFY_SUCCESS:
+			return {
+				...state,
+				verifyOtp: false,
+				verifyOtpLoading: false,
+				verifyOtpSuccess: true
+			};
+		case actionTypes.LOGIN_OTP_VERIFY_FAIL:
+			return {
+				...state,
+				verifyOtp: false,
+				verifyOtpLoading: false,
+				verifyOtpFail: true
 			};
 		default:
 			return state;

@@ -107,7 +107,6 @@ router.post('/register/auth', (req, res) => {
 			res.json({ status: 'error', message: 'Error' });
 		} else {
 			console.log(decoded);
-			const request = require('request');
 			const options = {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/verify',
@@ -152,23 +151,27 @@ router.post('/login', async (req, res) => {
 	try {
 		const database = req.app.locals.db;
 		const collection = database.collection('users');
-		const reslut = await collection.findOne({ phone: req.body.phone });
-		bcrypt.compare(req.body.password, reslut.password).then((ress) => {
-			if (ress) {
-				const token = jwt.sign(
-					{
-						name: reslut.name,
-						id: reslut._id,
-						phone: req.body.phone
-					},
-					'secret',
-					{ expiresIn: 60 * 60 }
-				);
-				res.json({ token });
-			} else {
-				res.sendStatus(401);
-			}
-		});
+		const result = await collection.findOne({ phone: req.body.phone });
+		if (result) {
+			bcrypt.compare(req.body.password, result.password).then((ress) => {
+				if (ress) {
+					const token = jwt.sign(
+						{
+							name: result.name,
+							id: result._id,
+							phone: req.body.phone
+						},
+						'secret',
+						{ expiresIn: 60 * 60 }
+					);
+					res.json({ token });
+				} else {
+					res.sendStatus(401);
+				}
+			});
+		} else {
+			res.sendStatus(401);
+		}
 	} catch (err) {
 		console.log(err);
 	}
@@ -290,6 +293,97 @@ router.post('/ordercod', (req, res) => {
 			} catch (err) {
 				console.log(err);
 			}
+		}
+	});
+});
+
+router.post('/login/otp', async (req, res) => {
+	const phone = req.body.phone;
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('users');
+		const reslut = await collection.findOne({ phone: phone });
+		console.log(reslut);
+		if (reslut) {
+			const options = {
+				method: 'POST',
+				url: 'https://d7networks.com/api/verifier/send',
+				headers: {
+					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+				},
+				formData: {
+					mobile: phone,
+					sender_id: 'SMSINFO',
+					message: 'Your otp code for MyMart register is {code}',
+					expiry: '1800'
+				}
+			};
+			request(options, function(error, response) {
+				console.log(error);
+				if (!error) {
+					const data = JSON.parse(response.body);
+					console.log(data.otp_id);
+					const token = jwt.sign(
+						{
+							phone: phone,
+							otp_id: data.otp_id,
+							name: reslut.name,
+							id: reslut._id
+						},
+						'secret',
+						{ expiresIn: '600s' }
+					);
+					console.log(token);
+					res.json({ temp: token });
+				} else {
+					res.json({ status: 'error', message: 'Error while sending otp' });
+				}
+			});
+		} else {
+			res.send(401);
+		}
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+router.post('/login/verify', (req, res) => {
+	const token = req.body.token;
+	const otp = req.body.otp;
+	jwt.verify(token, 'secret', (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+		} else {
+			console.log(decoded);
+			const options = {
+				method: 'POST',
+				url: 'https://d7networks.com/api/verifier/verify',
+				headers: {
+					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+				},
+				formData: {
+					otp_id: decoded.otp_id,
+					otp_code: otp
+				}
+			};
+			request(options, async function(error, response) {
+				console.log(response.body);
+				console.log(error + '[ERROR]');
+				if (!error && JSON.parse(response.body).status === 'success') {
+					const token = jwt.sign(
+						{
+							name: decoded.name,
+							id: decoded._id,
+							phone: decoded.phone
+						},
+						'secret',
+						{ expiresIn: 60 * 60 }
+					);
+					res.json({ token });
+				} else {
+					res.json({ status: 'error', message: JSON.parse(response.body).otp_code });
+				}
+			});
 		}
 	});
 });

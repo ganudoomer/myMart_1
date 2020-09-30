@@ -68,3 +68,94 @@ export const check = () => {
 			});
 	};
 };
+
+//LoginOTP
+
+export const loginOTPStart = () => {
+	return {
+		type: actionTypes.LOGIN_OTP_START
+	};
+};
+
+export const loginOtpsend = () => {
+	return {
+		type: actionTypes.LOGIN_OTP_SEND
+	};
+};
+
+export const loginOTPFail = (message) => {
+	return {
+		message: message,
+		type: actionTypes.LOGIN_OTP_FAIL
+	};
+};
+
+export const loginOTP = (phone) => {
+	return (dispatch) => {
+		dispatch(loginOTPStart());
+		const authData = {
+			phone: phone
+		};
+		axios
+			.post('http://localhost:5050/user/login/otp', authData)
+			.then((response) => {
+				localStorage.setItem('LToken', response.data.temp);
+				if (response.data.status === 'error') {
+					dispatch(loginOTPFail(response.data.message));
+				} else {
+					console.log(response.data);
+					dispatch(loginOtpsend());
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				dispatch(loginOTPFail('Server Down'));
+			});
+	};
+};
+
+//CHECK OTP
+
+export const UserOtpVerify = (otp) => {
+	return (dispatch) => {
+		dispatch(otpCheckStart());
+		const authData = {
+			token: localStorage.getItem('LToken'),
+			otp: otp
+		};
+		axios
+			.post('http://localhost:5050/user/login/verify', authData)
+			.then((response) => {
+				if (response.data.status === 'error') {
+					dispatch(failUserOtp(response.data.message));
+				} else {
+					dispatch(verifyOTPsuccess());
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				dispatch(failUserOtp('Server Down Try after sometime '));
+			});
+	};
+};
+export const otpCheckStart = () => {
+	console.log('Start');
+	return {
+		type: actionTypes.LOGIN_OTP_VERIFY_START
+	};
+};
+
+export const failUserOtp = (message) => {
+	console.log('fail');
+	return {
+		message: message,
+		type: actionTypes.LOGIN_OTP_VERIFY_FAIL
+	};
+};
+
+export const verifyOTPsuccess = () => {
+	console.log('success');
+	return {
+		type: actionTypes.LOGIN_OTP_VERIFY_SUCCESS
+	};
+};
