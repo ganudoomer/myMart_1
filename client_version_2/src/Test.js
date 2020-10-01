@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Paper, Container, Typography } from '@material-ui/core/';
+import { Button, Paper, Container, Typography, Input, Avatar } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
 	form: {
 		margin: theme.spacing(1),
 		width: '100ch'
+	},
+	large: {
+		width: theme.spacing(20),
+		height: theme.spacing(20)
 	}
 }));
 
@@ -67,11 +71,62 @@ const Add = (props) => {
 				console.log(err);
 			});
 	};
+
+	const [ progress, setProgress ] = useState(0);
+	const [ file, setFile ] = useState({
+		select: null
+	});
+	const [ url, setUrl ] = useState();
+	const onChangeHandler = (event) => {
+		const file = URL.createObjectURL(event.target.files[0]);
+		setUrl(file);
+		setProgress(0);
+		console.log(event.target.files[0]);
+		setFile({
+			select: event.target.files[0]
+		});
+	};
+	const [ images, setImage ] = useState({
+		image: null,
+		thumbnail: null
+	});
+
+	const onsubmit = () => {
+		const config = {
+			onUploadProgress: (progressEvent) => {
+				const totalLength = progressEvent.lengthComputable
+					? progressEvent.total
+					: progressEvent.target.getResponseHeader('content-length') ||
+						progressEvent.target.getResponseHeader('x-decompressed-content-length');
+				console.log('onUploadProgress', totalLength);
+				if (totalLength !== null) {
+					setProgress(Math.round(progressEvent.loaded * 100 / totalLength));
+				}
+			}
+		};
+		const data = new FormData();
+		data.append('file', file.select);
+		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
+			console.log(res.data.imageName);
+			console.log(res.data.thumbnail);
+
+			setImage({
+				image: res.data.imageName,
+				thumbnail: res.data.thumbnail
+			});
+		});
+	};
+
 	return (
 		<Container>
 			<Paper className={fixedHeightPaper}>
 				<h1>Add Form</h1>
+				<Avatar alt="Upload the image" src={url} className={classes.large}>
+					PHOTO
+				</Avatar>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
+					<Input required type="file" name="file" onChange={onChangeHandler} />
+					<Button onClick={onsubmit}>Upload Photo</Button>
 					<TextField
 						required
 						name="username"

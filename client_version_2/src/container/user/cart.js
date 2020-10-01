@@ -16,6 +16,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import * as actionCreators from './../../store/actions/user/action';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -159,6 +160,32 @@ const Cart = (props) => {
 		const total = totalArr.reduce((a, b) => a + b, 0);
 		setPrice(total);
 	};
+
+	const onDeleteHandler = (index) => {
+		const item = order.data[index];
+		item.count = order.data[index].count - order.data[index].count;
+		const arr = order.data;
+		if (item.count <= 0) {
+			arr.splice(index, 1);
+			localStorage.setItem('cart', JSON.stringify(arr));
+			setData({
+				data: arr
+			});
+		} else {
+			arr[index] = item;
+			localStorage.setItem('cart', JSON.stringify(arr));
+			setData({
+				data: arr
+			});
+		}
+		const totalArrCount = arr.map((item) => item.count);
+		const totalCount = totalArrCount.reduce((a, b) => a + b, 0);
+		setCount(totalCount);
+		const totalArr = arr.map((item) => item.count * item.price);
+		const total = totalArr.reduce((a, b) => a + b, 0);
+		setPrice(total);
+	};
+
 	const onSelect = (e) => {
 		console.log(e.target.value);
 		setSelect(e.target.value);
@@ -228,6 +255,11 @@ const Cart = (props) => {
 														<Grid>
 															<IconButton onClick={() => onAddHandler(index)}>
 																<AddIcon />
+															</IconButton>
+														</Grid>
+														<Grid>
+															<IconButton onClick={() => onDeleteHandler(index)}>
+																<CancelIcon />
 															</IconButton>
 														</Grid>
 													</Grid>
