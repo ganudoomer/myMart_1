@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Paper, Container, Typography, Input, Avatar } from '@material-ui/core/';
+import React, { useState, useCallback } from 'react';
+import { Button, Paper, Container, Typography, Input, Avatar, Slider, Dialog } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import clsx from 'clsx';
 import { SliderPicker } from 'react-color';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from './test';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -24,6 +26,48 @@ const useStyles = makeStyles((theme) => ({
 	large: {
 		width: theme.spacing(20),
 		height: theme.spacing(20)
+	},
+	cropContainer: {
+		position: 'relative',
+		width: '100%',
+		height: 200,
+		background: '#333',
+		[theme.breakpoints.up('sm')]: {
+			height: 400
+		}
+	},
+	cropButton: {
+		flexShrink: 0,
+		marginLeft: 16
+	},
+	controls: {
+		padding: 16,
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'stretch',
+		[theme.breakpoints.up('sm')]: {
+			flexDirection: 'row',
+			alignItems: 'center'
+		}
+	},
+	sliderContainer: {
+		display: 'flex',
+		flex: '1',
+		alignItems: 'center'
+	},
+	sliderLabel: {
+		[theme.breakpoints.down('xs')]: {
+			minWidth: 65
+		}
+	},
+	slider: {
+		padding: '22px 0px',
+		marginLeft: 16,
+		[theme.breakpoints.up('sm')]: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			margin: '0 16px'
+		}
 	}
 }));
 
@@ -37,6 +81,43 @@ const Add = (props) => {
 		password: '',
 		color: ''
 	});
+	const [ file, setFile ] = useState({
+		select: null
+	});
+	const dogImg = 'https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000';
+	const [ url, setUrl ] = useState();
+
+	const [ crop, setCrop ] = useState({ x: 0, y: 0 });
+	const [ rotation, setRotation ] = useState(0);
+	const [ zoom, setZoom ] = useState(1);
+	const [ croppedAreaPixels, setCroppedAreaPixels ] = useState(null);
+	const [ croppedImage, setCroppedImage ] = useState(null);
+
+	const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+		setCroppedAreaPixels(croppedAreaPixels);
+	}, []);
+
+	const showCroppedImage = useCallback(
+		async () => {
+			setUrl(null);
+			try {
+				const blob = await getCroppedImg(url, croppedAreaPixels, rotation);
+				const croppedImage = URL.createObjectURL(blob);
+				let imagefile = new File([ blob ], 'imageg.jpg');
+				setFile({ select: imagefile });
+				console.log(imagefile);
+				setCroppedImage(croppedImage);
+			} catch (e) {
+				console.error(e);
+			}
+		},
+		[ croppedAreaPixels, rotation ]
+	);
+
+	const onClose = useCallback(() => {
+		setCroppedImage(null);
+	}, []);
+
 	const classes = useStyles();
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 	const onChangeHandeler = (e) => {
@@ -73,10 +154,6 @@ const Add = (props) => {
 	};
 
 	const [ progress, setProgress ] = useState(0);
-	const [ file, setFile ] = useState({
-		select: null
-	});
-	const [ url, setUrl ] = useState();
 	const onChangeHandler = (event) => {
 		const file = URL.createObjectURL(event.target.files[0]);
 		setUrl(file);
@@ -121,7 +198,7 @@ const Add = (props) => {
 		<Container>
 			<Paper className={fixedHeightPaper}>
 				<h1>Add Form</h1>
-				<Avatar alt="Upload the image" src={url} className={classes.large}>
+				<Avatar alt="Upload the image" src={croppedImage} className={classes.large}>
 					PHOTO
 				</Avatar>
 				<form onSubmit={onSubmitHandler} autoComplete="off">
@@ -181,6 +258,63 @@ const Add = (props) => {
 					/>
 					<br />
 					<br />
+					{url ? (
+						<Dialog fullScreen open>
+							<div style={{ margin: 50 }}>
+								<div className={classes.cropContainer}>
+									<Cropper
+										image={url}
+										crop={crop}
+										rotation={rotation}
+										zoom={zoom}
+										aspect={4 / 3}
+										onCropChange={setCrop}
+										onRotationChange={setRotation}
+										onCropComplete={onCropComplete}
+										onZoomChange={setZoom}
+									/>
+								</div>
+								<div className={classes.sliderContainer}>
+									<Typography variant="overline" className={classes.sliderLabel}>
+										Zoom
+									</Typography>
+									<Slider
+										value={zoom}
+										min={1}
+										max={3}
+										step={0.1}
+										aria-labelledby="Zoom"
+										className={classes.slider}
+										onChange={(e, zoom) => setZoom(zoom)}
+									/>
+								</div>
+								<div className={classes.sliderContainer}>
+									<Typography variant="overline" className={classes.sliderLabel}>
+										Rotation
+									</Typography>
+
+									<Slider
+										value={rotation}
+										min={0}
+										max={360}
+										step={1}
+										aria-labelledby="Rotation"
+										className={classes.slider}
+										onChange={(e, rotation) => setRotation(rotation)}
+									/>
+								</div>
+								<Button
+									onClick={showCroppedImage}
+									variant="contained"
+									color="primary"
+									className={classes.cropButton}
+								>
+									Show Result
+								</Button>
+							</div>
+						</Dialog>
+					) : null}
+					<h1>{croppedImage}</h1>
 
 					<Typography>Pick a color</Typography>
 					<SliderPicker
