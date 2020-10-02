@@ -36,7 +36,9 @@ const Edit = (props) => {
 					username: result.data.username,
 					phone: result.data.phone,
 					email: result.data.email,
-					address: result.data.address
+					address: result.data.address,
+					color: result.data.color,
+					image: result.data.image
 				});
 			})();
 		},
@@ -48,7 +50,9 @@ const Edit = (props) => {
 		username: ' ',
 		phone: '',
 		email: '',
-		address: ''
+		address: '',
+		color: '',
+		image: ''
 	});
 
 	const classes = useStyles();
@@ -68,7 +72,9 @@ const Edit = (props) => {
 			phone: state.phone,
 			email: state.email,
 			address: state.address,
-			password: state.password
+			password: state.password,
+			color: state.color,
+			image: state.image
 		};
 		axios
 			.put(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data)

@@ -68,17 +68,17 @@ const Add = (props) => {
 			});
 		});
 	};
+	const [ unit, setUnit ] = useState({
+		units: null
+	});
 	const [ state, setState ] = useState({
 		name: '',
 		title: '',
 		description: '',
 		image: '',
 		price: '',
-		unit: '',
+		unit: 'Unit',
 		cat: ''
-	});
-	const [ unit, setUnit ] = useState({
-		units: null
 	});
 	useEffect(() => {
 		const data = {

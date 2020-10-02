@@ -1,5 +1,15 @@
 import React, { useState, useCallback } from 'react';
-import { Button, Paper, Container, Typography, Input, Avatar, Slider, Dialog } from '@material-ui/core/';
+import {
+	Button,
+	Paper,
+	LinearProgress,
+	Container,
+	Typography,
+	Input,
+	Avatar,
+	Slider,
+	Dialog
+} from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -79,12 +89,12 @@ const Add = (props) => {
 		email: '',
 		address: '',
 		password: '',
-		color: ''
+		color: '#FFFAFA'
 	});
 	const [ file, setFile ] = useState({
 		select: null
 	});
-	const dogImg = 'https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000';
+
 	const [ url, setUrl ] = useState();
 
 	const [ crop, setCrop ] = useState({ x: 0, y: 0 });
@@ -140,10 +150,12 @@ const Add = (props) => {
 			email: state.email,
 			address: state.address,
 			password: state.passwordf,
-			color: state.password
+			color: state.color,
+			image: images.image,
+			thumbnail: images.thumbnail
 		};
 		axios
-			.post('http://localhost:5050/admin/dealer', data)
+			.post('http://localhost:5050/theme', data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/admin/dash/');
@@ -155,13 +167,18 @@ const Add = (props) => {
 
 	const [ progress, setProgress ] = useState(0);
 	const onChangeHandler = (event) => {
-		const file = URL.createObjectURL(event.target.files[0]);
-		setUrl(file);
-		setProgress(0);
-		console.log(event.target.files[0]);
-		setFile({
-			select: event.target.files[0]
-		});
+		console.log(event.target.files[0].size);
+		if (event.target.files[0].size > 2000000) {
+			alert('File is too big!');
+		} else {
+			const file = URL.createObjectURL(event.target.files[0]);
+			setUrl(file);
+			setProgress(0);
+			console.log(event.target.files[0]);
+			setFile({
+				select: event.target.files[0]
+			});
+		}
 	};
 	const [ images, setImage ] = useState({
 		image: null,
@@ -193,6 +210,8 @@ const Add = (props) => {
 			});
 		});
 	};
+	let bar = null;
+	bar = <LinearProgress style={{ width: '40%' }} variant="determinate" value={progress} />;
 
 	return (
 		<Container>
@@ -201,9 +220,11 @@ const Add = (props) => {
 				<Avatar alt="Upload the image" src={croppedImage} className={classes.large}>
 					PHOTO
 				</Avatar>
+				<br />
+				{bar}
 				<form onSubmit={onSubmitHandler} autoComplete="off">
 					<Input required type="file" name="file" onChange={onChangeHandler} />
-					<Button onClick={onsubmit}>Upload Photo</Button>
+					{croppedImage ? <Button onClick={onsubmit}>Upload Photo</Button> : null}
 					<TextField
 						required
 						name="username"
@@ -314,7 +335,6 @@ const Add = (props) => {
 							</div>
 						</Dialog>
 					) : null}
-					<h1>{croppedImage}</h1>
 
 					<Typography>Pick a color</Typography>
 					<SliderPicker

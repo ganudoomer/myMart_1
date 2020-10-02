@@ -70,7 +70,9 @@ router
 			no_of_orders: 0,
 			password: hash,
 			products: [],
-			live: false
+			live: false,
+			color: req.body.color,
+			image: { imageName: req.body.image, thumbnail: req.body.thumbnail }
 		};
 		try {
 			const database = req.app.locals.db;
@@ -85,6 +87,8 @@ router
 	.put('/dealers/:id', isAuth, async (req, res) => {
 		const filter = { _id: ObjectID(req.params.id) };
 		console.log(filter);
+		const color = req.body.color;
+		const image = req.body.image;
 		let updateDoc = {
 			$set: {
 				dealer_name: req.body.dealer_name,
@@ -92,6 +96,8 @@ router
 				phone: req.body.phone,
 				email: req.body.email,
 				address: req.body.address,
+				color: color,
+				image: image,
 				no_of_orders: 0
 			}
 		};
@@ -105,6 +111,8 @@ router
 					email: req.body.email,
 					address: req.body.address,
 					no_of_orders: 0,
+					color: req.body.color,
+					image: image,
 					password: hash
 				}
 			};

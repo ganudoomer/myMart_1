@@ -73,7 +73,9 @@ router
 				try {
 					const database = req.app.locals.db;
 					const collection = database.collection('dealer');
-					const reslut = await collection.find({ username: decoded.username }).project({ products: 1 });
+					const reslut = await collection
+						.find({ username: decoded.username })
+						.project({ products: 1, image: 1, color: 1, dealer_name: 1 });
 					const response = [];
 					await reslut.forEach((doc) => response.push(doc));
 					await res.json(response);
