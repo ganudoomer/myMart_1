@@ -193,7 +193,6 @@ router
 					console.log(err);
 				}
 				console.log(decoded);
-				res.sendStatus(200);
 			}
 		});
 	})
@@ -260,6 +259,7 @@ router
 			console(err);
 		}
 	})
+	//COMMON ROUTE FOR DEALER AND ADMIN
 	.post('/upload', (req, res) => {
 		const url = req.protocol + '://' + req.get('host') + '/images/';
 		upload(req, res, async function(err) {

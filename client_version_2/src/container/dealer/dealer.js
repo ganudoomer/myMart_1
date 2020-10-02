@@ -163,8 +163,8 @@ const Dealer = (props) => {
 			height: 150
 		},
 		large: {
-			width: theme.spacing(6),
-			height: theme.spacing(5)
+			width: theme.spacing(8),
+			height: theme.spacing(8)
 		}
 	}));
 
@@ -209,12 +209,13 @@ const Dealer = (props) => {
 				open={open}
 			>
 				<div className={classes.toolbarIcon}>
-					<Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-						{dealer.name}
-					</Typography>
 					<Avatar className={classes.large}>
 						<img height="100%" width="100%" src={dealer.image} />
 					</Avatar>
+					<Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title} />
+					<Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+						{dealer.name}
+					</Typography>
 					<IconButton onClick={handleDrawerClose}>
 						<ChevronLeftIcon />
 					</IconButton>

@@ -79,7 +79,9 @@ export default function CustomizedDialogs(props) {
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
 					{props.data.name}
 				</DialogTitle>
-				<img width="250rem" alt="logo" height="250rem" src={props.data.image.imageName} />
+				<div style={{ margin: 'auto' }}>
+					<img width="240rem" alt="logo" height="200rem" src={props.data.image.imageName} />
+				</div>
 
 				<DialogTitle id="customized-dialog-title" onClose={handleClose}>
 					{props.data.title} <br /> ₹{props.data.price}/{props.data.unit}

@@ -116,7 +116,7 @@ const Home = (props) => {
 			select: e.target.value
 		});
 		axios.get(`http://localhost:5050/user/items/${e.target.value}`).then((res) => {
-			console.log(res.data[0].products);
+			console.log(res.data);
 			setState({
 				...state,
 				select: e.target.value,
