@@ -96,7 +96,8 @@ router
 			image: { imageName: req.body.image, thumbnail: req.body.thumbnail },
 			price: req.body.price,
 			unit: req.body.unit,
-			cat: req.body.cat
+			cat: req.body.cat,
+			stock: parseInt(req.body.stock)
 		};
 		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
 			if (err) {
@@ -130,7 +131,8 @@ router
 				'products.$.image': req.body.image,
 				'products.$.price': req.body.price,
 				'products.$.unit': req.body.unit,
-				'products.$.cat': req.body.cat
+				'products.$.cat': req.body.cat,
+				'products.$.stock': parseInt(req.body.stock)
 			}
 		};
 
@@ -311,6 +313,23 @@ router
 				}
 			}
 		});
+	})
+	.put('/orders', isAuth, async (req, res) => {
+		const status = req.body.status;
+		const id = req.body.id;
+		try {
+			const database = req.app.locals.db;
+			const collection = database.collection('orders');
+			const updateDoc = { $set: { status: status } };
+			const options = { upsert: false };
+			const result = await collection.updateOne({ _id: ObjectID(id) }, updateDoc, options);
+			console.log(
+				`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+			);
+			res.sendStatus(200);
+		} catch (err) {
+			console(err);
+		}
 	});
 
 module.exports = router;

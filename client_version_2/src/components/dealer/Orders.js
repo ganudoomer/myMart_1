@@ -54,6 +54,19 @@ const Test = () => {
 		});
 	}, []);
 
+	const handleChangeSubmit = (value, id) => {
+		const data = {
+			token: localStorage.getItem('dToken'),
+			status: value,
+			id: id
+		};
+		axios.put('http://localhost:5050/dealer/orders', data).then(() => {
+			alert('Status Changed');
+		});
+
+		console.log(value, id);
+	};
+
 	const classes = useStyles();
 	let table = null;
 
@@ -62,17 +75,34 @@ const Test = () => {
 			const item = order.order;
 			const totalArr = item.map((items) => items.count);
 			const total = totalArr.reduce((a, b) => a + b, 0);
+			const date = new Date(order.createdOn);
+			let value = null;
 
 			return (
 				<StyledTableRow>
-					<StyledTableCell align="left">{order._id}</StyledTableCell>
+					<StyledTableCell align="left">{date.toLocaleTimeString()}</StyledTableCell>
 					<StyledTableCell align="left">₹ {order.price}</StyledTableCell>
 					<StyledTableCell align="left">{order.address}</StyledTableCell>
 					<StyledTableCell align="left">
 						Name:- {order.user.name} <br /> Phone :- {order.user.phone}
 					</StyledTableCell>
 					<StyledTableCell align="left">{order.payment.mode}</StyledTableCell>
-					<StyledTableCell align="left">{order.status}</StyledTableCell>
+					<StyledTableCell align="left">
+						<select
+							onChange={(e) => {
+								value = e.target.value;
+							}}
+						>
+							<option value={order.status}>{order.status}</option>
+							{order.status !== 'Rejected' ? <option value="Rejected">Rejected</option> : null}
+							{order.status !== 'Pending' ? <option value="Pending">Pending</option> : null}
+							{order.status !== 'Confrimed' ? <option value="Confrimed">Confrimed</option> : null}
+							{order.status !== 'Packing' ? <option value="Packing">Packing</option> : null}
+							{order.status !== 'On the way' ? <option value="On the Way">On the Way</option> : null}
+							{order.status !== 'Delivered' ? <option value="Delivered">Delivered</option> : null}
+						</select>
+						<button onClick={() => handleChangeSubmit(value, order._id)}>Change</button>
+					</StyledTableCell>
 					<StyledTableCell align="left">{total} Items</StyledTableCell>
 					<StyledTableCell align="right">
 						<IconButton aria-label="delete">
@@ -92,7 +122,7 @@ const Test = () => {
 			<Table className={classes.table} aria-label="customized table">
 				<TableHead>
 					<TableRow>
-						<StyledTableCell align="left">ID</StyledTableCell>
+						<StyledTableCell align="left">Ordered on </StyledTableCell>
 						<StyledTableCell align="left">Price</StyledTableCell>
 						<StyledTableCell align="left">Address</StyledTableCell>
 						<StyledTableCell align="left">Contact Details </StyledTableCell>

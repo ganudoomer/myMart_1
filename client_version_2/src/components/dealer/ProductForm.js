@@ -172,7 +172,8 @@ const Add = (props) => {
 		image: '',
 		price: '',
 		unit: 'Unit',
-		cat: ''
+		cat: '',
+		inventory: ''
 	});
 	useEffect(() => {
 		const data = {
@@ -205,6 +206,7 @@ const Add = (props) => {
 			price: state.price,
 			unit: state.unit,
 			cat: state.cat,
+			stock: state.inventory,
 			image: images.image,
 			thumbnail: images.thumbnail
 		};
@@ -272,7 +274,16 @@ const Add = (props) => {
 						value={state.cat}
 						className={classes.form}
 						type="text"
-						label="category"
+						label="Category"
+					/>
+					<TextField
+						required
+						onChange={onChangeHandeler}
+						name="inventory"
+						value={state.inventory}
+						className={classes.form}
+						type="number"
+						label="Stock"
 					/>
 					<br />
 					<br />

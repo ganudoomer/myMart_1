@@ -76,6 +76,9 @@ const Tables = (props) => {
 			<StyledTableCell align="left">{data.name}</StyledTableCell>
 			<StyledTableCell align="right"> ₹{data.price}</StyledTableCell>
 			<StyledTableCell align="right">{data.unit}</StyledTableCell>
+			<StyledTableCell align="right">
+				{data.stock ? data.stock + ' ' + data.unit + ' Left' : 'Out of Stock'}{' '}
+			</StyledTableCell>
 			<StyledTableCell align="right">{data.cat}</StyledTableCell>
 			<StyledTableCell align="right">
 				<Deletemodel click={() => onDeleteHandler(data._id)} />
@@ -101,6 +104,7 @@ const Tables = (props) => {
 						<StyledTableCell align="left">Product</StyledTableCell>
 						<StyledTableCell align="right">Price </StyledTableCell>
 						<StyledTableCell align="right">Unit </StyledTableCell>
+						<StyledTableCell align="right">Stock Left </StyledTableCell>
 						<StyledTableCell align="right">Category</StyledTableCell>
 						<StyledTableCell align="right">Delete</StyledTableCell>
 						<StyledTableCell align="right">Edit</StyledTableCell>

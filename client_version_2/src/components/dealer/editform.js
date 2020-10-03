@@ -184,7 +184,8 @@ const Edit = (props) => {
 					image: result.image,
 					price: result.price,
 					unit: result.unit,
-					cat: result.cat
+					cat: result.cat,
+					inventory: result.stock
 				});
 			})();
 			const data = {
@@ -209,7 +210,8 @@ const Edit = (props) => {
 		image: '',
 		price: '',
 		unit: '',
-		cat: ''
+		cat: '',
+		inventory: ''
 	});
 
 	const classes = useStyles();
@@ -230,7 +232,8 @@ const Edit = (props) => {
 			image: state.image,
 			price: state.price,
 			unit: state.unit,
-			cat: state.cat
+			cat: state.cat,
+			stock: state.inventory
 		};
 		axios
 			.put(`http://localhost:5050/dealer/product/${props.match.params.id}`, data)
@@ -299,6 +302,15 @@ const Edit = (props) => {
 						className={classes.form}
 						type="text"
 						label="category"
+					/>
+					<TextField
+						required
+						onChange={onChangeHandeler}
+						name="inventory"
+						value={state.inventory}
+						className={classes.form}
+						type="number"
+						label="Stock"
 					/>
 					<br />
 					<br />

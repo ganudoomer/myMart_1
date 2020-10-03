@@ -202,6 +202,8 @@ router.post('/order', (req, res) => {
 });
 
 router.post('/capture/:paymentId', (req, res) => {
+	// db.dealer.update({ 'products._id': ObjectId('5f7839c8f8516a2a6fcc6fa2') }, { $inc: { 'products.$.stock': -20 } });
+
 	const database = req.app.locals.db;
 	const price = req.body.price;
 	const order = JSON.parse(req.body.order);
@@ -229,6 +231,20 @@ router.post('/capture/:paymentId', (req, res) => {
 						console.log(err.message);
 						res.sendStatus(401);
 					} else {
+						order.map((item) => {
+							try {
+								const collection = database.collection('dealer');
+								const filter = { 'products._id': ObjectId(item._id) };
+								const updateDoc = { $inc: { 'products.$.stock': -parseInt(item.count) } };
+								const result = collection.update(filter, updateDoc);
+								console.log(result);
+							} catch (err) {
+								console.log(err);
+							}
+
+							console.log(item._id + ' ' + item.count);
+						});
+
 						const user = {
 							phone: decoded.phone,
 							name: decoded.name
@@ -240,6 +256,7 @@ router.post('/capture/:paymentId', (req, res) => {
 								price,
 								address,
 								user,
+								createdOn: new Date(),
 								status: 'Pending',
 								payment: { mode: 'Online ', id: req.params.paymentId }
 							});
@@ -285,6 +302,7 @@ router.post('/ordercod', (req, res) => {
 					price,
 					address,
 					user,
+					createdOn: new Date(),
 					status: 'Pending',
 					payment: { mode: 'COD' }
 				});
