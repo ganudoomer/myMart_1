@@ -1,357 +1,168 @@
-import React, { useState, useCallback } from 'react';
-import {
-	Button,
-	Paper,
-	LinearProgress,
-	Container,
-	Typography,
-	Input,
-	Avatar,
-	Slider,
-	Dialog
-} from '@material-ui/core/';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
-import clsx from 'clsx';
-import { SliderPicker } from 'react-color';
-import Cropper from 'react-easy-crop';
-import getCroppedImg from './test';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
 
-const useStyles = makeStyles((theme) => ({
-	paper: {
-		margin: 100,
-		padding: theme.spacing(2),
-		display: 'flex',
-		overflow: 'auto',
-		flexDirection: 'column'
-	},
-	fixedHeight: {
-		height: '100%'
-	},
-	form: {
-		margin: theme.spacing(1),
-		width: '100ch'
-	},
-	large: {
-		width: theme.spacing(20),
-		height: theme.spacing(20)
-	},
-	cropContainer: {
-		position: 'relative',
-		width: '100%',
-		height: 200,
-		background: '#333',
-		[theme.breakpoints.up('sm')]: {
-			height: 400
-		}
-	},
-	cropButton: {
+const useStyles1 = makeStyles((theme) => ({
+	root: {
 		flexShrink: 0,
-		marginLeft: 16
-	},
-	controls: {
-		padding: 16,
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'stretch',
-		[theme.breakpoints.up('sm')]: {
-			flexDirection: 'row',
-			alignItems: 'center'
-		}
-	},
-	sliderContainer: {
-		display: 'flex',
-		flex: '1',
-		alignItems: 'center'
-	},
-	sliderLabel: {
-		[theme.breakpoints.down('xs')]: {
-			minWidth: 65
-		}
-	},
-	slider: {
-		padding: '22px 0px',
-		marginLeft: 16,
-		[theme.breakpoints.up('sm')]: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			margin: '0 16px'
-		}
+		marginLeft: theme.spacing(2.5)
 	}
 }));
 
-const Add = (props) => {
-	const [ state, setState ] = useState({
-		dealer_name: '',
-		username: '',
-		phone: '',
-		email: '',
-		address: '',
-		password: '',
-		color: '#FFFAFA'
-	});
-	const [ file, setFile ] = useState({
-		select: null
-	});
+function TablePaginationActions(props) {
+	const classes = useStyles1();
+	const theme = useTheme();
+	const { count, page, rowsPerPage, onChangePage } = props;
 
-	const [ url, setUrl ] = useState();
-
-	const [ crop, setCrop ] = useState({ x: 0, y: 0 });
-	const [ rotation, setRotation ] = useState(0);
-	const [ zoom, setZoom ] = useState(1);
-	const [ croppedAreaPixels, setCroppedAreaPixels ] = useState(null);
-	const [ croppedImage, setCroppedImage ] = useState(null);
-
-	const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-		setCroppedAreaPixels(croppedAreaPixels);
-	}, []);
-
-	const showCroppedImage = useCallback(
-		async () => {
-			setUrl(null);
-			try {
-				const blob = await getCroppedImg(url, croppedAreaPixels, rotation);
-				const croppedImage = URL.createObjectURL(blob);
-				let imagefile = new File([ blob ], 'imageg.jpg');
-				setFile({ select: imagefile });
-				console.log(imagefile);
-				setCroppedImage(croppedImage);
-			} catch (e) {
-				console.error(e);
-			}
-		},
-		[ croppedAreaPixels, rotation ]
-	);
-
-	const onClose = useCallback(() => {
-		setCroppedImage(null);
-	}, []);
-
-	const classes = useStyles();
-	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-	const onChangeHandeler = (e) => {
-		setState({
-			...state,
-			[e.target.name]: e.target.value
-		});
-	};
-	const onColorChange = (color) => {
-		console.log(color.hex);
-		setState({ ...state, color: color.hex });
-	};
-	const onSubmitHandler = (e) => {
-		e.preventDefault();
-		const data = {
-			token: localStorage.getItem('aToken'),
-			dealer_name: state.dealer_name,
-			username: state.username,
-			phone: state.phone,
-			email: state.email,
-			address: state.address,
-			password: state.passwordf,
-			color: state.color,
-			image: images.image,
-			thumbnail: images.thumbnail
-		};
-		axios
-			.post('http://localhost:5050/theme', data)
-			.then((res) => {
-				console.log(res);
-				props.history.push('/admin/dash/');
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+	const handleFirstPageButtonClick = (event) => {
+		onChangePage(event, 0);
 	};
 
-	const [ progress, setProgress ] = useState(0);
-	const onChangeHandler = (event) => {
-		console.log(event.target.files[0].size);
-		if (event.target.files[0].size > 2000000) {
-			alert('File is too big!');
-		} else {
-			const file = URL.createObjectURL(event.target.files[0]);
-			setUrl(file);
-			setProgress(0);
-			console.log(event.target.files[0]);
-			setFile({
-				select: event.target.files[0]
-			});
-		}
+	const handleBackButtonClick = (event) => {
+		onChangePage(event, page - 1);
 	};
-	const [ images, setImage ] = useState({
-		image: null,
-		thumbnail: null
-	});
 
-	const onsubmit = () => {
-		const config = {
-			onUploadProgress: (progressEvent) => {
-				const totalLength = progressEvent.lengthComputable
-					? progressEvent.total
-					: progressEvent.target.getResponseHeader('content-length') ||
-						progressEvent.target.getResponseHeader('x-decompressed-content-length');
-				console.log('onUploadProgress', totalLength);
-				if (totalLength !== null) {
-					setProgress(Math.round(progressEvent.loaded * 100 / totalLength));
-				}
-			}
-		};
-		const data = new FormData();
-		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
-			console.log(res.data.imageName);
-			console.log(res.data.thumbnail);
-
-			setImage({
-				image: res.data.imageName,
-				thumbnail: res.data.thumbnail
-			});
-		});
+	const handleNextButtonClick = (event) => {
+		onChangePage(event, page + 1);
 	};
-	let bar = null;
-	bar = <LinearProgress style={{ width: '40%' }} variant="determinate" value={progress} />;
+
+	const handleLastPageButtonClick = (event) => {
+		onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+	};
 
 	return (
-		<Container>
-			<Paper className={fixedHeightPaper}>
-				<h1>Add Form</h1>
-				<Avatar alt="Upload the image" src={croppedImage} className={classes.large}>
-					PHOTO
-				</Avatar>
-				<br />
-				{bar}
-				<form onSubmit={onSubmitHandler} autoComplete="off">
-					<Input required type="file" name="file" onChange={onChangeHandler} />
-					{croppedImage ? <Button onClick={onsubmit}>Upload Photo</Button> : null}
-					<TextField
-						required
-						name="username"
-						value={state.username}
-						onChange={onChangeHandeler}
-						className={classes.form}
-						label="Username"
-					/>
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="password"
-						value={state.password}
-						type="password"
-						className={classes.form}
-						label="Password"
-					/>
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="address"
-						value={state.address}
-						className={classes.form}
-						label="Address"
-					/>
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="dealer_name"
-						value={state.dealer_name}
-						className={classes.form}
-						label="Dealer_name"
-					/>
-
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="phone"
-						value={state.phone}
-						className={classes.form}
-						type="number"
-						label="Phone"
-					/>
-					<TextField
-						required
-						onChange={onChangeHandeler}
-						name="email"
-						value={state.email}
-						className={classes.form}
-						type="email"
-						label="Email"
-					/>
-					<br />
-					<br />
-					{url ? (
-						<Dialog fullScreen open>
-							<div style={{ margin: 50 }}>
-								<div className={classes.cropContainer}>
-									<Cropper
-										image={url}
-										crop={crop}
-										rotation={rotation}
-										zoom={zoom}
-										aspect={4 / 3}
-										onCropChange={setCrop}
-										onRotationChange={setRotation}
-										onCropComplete={onCropComplete}
-										onZoomChange={setZoom}
-									/>
-								</div>
-								<div className={classes.sliderContainer}>
-									<Typography variant="overline" className={classes.sliderLabel}>
-										Zoom
-									</Typography>
-									<Slider
-										value={zoom}
-										min={1}
-										max={3}
-										step={0.1}
-										aria-labelledby="Zoom"
-										className={classes.slider}
-										onChange={(e, zoom) => setZoom(zoom)}
-									/>
-								</div>
-								<div className={classes.sliderContainer}>
-									<Typography variant="overline" className={classes.sliderLabel}>
-										Rotation
-									</Typography>
-
-									<Slider
-										value={rotation}
-										min={0}
-										max={360}
-										step={1}
-										aria-labelledby="Rotation"
-										className={classes.slider}
-										onChange={(e, rotation) => setRotation(rotation)}
-									/>
-								</div>
-								<Button
-									onClick={showCroppedImage}
-									variant="contained"
-									color="primary"
-									className={classes.cropButton}
-								>
-									Show Result
-								</Button>
-							</div>
-						</Dialog>
-					) : null}
-
-					<Typography>Pick a color</Typography>
-					<SliderPicker
-						onChange={(e) => setState({ ...state, color: e.hex })}
-						color={state.color}
-						onChangeComplete={onColorChange}
-					/>
-
-					<br />
-					<br />
-					<Button type="submit" variant="contained" color="primary">
-						Add Dealer
-					</Button>
-				</form>
-			</Paper>
-		</Container>
+		<div className={classes.root}>
+			<IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
+				{theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+			</IconButton>
+			<IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+				{theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+			</IconButton>
+			<IconButton
+				onClick={handleNextButtonClick}
+				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+				aria-label="next page"
+			>
+				{theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+			</IconButton>
+			<IconButton
+				onClick={handleLastPageButtonClick}
+				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+				aria-label="last page"
+			>
+				{theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+			</IconButton>
+		</div>
 	);
+}
+
+TablePaginationActions.propTypes = {
+	count: PropTypes.number.isRequired,
+	onChangePage: PropTypes.func.isRequired,
+	page: PropTypes.number.isRequired,
+	rowsPerPage: PropTypes.number.isRequired
 };
 
-export default Add;
+function createData(name, calories, fat) {
+	return { name, calories, fat };
+}
+
+const rows = [
+	createData('Cupcake', 305, 3.7),
+	createData('Donut', 452, 25.0),
+	createData('Eclair', 262, 16.0),
+	createData('Frozen yoghurt', 159, 6.0),
+	createData('Gingerbread', 356, 16.0),
+	createData('Honeycomb', 408, 3.2),
+	createData('Ice cream sandwich', 237, 9.0),
+	createData('Jelly Bean', 375, 0.0),
+	createData('KitKat', 518, 26.0),
+	createData('Lollipop', 392, 0.2),
+	createData('Marshmallow', 318, 0),
+	createData('Nougat', 360, 19.0),
+	createData('Oreo', 437, 18.0)
+].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+
+const useStyles2 = makeStyles({
+	table: {
+		minWidth: 500
+	}
+});
+
+export default function CustomPaginationActionsTable() {
+	const classes = useStyles2();
+	const [ page, setPage ] = React.useState(0);
+	const [ rowsPerPage, setRowsPerPage ] = React.useState(5);
+
+	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+	};
+
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
+		setPage(0);
+	};
+
+	return (
+		<TableContainer component={Paper}>
+			<Table className={classes.table} aria-label="custom pagination table">
+				<TableBody>
+					{(rowsPerPage > 0
+						? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+						: rows).map((row) => (
+						<TableRow key={row.name}>
+							<TableCell component="th" scope="row">
+								{row.name}
+							</TableCell>
+							<TableCell style={{ width: 160 }} align="right">
+								{row.calories}
+							</TableCell>
+							<TableCell style={{ width: 160 }} align="right">
+								{row.fat}
+							</TableCell>
+						</TableRow>
+					))}
+
+					{emptyRows > 0 && (
+						<TableRow style={{ height: 53 * emptyRows }}>
+							<TableCell colSpan={6} />
+						</TableRow>
+					)}
+				</TableBody>
+				<TableFooter>
+					<TableRow>
+						<TablePagination
+							rowsPerPageOptions={[ 5, 10, 25, { label: 'All', value: -1 } ]}
+							colSpan={3}
+							count={rows.length}
+							rowsPerPage={rowsPerPage}
+							page={page}
+							SelectProps={{
+								inputProps: { 'aria-label': 'rows per page' },
+								native: true
+							}}
+							onChangePage={handleChangePage}
+							onChangeRowsPerPage={handleChangeRowsPerPage}
+							ActionsComponent={TablePaginationActions}
+						/>
+					</TableRow>
+				</TableFooter>
+			</Table>
+		</TableContainer>
+	);
+}

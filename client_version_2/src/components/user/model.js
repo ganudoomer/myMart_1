@@ -96,20 +96,24 @@ export default function CustomizedDialogs(props) {
 					</Typography>
 				</DialogContent>
 				<DialogActions>
-					<Button
-						autoFocus
-						onClick={onButtonClick}
-						style={{
-							borderRadius: 35,
-							backgroundColor: '#2FEF92',
-							padding: '18px 36px',
-							fontSize: '10px',
-							marginLeft: 20
-						}}
-						variant="contained"
-					>
-						<AddShoppingCartIcon />
-					</Button>
+					{props.data.stock > 0 ? (
+						<Button
+							autoFocus
+							onClick={onButtonClick}
+							style={{
+								borderRadius: 35,
+								backgroundColor: '#2FEF92',
+								padding: '18px 36px',
+								fontSize: '10px',
+								marginLeft: 20
+							}}
+							variant="contained"
+						>
+							<AddShoppingCartIcon />
+						</Button>
+					) : (
+						<Button> Out Of Stock</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 		</div>

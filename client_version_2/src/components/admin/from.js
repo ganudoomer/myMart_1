@@ -328,7 +328,7 @@ const Add = (props) => {
 									color="primary"
 									className={classes.cropButton}
 								>
-									Show Result
+									Crop
 								</Button>
 							</div>
 						</Dialog>

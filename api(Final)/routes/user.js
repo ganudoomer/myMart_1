@@ -234,7 +234,7 @@ router.post('/capture/:paymentId', (req, res) => {
 						order.map((item) => {
 							try {
 								const collection = database.collection('dealer');
-								const filter = { 'products._id': ObjectId(item._id) };
+								const filter = { 'products._id': ObjectID(item._id) };
 								const updateDoc = { $inc: { 'products.$.stock': -parseInt(item.count) } };
 								const result = collection.update(filter, updateDoc);
 								console.log(result);
@@ -294,7 +294,19 @@ router.post('/ordercod', (req, res) => {
 				phone: decoded.phone,
 				name: decoded.name
 			};
+			order.map((item) => {
+				try {
+					const collection = database.collection('dealer');
+					const filter = { 'products._id': ObjectID(item._id) };
+					const updateDoc = { $inc: { 'products.$.stock': -parseInt(item.count) } };
+					const result = collection.update(filter, updateDoc);
+					console.log(result);
+				} catch (err) {
+					console.log(err);
+				}
 
+				console.log(item._id + ' ' + item.count);
+			});
 			try {
 				const collection = database.collection('orders');
 				const result = collection.insertOne({
@@ -365,45 +377,73 @@ router.post('/login/otp', async (req, res) => {
 	}
 });
 
-router.post('/login/verify', (req, res) => {
-	const token = req.body.token;
-	const otp = req.body.otp;
-	jwt.verify(token, 'secret', (err, decoded) => {
-		if (err) {
-			console.log(err.message);
-		} else {
-			console.log(decoded);
-			const options = {
-				method: 'POST',
-				url: 'https://d7networks.com/api/verifier/verify',
-				headers: {
-					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
-				},
-				formData: {
-					otp_id: decoded.otp_id,
-					otp_code: otp
-				}
-			};
-			request(options, async function(error, response) {
-				console.log(response.body);
-				console.log(error + '[ERROR]');
-				if (!error && JSON.parse(response.body).status === 'success') {
-					const token = jwt.sign(
-						{
-							name: decoded.name,
-							id: decoded._id,
-							phone: decoded.phone
-						},
-						'secret',
-						{ expiresIn: 60 * 60 }
-					);
-					res.json({ token });
-				} else {
-					res.json({ status: 'error', message: JSON.parse(response.body).otp_code });
-				}
-			});
+router
+	.post('/login/verify', (req, res) => {
+		const token = req.body.token;
+		const otp = req.body.otp;
+		jwt.verify(token, 'secret', (err, decoded) => {
+			if (err) {
+				console.log(err.message);
+			} else {
+				console.log(decoded);
+				const options = {
+					method: 'POST',
+					url: 'https://d7networks.com/api/verifier/verify',
+					headers: {
+						Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+					},
+					formData: {
+						otp_id: decoded.otp_id,
+						otp_code: otp
+					}
+				};
+				request(options, async function(error, response) {
+					console.log(response.body);
+					console.log(error + '[ERROR]');
+					if (!error && JSON.parse(response.body).status === 'success') {
+						const token = jwt.sign(
+							{
+								name: decoded.name,
+								id: decoded._id,
+								phone: decoded.phone
+							},
+							'secret',
+							{ expiresIn: 60 * 60 }
+						);
+						res.json({ token });
+					} else {
+						res.json({ status: 'error', message: JSON.parse(response.body).otp_code });
+					}
+				});
+			}
+		});
+	})
+	.post('/live', async (req, res) => {
+		const database = req.app.locals.db;
+		// const order = req.body.order;
+		// order.map(async (item) => {
+		// 	try {
+		// 		const collection = database.collection('dealer');
+		// 		const query = { 'products._id': ObjectID(item._id) };
+		// 		const result = await collection.find(query);
+		// 		const response = [];
+		// 		await result.forEach((doc) => response.push(doc));
+		// 		console.log(response[0].products);
+		// 	} catch (err) {
+		// 		console.log(err);
+		// 	}
+		// 	console.log(item._id + ' ' + item.count);
+		// });
+
+		try {
+			const collection = database.collection('dealer');
+			const result = await collection.find({ username: req.body.dealer }).project({ live: 1 });
+			const response = [];
+			await result.forEach((doc) => response.push(doc));
+			await res.json(response);
+		} catch (err) {
+			console.log(err);
 		}
 	});
-});
 
 module.exports = router;

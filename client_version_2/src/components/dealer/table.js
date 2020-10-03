@@ -35,7 +35,8 @@ const StyledTableRow = withStyles((theme) => ({
 
 const useStyles = makeStyles({
 	table: {
-		minWidth: 700
+		minWidth: 700,
+		overflowY: 'scroll'
 	},
 	large: {
 		width: 100,

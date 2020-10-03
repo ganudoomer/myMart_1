@@ -264,19 +264,23 @@ const Home = (props) => {
 											>
 												{card.cat}
 											</Button>
-											<Button
-												onClick={() => onCartClick(card)}
-												style={{
-													borderRadius: 35,
-													backgroundColor: '#2FEF92',
-													padding: '18px 36px',
-													fontSize: '10px',
-													marginLeft: 20
-												}}
-												variant="contained"
-											>
-												<AddShoppingCartIcon />
-											</Button>
+											{card.stock > 0 ? (
+												<Button
+													onClick={() => onCartClick(card)}
+													style={{
+														borderRadius: 35,
+														backgroundColor: '#2FEF92',
+														padding: '18px 36px',
+														fontSize: '10px',
+														marginLeft: 20
+													}}
+													variant="contained"
+												>
+													<AddShoppingCartIcon />
+												</Button>
+											) : (
+												<Button> Out Of Stock</Button>
+											)}
 										</CardActions>
 									</Card>
 								</Grid>

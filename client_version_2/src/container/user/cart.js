@@ -102,21 +102,30 @@ const Cart = (props) => {
 	//=======================================================================//
 	const onOrder = (e) => {
 		e.preventDefault();
-		if (select === 'ONLINE') {
-			paymentHandler();
-		} else {
-			const data = {
-				price: price,
-				order: localStorage.getItem('cart'),
-				address: address,
-				token: localStorage.getItem('uToken')
-			};
-			axios.post('http://localhost:5050/user/ordercod', data).then((res) => {
-				console.log(res);
-				props.history.push('/');
-				alert(`Your order has been placed `);
-			});
-		}
+		const order = JSON.parse(localStorage.getItem('cart'));
+		const dealer = order[0].dealer_name;
+		console.log(dealer);
+		axios.post('http://localhost:5050/user/live', { dealer: dealer }).then((res) => {
+			if (res.data[0].live) {
+				if (select === 'ONLINE') {
+					paymentHandler();
+				} else {
+					const data = {
+						price: price,
+						order: localStorage.getItem('cart'),
+						address: address,
+						token: localStorage.getItem('uToken')
+					};
+					axios.post('http://localhost:5050/user/ordercod', data).then((res) => {
+						console.log(res);
+						props.history.push('/');
+						alert(`Your order has been placed `);
+					});
+				}
+			} else {
+				alert('The dealer is closed');
+			}
+		});
 	};
 
 	//=======================================================================//
