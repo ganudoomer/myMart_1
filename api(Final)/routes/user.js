@@ -446,4 +446,25 @@ router
 		}
 	});
 
+router.post('/orders', (req, res) => {
+	jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('orders');
+				const reslut = await collection.find({ 'user.phone': decoded.phone });
+				const response = [];
+				await reslut.forEach((doc) => response.push(doc));
+				await res.json(response);
+			} catch (err) {
+				console(err);
+			}
+		}
+	});
+});
+
 module.exports = router;

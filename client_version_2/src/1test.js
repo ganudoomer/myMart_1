@@ -1,62 +1,77 @@
-const createImage = (url) =>
-	new Promise((resolve, reject) => {
-		const image = new Image();
-		image.addEventListener('load', () => resolve(image));
-		image.addEventListener('error', (error) => reject(error));
-		image.setAttribute('crossOrigin', 'anonymous'); // needed to avoid cross-origin issues on CodeSandbox
-		image.src = url;
-	});
+import React, { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
+const useStyles = makeStyles({
+	root: {
+		minWidth: 500,
+		marginTop: 20
+	},
+	bullet: {
+		display: 'inline-block',
+		margin: '0 2px',
+		transform: 'scale(0.8)'
+	},
+	title: {
+		fontSize: 14
+	},
+	pos: {
+		marginBottom: 12
+	}
+});
 
-function getRadianAngle(degreeValue) {
-	return degreeValue * Math.PI / 180;
-}
+export default function SimpleCard() {
+	const [ state, setstate ] = useState({ data: null });
+	useEffect(() => {
+		axios.post('http://localhost:5050/user/orders', { token: localStorage.getItem('uToken') }).then((res) => {
+			setstate({ data: res.data });
+		});
+	}, []);
+	const classes = useStyles();
+	const bull = <span className={classes.bullet}>•</span>;
 
-/**
- * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
- * @param {File} image - Image File url
- * @param {Object} pixelCrop - pixelCrop Object provided by react-easy-crop
- * @param {number} rotation - optional rotation parameter
- */
-export default async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
-	const image = await createImage(imageSrc);
-	const canvas = document.createElement('canvas');
-	const ctx = canvas.getContext('2d');
-
-	const maxSize = Math.max(image.width, image.height);
-	const safeArea = 2 * (maxSize / 2 * Math.sqrt(2));
-
-	// set each dimensions to double largest dimension to allow for a safe area for the
-	// image to rotate in without being clipped by canvas context
-	canvas.width = safeArea;
-	canvas.height = safeArea;
-
-	// translate canvas context to a central location on image to allow rotating around the center.
-	ctx.translate(safeArea / 2, safeArea / 2);
-	ctx.rotate(getRadianAngle(rotation));
-	ctx.translate(-safeArea / 2, -safeArea / 2);
-
-	// draw rotated image and store data.
-	ctx.drawImage(image, safeArea / 2 - image.width * 0.5, safeArea / 2 - image.height * 0.5);
-	const data = ctx.getImageData(0, 0, safeArea, safeArea);
-
-	// set canvas width to final desired crop size - this will clear existing context
-	canvas.width = pixelCrop.width;
-	canvas.height = pixelCrop.height;
-
-	// paste generated rotate image with correct offsets for x,y crop values.
-	ctx.putImageData(
-		data,
-		Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
-		Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
+	return (
+		<div
+			style={{
+				width: 600,
+				height: 500,
+				overflow: 'scroll'
+			}}
+		>
+			{state.data ? (
+				state.data.map((data) => {
+					const date = new Date(data.createdOn);
+					if (data.status === 'Delivered' || data.status === 'Rejected') {
+						return (
+							<Card className={classes.root}>
+								<CardContent>
+									<Typography className={classes.title} color="textSecondary" gutterBottom>
+										{data.status}
+									</Typography>
+									<Typography className={classes.title} color="textSecondary" gutterBottom>
+										{date.toLocaleDateString()}
+									</Typography>
+									<Typography className={classes.title} color="textSecondary" gutterBottom>
+										{data.address}
+									</Typography>
+									<Typography className={classes.title} color="textSecondary" gutterBottom>
+										{data.price + ' Paid via ' + data.payment.mode}
+									</Typography>
+									<Typography className={classes.title} color="textSecondary" gutterBottom>
+										{data.order.length + ' Items from  ' + data.order[0].dealer_name}
+									</Typography>
+								</CardContent>
+							</Card>
+						);
+					} else {
+						return null;
+					}
+				})
+			) : null}
+		</div>
 	);
-
-	// As Base64 string
-	// return canvas.toDataURL('image/jpeg');
-
-	// As a blob
-	return new Promise((resolve) => {
-		canvas.toBlob((file) => {
-			resolve(file);
-		}, 'image/jpeg');
-	});
 }
