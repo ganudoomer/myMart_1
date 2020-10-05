@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import Shop from './Buy.svg';
 import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 const useStyles = makeStyles((theme) => ({
 	formControl: {
 		margin: 'auto',
@@ -64,59 +65,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Home = (props) => {
-	const [ state, setState ] = useState({
-		select: '',
-		store: null,
-		data: null,
-		select: null
-	});
-	const [ open, setSate ] = useState({
-		card: null
-	});
-	const [ count, setCount ] = useState();
-	useEffect(() => {
-		let cart = JSON.parse(localStorage.getItem('cart'));
-		if (cart) {
-			const totalArrCount = cart.map((item) => item.count);
-			const totalCount = totalArrCount.reduce((a, b) => a + b, 0);
-			setCount(totalCount);
-		}
-		(function getData() {
-			axios.get('http://localhost:5050/user/store/').then((res) => {
-				setState({
-					...state,
-					store: res.data
-				});
-			});
-		})();
-	}, []);
-	let select = null;
-	if (state.store) {
-		select = state.store.map((data) => <MenuItem value={data.dealer_name}>{data.dealer_name}</MenuItem>);
-	}
-	const onSelectChange = (e) => {
-		console.log(e.target.value);
-		if (localStorage.getItem('cart') && JSON.parse(localStorage.getItem('cart')).length > 0) {
-			let cart = JSON.parse(localStorage.getItem('cart'));
-			if (cart[0].dealer_name !== e.target.value) {
-				localStorage.removeItem('cart');
-				setCount(null);
-			}
-		}
-		setState({
-			...state,
-			select: e.target.value
-		});
-		axios.get(`http://localhost:5050/user/items/${e.target.value}`).then((res) => {
-			console.log(res.data);
-			setState({
-				...state,
-				select: e.target.value,
-				data: res.data[0].products,
-				live: res.data[0].live
-			});
-		});
-	};
 	const classes = useStyles();
 	let button = (
 		<Fragment>
@@ -135,7 +83,6 @@ const Home = (props) => {
 			</Link>
 		);
 	}
-	const [ cart, setCart ] = useState(false);
 
 	return (
 		<React.Fragment>
@@ -148,8 +95,8 @@ const Home = (props) => {
 					<div style={{ marginLeft: 'auto' }}>
 						<Link to="/cart" style={{ textDecoration: 'none' }}>
 							<IconButton>
-								<Typography variant="subtitle1">{count}</Typography>
-								<img width="30px" src={Shop} />
+								<Typography>Live Orders</Typography>
+								<ShoppingBasketIcon style={{ fontSize: 30 }} />
 							</IconButton>
 						</Link>
 						<Link to="/cart" style={{ textDecoration: 'none' }}>
@@ -162,6 +109,7 @@ const Home = (props) => {
 				</Toolbar>
 			</AppBar>
 			<div style={{ width: '50px', marginLeft: '25%', marginTop: '2%' }}>
+				<Typography>Live Order</Typography>
 				<Card />
 			</div>
 		</React.Fragment>

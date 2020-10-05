@@ -14,10 +14,13 @@ import RegisterUser from './container/user/register';
 import LogoutUser from './container/user/logout';
 import AdminProtectedRoute from './components/hoc/AdminAuth';
 import DealerProtectedRoute from './components/hoc/DealerAuth';
+import UserProtectedRoute from './components/hoc/UserAuth';
 import * as dealerAction from './store/actions/dealer/action';
 import * as adminAction from './store/actions/admin';
 import * as userAction from './store/actions/user/action';
 import Cart from './container/user/cart';
+import History from './container/user/history';
+import Live from './container/user/Live';
 import Test from './Test';
 function App(props) {
 	const admin = props.checkAdmin;
@@ -34,6 +37,8 @@ function App(props) {
 			<Switch>
 				<Route path="/" exact component={Home} />
 				<Route path="/cart" exact component={Cart} />
+				<UserProtectedRoute path="/history" auth={props.userAuth} exact component={History} />
+				<UserProtectedRoute path="/live" auth={props.userAuth} exact component={Live} />
 				<Route path="/test" exact component={Test} />
 				<Route path="/logout" exact component={LogoutUser} />
 				<Route path="/login" exact component={LoginUser} />
@@ -54,7 +59,8 @@ function App(props) {
 const mapStateToProps = (state) => {
 	return {
 		adminAuth: state.admin.token,
-		dealerAuth: state.dealer.token
+		dealerAuth: state.dealer.token,
+		userAuth: state.user.login
 	};
 };
 

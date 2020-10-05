@@ -8,10 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
-import confirmed from './images/tick.svg';
-import pending from './images/pending.png';
-import ontheway from './images/ontheway.png';
-import packing from './images/packing.png';
+import confirmed from '../../images/tick.svg';
+import pending from '../../images/pending.png';
+import ontheway from '../../images/ontheway.png';
+import packing from '../../images/packing.png';
 
 const useStyles = makeStyles((theme) => ({
 	root: {

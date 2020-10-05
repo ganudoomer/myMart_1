@@ -18,6 +18,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import DescriptionIcon from '@material-ui/icons/Description';
 import logo from '../../SuperMart.svg';
 import axios from 'axios';
 import Model from '../../components/user/model';
@@ -26,6 +27,7 @@ import * as actionCreators from '../../store/actions/user/action';
 import Shop from '../../Buy.svg';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '../../components/user/snackbar';
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -138,9 +140,22 @@ const Home = (props) => {
 	);
 	if (props.token) {
 		button = (
-			<Link style={{ textDecoration: 'none' }} onClick={() => props.onLogout()} to="/logout">
-				<Button className={classes.button}>Logout</Button>
-			</Link>
+			<Fragment>
+				<Link to="/history" style={{ textDecoration: 'none' }}>
+					<IconButton>
+						<DescriptionIcon style={{ fontSize: 30 }} />
+					</IconButton>
+				</Link>
+				<Link to="/live" style={{ textDecoration: 'none' }}>
+					<IconButton>
+						<ShoppingBasketIcon style={{ fontSize: 25 }} />
+						Live
+					</IconButton>
+				</Link>
+				<Link style={{ textDecoration: 'none' }} onClick={() => props.onLogout()} to="/logout">
+					<Button className={classes.button}>Logout</Button>
+				</Link>
+			</Fragment>
 		);
 	}
 	const [ cart, setCart ] = useState(false);
