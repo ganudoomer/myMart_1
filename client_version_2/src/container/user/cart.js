@@ -217,7 +217,7 @@ const Cart = (props) => {
 			</Link>
 		);
 	}
-	let cards = <h1>....Add items to use the card</h1>;
+	let cards = <h1>....Add items to use the cart</h1>;
 	if (order.data) {
 		cards = (
 			<main>

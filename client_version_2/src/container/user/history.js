@@ -18,6 +18,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import CancelIcon from '@material-ui/icons/Cancel';
 import OrderHistory from '../../components/user/Card';
+
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		height: 500,

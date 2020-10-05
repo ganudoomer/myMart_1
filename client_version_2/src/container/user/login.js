@@ -13,6 +13,7 @@ import { Redirect, Link } from 'react-router-dom';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import OTP from '../../components/user/otp';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Recaptcha from 'react-recaptcha';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -48,7 +49,10 @@ const Dealer = (props) => {
 		e.preventDefault();
 		props.onSubmitForm(state.phone, state.password);
 	};
-
+	const [ captcha, setCap ] = useState(false);
+	const captchaVerify = () => {
+		setCap(true);
+	};
 	return (
 		<Container component="main" maxWidth="xs">
 			{props.token ? <Redirect to="/" /> : null}
@@ -115,9 +119,15 @@ const Dealer = (props) => {
 				{props.verifyOtpLoading ? <CircularProgress /> : null}
 				{otp ? (
 					<React.Fragment>
-						<Button onClick={() => props.onOTPsubmit(state.phone)} variant="contained" type="submit">
-							Send OTP
-						</Button>
+						<br />
+						<Recaptcha verifyCallback={captchaVerify} sitekey="6LdO9NMZAAAAAFlviOTgQnWottGfzmTtf7D-eQ-t" />
+						<br />
+
+						{captcha ? (
+							<Button onClick={() => props.onOTPsubmit(state.phone)} variant="contained" type="submit">
+								Send OTP
+							</Button>
+						) : null}
 						<Button onClick={() => setOtp(false)}>Go back</Button>
 					</React.Fragment>
 				) : null}

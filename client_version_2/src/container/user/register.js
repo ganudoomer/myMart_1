@@ -14,6 +14,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Otp from '../../components/user/otp';
 import Success from '../../components/user/success';
+import Recaptcha from 'react-recaptcha';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -63,6 +64,10 @@ const Dealer = (props) => {
 	};
 	const onSucces = () => {
 		props.history.push('/login');
+	};
+	const [ captcha, setCap ] = useState(false);
+	const captchaVerify = () => {
+		setCap(true);
 	};
 
 	return (
@@ -127,11 +132,17 @@ const Dealer = (props) => {
 						type="password"
 						label="password  for your account"
 					/>
+					<Recaptcha verifyCallback={captchaVerify} sitekey="6LdO9NMZAAAAAFlviOTgQnWottGfzmTtf7D-eQ-t" />
+
 					{props.loadingOtp ? <CircularProgress color="secondary" /> : null}
 					{!props.loadingOtp ? (
-						<Button type="submit" variant="contained" color="primary" className={classes.submit}>
-							Send OTP
-						</Button>
+						<React.Fragment>
+							{captcha ? (
+								<Button type="submit" variant="contained" color="primary" className={classes.submit}>
+									Send OTP
+								</Button>
+							) : null}
+						</React.Fragment>
 					) : null}
 					{props.loadingVerify ? <CircularProgress color="secondary" /> : null}
 				</form>

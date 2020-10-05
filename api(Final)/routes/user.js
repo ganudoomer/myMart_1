@@ -420,26 +420,14 @@ router
 	})
 	.post('/live', async (req, res) => {
 		const database = req.app.locals.db;
-		// const order = req.body.order;
-		// order.map(async (item) => {
-		// 	try {
-		// 		const collection = database.collection('dealer');
-		// 		const query = { 'products._id': ObjectID(item._id) };
-		// 		const result = await collection.find(query);
-		// 		const response = [];
-		// 		await result.forEach((doc) => response.push(doc));
-		// 		console.log(response[0].products);
-		// 	} catch (err) {
-		// 		console.log(err);
-		// 	}
-		// 	console.log(item._id + ' ' + item.count);
-		// });
 
 		try {
 			const collection = database.collection('dealer');
-			const result = await collection.find({ username: req.body.dealer }).project({ live: 1 });
+			const result = await collection.find({ dealer_name: req.body.dealer }).project({ live: 1 });
 			const response = [];
 			await result.forEach((doc) => response.push(doc));
+			console.log(req.body.dealer);
+			console.log(response);
 			await res.json(response);
 		} catch (err) {
 			console.log(err);

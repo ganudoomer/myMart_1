@@ -12,6 +12,7 @@ import confirmed from '../../images/tick.svg';
 import pending from '../../images/pending.png';
 import ontheway from '../../images/ontheway.png';
 import packing from '../../images/packing.png';
+import Model from './ItemModel';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -75,28 +76,30 @@ export default function SimpleCard() {
 					}
 					if (data.status !== 'Delivered' && data.status !== 'Rejected') {
 						return (
-							<Card raised className={classes.root}>
-								<CardContent>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.status}
-										<Avatar className={classes.large}>
-											<img width="100%" height="100%" src={logo} />
-										</Avatar>
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{date.toLocaleDateString()}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.address}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.price + ' Paid via ' + data.payment.mode}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.order.length + ' Items from  ' + data.order[0].dealer_name}
-									</Typography>
-								</CardContent>
-							</Card>
+							<Model data={data.order}>
+								<Card raised className={classes.root}>
+									<CardContent>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.status}
+											<Avatar className={classes.large}>
+												<img width="100%" height="100%" src={logo} />
+											</Avatar>
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{date.toLocaleDateString()}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.address}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.price + ' Paid via ' + data.payment.mode}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.order.length + ' Items from  ' + data.order[0].dealer_name}
+										</Typography>
+									</CardContent>
+								</Card>
+							</Model>
 						);
 					} else {
 						return null;

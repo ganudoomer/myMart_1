@@ -6,6 +6,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
+import Model from './ItemModel';
+
 const useStyles = makeStyles({
 	root: {
 		minWidth: 500,
@@ -49,23 +51,25 @@ export default function SimpleCard() {
 					if (data.status === 'Delivered' || data.status === 'Rejected') {
 						return (
 							<Card raised className={classes.root}>
-								<CardContent>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.status}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{date.toLocaleDateString()}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.address}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.price + ' Paid via ' + data.payment.mode}
-									</Typography>
-									<Typography className={classes.title} color="textSecondary" gutterBottom>
-										{data.order.length + ' Items from  ' + data.order[0].dealer_name}
-									</Typography>
-								</CardContent>
+								<Model data={data.order}>
+									<CardContent>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.status}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{date.toLocaleDateString()}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.address}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{'₹' + data.price + ' Paid via ' + data.payment.mode}
+										</Typography>
+										<Typography className={classes.title} color="textSecondary" gutterBottom>
+											{data.order.length + ' Items from  ' + data.order[0].dealer_name}
+										</Typography>
+									</CardContent>
+								</Model>
 							</Card>
 						);
 					} else {
