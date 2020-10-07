@@ -60,7 +60,6 @@ export default function AlertDialog(props) {
 										<TableCell align="right">Count</TableCell>
 										<TableCell align="right">Price </TableCell>
 										<TableCell align="right">Descrp.</TableCell>
-										<TableCell align="left">ID</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -74,10 +73,9 @@ export default function AlertDialog(props) {
 											<TableCell align="right">{item.name}</TableCell>
 											<TableCell align="right">{item.count}</TableCell>
 											<TableCell align="right">{item.price + ' per ' + item.unit}</TableCell>
-											<TableCell component="th" scope="row">
+											<TableCell component="th" align="right" scope="row">
 												{item.description}
 											</TableCell>
-											<TableCell align="right">{item._id}</TableCell>
 										</TableRow>
 									))}
 								</TableBody>

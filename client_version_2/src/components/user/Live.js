@@ -41,6 +41,7 @@ export default function SimpleCard() {
 	const [ state, setstate ] = useState({ data: null });
 	useEffect(() => {
 		axios.post('http://localhost:5050/user/orders', { token: localStorage.getItem('uToken') }).then((res) => {
+			console.log(res.data);
 			setstate({ data: res.data });
 		});
 	}, []);

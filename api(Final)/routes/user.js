@@ -10,7 +10,9 @@ router.get('/items/:store', async (req, res) => {
 	try {
 		const database = req.app.locals.db;
 		const collection = database.collection('dealer');
-		const reslut = await collection.find({ dealer_name: store }).project({ products: 1, _id: 0, live: 1 });
+		const reslut = await collection
+			.find({ dealer_name: store })
+			.project({ products: 1, _id: 0, live: 1, image: 1 });
 		const response = [];
 		await reslut.forEach((doc) => response.push(doc));
 		await res.json(response);
@@ -30,6 +32,30 @@ router.get('/store/', async (req, res) => {
 	} catch (err) {
 		console.log(err);
 	}
+});
+
+router.post('/userinfo', (req, res) => {
+	const database = req.app.locals.db;
+	jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.json({ status: 'error', message: 'Error' });
+		} else {
+			try {
+				const collection = database.collection('users');
+				const result = await collection.find({ phone: decoded.phone }).project({ location: 1, _id: 0 });
+				const response = [];
+				await result.forEach((data) => {
+					console.log(data);
+					response.push(data);
+				});
+				console.log(response);
+				await res.send(response[0]);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+	});
 });
 
 router.post('/auth', (req, res) => {

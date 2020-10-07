@@ -28,6 +28,9 @@ import Shop from '../../Buy.svg';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '../../components/user/snackbar';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import Open from '../../images/open-sign.png';
+import Close from '../../images/closed.svg';
+import { Avatar } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -61,14 +64,23 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column'
 	},
 	cardMedia: {
+		cursor: 'pointer',
 		paddingTop: '56.25%' // 16:9
 	},
 	cardContent: {
+		cursor: 'pointer',
 		flexGrow: 1
 	},
 	footer: {
 		backgroundColor: theme.palette.background.paper,
 		padding: theme.spacing(6)
+	},
+
+	large: {
+		width: 100,
+		height: 100,
+		marginTop: 10,
+		margin: 'auto'
 	}
 }));
 
@@ -93,6 +105,8 @@ const Home = (props) => {
 		}
 		(function getData() {
 			axios.get('http://localhost:5050/user/store/').then((res) => {
+				console.log(res.data);
+
 				setState({
 					...state,
 					store: res.data
@@ -123,7 +137,8 @@ const Home = (props) => {
 				...state,
 				select: e.target.value,
 				data: res.data[0].products,
-				live: res.data[0].live
+				live: res.data[0].live,
+				image: res.data[0].image.thumbnail
 			});
 		});
 	};
@@ -227,20 +242,27 @@ const Home = (props) => {
 							>
 								{select}
 							</Select>
-						</FormControl>
-						<div style={{ margin: 'auto' }}>
-							{state.data ? state.live ? (
-								<Button variant="contained" color="primary">
-									Open
-								</Button>
-							) : (
-								<Button variant="contained">Closed</Button>
+							{state.image ? (
+								<Avatar className={classes.large}>
+									<img height="100%" width="100%" src={state.image} />
+								</Avatar>
 							) : null}
-						</div>
+						</FormControl>
 					</Container>
 				</div>
+				{/* End hero unit */}
+				<div style={{ float: 'right', marginRight: 80 }}>
+					{state.data ? state.live ? (
+						<Card raised>
+							<img height="80px" width="80px" src={Open} />
+						</Card>
+					) : (
+						<Card raised>
+							<img height="80px" width="80px" src={Close} />{' '}
+						</Card>
+					) : null}
+				</div>
 				<Container className={classes.cardGrid} maxWidth="md">
-					{/* End hero unit */}
 					<Grid container spacing={4}>
 						{state.data ? (
 							state.data.map((card) => (
@@ -267,18 +289,18 @@ const Home = (props) => {
 										<Divider className={classes.divider} light />
 										<CardActions>
 											<Model cart={() => onCartClick(card)} data={card} />
-											<Button
+											<Card
 												style={{
 													borderRadius: 30,
 													backgroundColor: '#2FEF92',
 													padding: '15px 15px',
-													fontSize: '10px',
+													fontSize: '11px',
 													marginLeft: 20
 												}}
 												variant="contained"
 											>
 												{card.cat}
-											</Button>
+											</Card>
 											{card.stock > 0 ? (
 												<Button
 													onClick={() => onCartClick(card)}

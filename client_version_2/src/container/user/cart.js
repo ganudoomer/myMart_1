@@ -44,9 +44,14 @@ const Cart = (props) => {
 	const [ price, setPrice ] = useState();
 	const [ count, setCount ] = useState();
 	const [ select, setSelect ] = useState();
-	const [ address, setAddress ] = useState();
+	const [ address, setAddress ] = useState({ data: null });
 	props.checkAuth();
 	useEffect(() => {
+		axios.post('http://localhost:5050/user/userinfo', { token: localStorage.getItem('uToken') }).then((res) => {
+			console.log(res.data);
+			setAddress({ data: res.data.location });
+		});
+
 		let cart = JSON.parse(localStorage.getItem('cart'));
 		setData({
 			data: cart
@@ -87,6 +92,7 @@ const Cart = (props) => {
 					const captureResponse = await axios.post(url, data);
 					console.log(captureResponse.data);
 					alert(`Your order has been placed `);
+					localStorage.removeItem('cart');
 					props.history.push('/');
 				} catch (err) {
 					console.log(err);
@@ -113,12 +119,13 @@ const Cart = (props) => {
 					const data = {
 						price: price,
 						order: localStorage.getItem('cart'),
-						address: address,
+						address: address.data,
 						token: localStorage.getItem('uToken')
 					};
 					axios.post('http://localhost:5050/user/ordercod', data).then((res) => {
 						console.log(res);
 						props.history.push('/');
+						localStorage.removeItem('cart');
 						alert(`Your order has been placed `);
 					});
 				}
@@ -297,8 +304,7 @@ const Cart = (props) => {
 																required
 																name="address"
 																className={classes.form}
-																label="Address"
-																value={address}
+																value={address.data}
 																onChange={(e) => setAddress(e.target.value)}
 															/>
 														</CardContent>
