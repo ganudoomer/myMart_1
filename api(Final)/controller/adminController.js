@@ -8,7 +8,7 @@ module.exports.login = (req, res) => {
 			{
 				data: 'admin'
 			},
-			process.env.SECRET,
+			process.env.ADMIN_SECRET,
 			{ expiresIn: 60 * 1600 }
 		);
 		res.json({ token });
@@ -18,7 +18,7 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.checkAuth = (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
+	jwt.verify(req.body.token, process.env.ADMIN_SECRET, (err, decoded) => {
 		if (err) {
 			res.sendStatus(401);
 		} else {

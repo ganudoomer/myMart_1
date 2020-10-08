@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { isAuth, isAuthHeader } = require('../middleware');
+const { isAuthAdmin, isAuthHeaderAdmin } = require('../middleware');
 const adminController = require('../controller/adminController');
 
 //==============Authorization and Authentication=====================//
@@ -12,21 +12,21 @@ router
 //======================Dealer=========================//
 router
 	//Get all the dealer
-	.post('/dealers', isAuth, adminController.getAllDealer)
+	.post('/dealers', isAuthAdmin, adminController.getAllDealer)
 	//Get a single dealer
-	.post('/dealers/:id', isAuth, adminController.getSingleDealer)
+	.post('/dealers/:id', isAuthAdmin, adminController.getSingleDealer)
 	//Create a new dealer
-	.post('/dealer', isAuth, adminController.createNewDealer)
+	.post('/dealer', isAuthAdmin, adminController.createNewDealer)
 	//Edit a vendor
-	.put('/dealers/:id', isAuth, adminController.editDealer)
+	.put('/dealers/:id', isAuthAdmin, adminController.editDealer)
 	// Delete a vendor
-	.delete('/dealers/:id', isAuthHeader, adminController.editDealer);
+	.delete('/dealers/:id', isAuthHeaderAdmin, adminController.editDealer);
 
 //=============================Unit=================================//
 router
 	//View Units
-	.post('/unit', isAuth, adminController.getUnit)
+	.post('/unit', isAuthAdmin, adminController.getUnit)
 	//Add unit
-	.post('/addunit', isAuth, adminController.addUnit);
+	.post('/addunit', isAuthAdmin, adminController.addUnit);
 
 module.exports = router;

@@ -1,9 +1,7 @@
 const jwt = require('jsonwebtoken');
 const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
-const sharp = require('sharp');
-const upload = require('../common/multer.config');
-const multer = require('multer');
+const { upload } = require('../common/multer.config');
 
 module.exports.loginDealer = async (req, res) => {
 	const password = req.body.password;
@@ -22,7 +20,7 @@ module.exports.loginDealer = async (req, res) => {
 							id: reslut._id,
 							dealer: reslut.dealer_name
 						},
-						process.env.SECRET,
+						process.env.DEALER_SECRET,
 						{ expiresIn: 60 * 1600 }
 					);
 					res.json({ token });
@@ -39,7 +37,7 @@ module.exports.loginDealer = async (req, res) => {
 };
 
 module.exports.dealerAuth = (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -51,7 +49,7 @@ module.exports.dealerAuth = (req, res) => {
 };
 
 module.exports.getAllProducts = (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -85,7 +83,7 @@ module.exports.createProduct = async (req, res) => {
 		cat: req.body.cat,
 		stock: parseInt(req.body.stock)
 	};
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -141,7 +139,7 @@ module.exports.deleteProduct = async (req, res) => {
 	const bearerHeader = req.headers['authorization'];
 	const bearer = bearerHeader.split(' ');
 	const bearerToken = bearer[1];
-	jwt.verify(bearerToken, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(bearerToken, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -167,7 +165,7 @@ module.exports.deleteProduct = async (req, res) => {
 
 module.exports.getSingleDealer = (req, res) => {
 	const id = req.params.id;
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -191,7 +189,7 @@ module.exports.getSingleDealer = (req, res) => {
 };
 
 module.exports.getSettings = (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -213,7 +211,7 @@ module.exports.getSettings = (req, res) => {
 };
 
 module.exports.changeSetting = async (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -254,40 +252,11 @@ module.exports.getUnits = async (req, res) => {
 };
 
 module.exports.uploadImage = (req, res) => {
-	const url = req.protocol + '://' + req.get('host') + '/images/';
-	upload(req, res, async function(err) {
-		if (!req.file) {
-			return { status: 'failed', message: 'No image to upload' };
-		}
-		if (err instanceof multer.MulterError) {
-			return res.status(500).json(err);
-		} else if (err) {
-			return res.status(500).json(err);
-		}
-
-		try {
-			const bismi = {
-				imageName: url + req.file.filename,
-				thumbnail: url + 'thumbnails/' + 'thumbnails-' + req.file.filename
-			};
-			sharp(req.file.path)
-				.resize(416, 234)
-				.toFile('public/images/thumbnails/' + 'thumbnails-' + req.file.filename, (err, resizeImage) => {
-					if (err) {
-						console.log(err);
-					} else {
-						console.log(resizeImage);
-						return res.json(bismi);
-					}
-				});
-		} catch (error) {
-			console.error(error);
-		}
-	});
+	upload(req, res);
 };
 
 module.exports.getOrder = (req, res) => {
-	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);

@@ -1,10 +1,5 @@
 const router = require('express').Router();
-const jwt = require('jsonwebtoken');
-const ObjectID = require('mongodb').ObjectID;
-const { isAuth, isAuthHeader } = require('../middleware');
-const bcrypt = require('bcrypt');
-const multer = require('multer');
-const sharp = require('sharp');
+const { isAuthDealer, isAuthHeaderDealer } = require('../middleware');
 const dealerController = require('../controller/dealerController');
 
 //====================Login and Auth=====================================//
@@ -16,36 +11,36 @@ router.post('/auth', dealerController.dealerAuth);
 //=================Products================================//
 router
 	//Get all the products
-	.post('/products', isAuth, dealerController.getAllProducts)
+	.post('/products', isAuthDealer, dealerController.getAllProducts)
 	//Create a new product
-	.post('/product', isAuth, dealerController.createProduct)
+	.post('/product', isAuthDealer, dealerController.createProduct)
 	//Edit a product
-	.put('/product/:id', isAuth, dealerController.editProduct)
+	.put('/product/:id', isAuthDealer, dealerController.editProduct)
 	//Get single product
-	.post('/productsingle/:id', isAuth, dealerController.getSingleDealer)
+	.post('/productsingle/:id', isAuthDealer, dealerController.getSingleDealer)
 	// Delete a product
-	.delete('/product/:id', isAuthHeader, dealerController.deleteProduct);
+	.delete('/product/:id', isAuthHeaderDealer, dealerController.deleteProduct);
 
 //========================Setting==================================//
 router
-	.post('/settings', isAuth, dealerController.getSettings)
+	.post('/settings', isAuthDealer, dealerController.getSettings)
 	//Edit settings
-	.put('/settings', isAuth, dealerController.changeSetting);
+	.put('/settings', isAuthDealer, dealerController.changeSetting);
 
 //====================Units  and Uploads ===========================//
 router
 	//Get the units
-	.post('/unit', isAuth, dealerController.getUnits)
+	.post('/unit', isAuthDealer, dealerController.getUnits)
 	//COMMON ROUTE FOR DEALER AND ADMIN
 	.post('/upload', dealerController.uploadImage);
 
 //===================Order===========================================//
 router
 	//Get all the orders
-	.post('/orders', isAuth, dealerController.getOrder)
+	.post('/orders', isAuthDealer, dealerController.getOrder)
 	//Edit the status of the order
-	.put('/orders', isAuth, dealerController.editOrderStatus)
-	//
-	.put('/item', isAuth, dealerController.editItemStatus);
-
+	.put('/orders', isAuthDealer, dealerController.editOrderStatus)
+	//Edit item status
+	.put('/item', isAuthDealer, dealerController.editItemStatus);
+//===================================================================//
 module.exports = router;
