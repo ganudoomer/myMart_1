@@ -56,6 +56,7 @@ export default function AlertDialog(props) {
 										<TableRow>
 											<TableCell align="left">Image</TableCell>
 											<TableCell align="left">Item Name </TableCell>
+											<TableCell align="left">Status </TableCell>
 											<TableCell align="left">Count</TableCell>
 											<TableCell align="left">Price </TableCell>
 										</TableRow>
@@ -69,6 +70,9 @@ export default function AlertDialog(props) {
 													</Avatar>
 												</TableCell>
 												<TableCell align="left">{item.name}</TableCell>
+												<TableCell align="left">
+													{item.reject ? 'Rejected' : 'Accepted'}
+												</TableCell>
 												<TableCell align="left">{item.count}</TableCell>
 												<TableCell align="left">{item.price + '₹ per ' + item.unit}</TableCell>
 											</TableRow>

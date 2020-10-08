@@ -16,6 +16,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import axios from 'axios';
 const useStyles = makeStyles({
 	table: {
 		minWidth: 650
@@ -32,6 +33,21 @@ export default function AlertDialog(props) {
 
 	const handleClickOpen = () => {
 		setOpen(true);
+	};
+
+	const rejectHandler = (itemid) => {
+		const data = {
+			token: localStorage.getItem('dToken'),
+			orderId: props.orderId,
+			id: itemid
+		};
+		axios.put('http://localhost:5050/dealer/item', data).then((res) => {
+			alert('The Item has been rejected ');
+			handleClose();
+			props.getData();
+		});
+
+		console.log(itemid, props.orderId);
 	};
 
 	const handleClose = () => {
@@ -57,9 +73,9 @@ export default function AlertDialog(props) {
 									<TableRow>
 										<TableCell align="left">Image</TableCell>
 										<TableCell>Item Name </TableCell>
-										<TableCell align="right">Count</TableCell>
-										<TableCell align="right">Price </TableCell>
-										<TableCell align="right">Descrp.</TableCell>
+										<TableCell align="left">Count</TableCell>
+										<TableCell align="left">Price </TableCell>
+										<TableCell align="lef">Status</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -70,11 +86,21 @@ export default function AlertDialog(props) {
 													<img width="100%" height="100%" src={item.image.thumbnail} />
 												</Avatar>
 											</TableCell>
-											<TableCell align="right">{item.name}</TableCell>
-											<TableCell align="right">{item.count}</TableCell>
-											<TableCell align="right">{item.price + ' per ' + item.unit}</TableCell>
-											<TableCell component="th" align="right" scope="row">
-												{item.description}
+											<TableCell align="left">{item.name}</TableCell>
+											<TableCell align="left">{item.count}</TableCell>
+											<TableCell align="Left">{item.price + ' per ' + item.unit}</TableCell>
+											<TableCell component="th" align="left" scope="row">
+												{item.reject ? (
+													'Rejected'
+												) : (
+													<Button
+														onClick={() => rejectHandler(item._id)}
+														size="small"
+														variant="contained"
+													>
+														Reject
+													</Button>
+												)}
 											</TableCell>
 										</TableRow>
 									))}

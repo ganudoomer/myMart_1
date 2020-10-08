@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
 							id: reslut._id,
 							dealer: reslut.dealer_name
 						},
-						'secret',
+						process.env.SECRET,
 						{ expiresIn: 60 * 1600 }
 					);
 					res.json({ token });
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
 
 //Check if the dealer is authenticated
 router.post('/auth', (req, res) => {
-	jwt.verify(req.body.token, 'secret', (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -65,7 +65,7 @@ router.post('/auth', (req, res) => {
 //Get all the products
 router
 	.post('/products', isAuth, (req, res) => {
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -99,7 +99,7 @@ router
 			cat: req.body.cat,
 			stock: parseInt(req.body.stock)
 		};
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -153,7 +153,7 @@ router
 		const bearerHeader = req.headers['authorization'];
 		const bearer = bearerHeader.split(' ');
 		const bearerToken = bearer[1];
-		jwt.verify(bearerToken, 'secret', async (err, decoded) => {
+		jwt.verify(bearerToken, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -178,7 +178,7 @@ router
 	});
 router
 	.post('/settings', isAuth, (req, res) => {
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -199,7 +199,7 @@ router
 		});
 	})
 	.put('/settings', isAuth, async (req, res) => {
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -227,7 +227,7 @@ router
 	})
 	.post('/productsingle/:id', (req, res) => {
 		const id = req.params.id;
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -295,7 +295,7 @@ router
 		});
 	})
 	.post('/orders', (req, res) => {
-		jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+		jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 				res.sendStatus(401);
@@ -329,6 +329,25 @@ router
 			res.sendStatus(200);
 		} catch (err) {
 			console(err);
+		}
+	})
+	.put('/item', async (req, res) => {
+		const database = req.app.locals.db;
+		try {
+			const collection = database.collection('orders');
+			const updateDoc = { $set: { 'order.$.reject': true } };
+			const options = { upsert: false };
+			const result = await collection.updateOne(
+				{ _id: ObjectID(req.body.orderId), 'order._id': req.body.id },
+				updateDoc,
+				options
+			);
+			console.log(
+				`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+			);
+			res.send(200);
+		} catch (err) {
+			console.log(err);
 		}
 	});
 

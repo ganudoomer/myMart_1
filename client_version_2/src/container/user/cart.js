@@ -84,7 +84,7 @@ const Cart = (props) => {
 					const data = {
 						price: price,
 						order: localStorage.getItem('cart'),
-						address: address,
+						address: address.data,
 						token: localStorage.getItem('uToken')
 					};
 					const paymentId = response.razorpay_payment_id;

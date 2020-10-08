@@ -51,11 +51,15 @@ const useStyles = makeStyles({
 const Test = () => {
 	const [ state, setState ] = useState({ data: null });
 	useEffect(() => {
+		getData();
+	}, []);
+
+	const getData = () => {
 		axios.post('http://localhost:5050/dealer/orders', { token: localStorage.getItem('dToken') }).then((res) => {
 			console.log(res.data);
 			setState({ data: res.data });
 		});
-	}, []);
+	};
 
 	const handleChangeSubmit = (value, id) => {
 		const data = {
@@ -110,7 +114,7 @@ const Test = () => {
 					<StyledTableCell align="left">{total} Items</StyledTableCell>
 					<StyledTableCell align="right">
 						<IconButton aria-label="delete">
-							<Model data={item} />
+							<Model data={item} orderId={order._id} getData={getData} />
 						</IconButton>
 					</StyledTableCell>
 				</StyledTableRow>

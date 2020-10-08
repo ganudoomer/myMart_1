@@ -36,7 +36,7 @@ router.get('/store/', async (req, res) => {
 
 router.post('/userinfo', (req, res) => {
 	const database = req.app.locals.db;
-	jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.json({ status: 'error', message: 'Error' });
@@ -59,7 +59,7 @@ router.post('/userinfo', (req, res) => {
 });
 
 router.post('/auth', (req, res) => {
-	jwt.verify(req.body.token, 'secret', (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -85,7 +85,7 @@ router.post('/register', async (req, res) => {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/send',
 				headers: {
-					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+					Authorization: process.env.D7APIKEY
 				},
 				formData: {
 					mobile: phone,
@@ -107,7 +107,7 @@ router.post('/register', async (req, res) => {
 							otp_id: data.otp_id,
 							password: password
 						},
-						'secret',
+						process.env.SECRET,
 						{ expiresIn: '600s' }
 					);
 					console.log(token);
@@ -127,7 +127,7 @@ router.post('/register/auth', (req, res) => {
 	const database = req.app.locals.db;
 	const otp = req.body.otp;
 	console.log(otp);
-	jwt.verify(req.body.token, 'secret', (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.json({ status: 'error', message: 'Error' });
@@ -137,7 +137,7 @@ router.post('/register/auth', (req, res) => {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/verify',
 				headers: {
-					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+					Authorization: process.env.D7APIKEY
 				},
 				formData: {
 					otp_id: decoded.otp_id,
@@ -187,7 +187,7 @@ router.post('/login', async (req, res) => {
 							id: result._id,
 							phone: req.body.phone
 						},
-						'secret',
+						process.env.SECRET,
 						{ expiresIn: 60 * 60 }
 					);
 					res.json({ token });
@@ -205,8 +205,8 @@ router.post('/login', async (req, res) => {
 
 router.post('/order', (req, res) => {
 	const instance = new Razorpay({
-		key_id: 'rzp_test_pD7pyj5JpXOA5a',
-		key_secret: 'kxSNiaFxtvlBNBwXT7pBSp8f'
+		key_id: process.env.RAZORPAY_ID,
+		key_secret: process.env.RAZORPAY_SECRET
 	});
 	const price = req.body.price;
 	console.log(price);
@@ -233,13 +233,16 @@ router.post('/capture/:paymentId', (req, res) => {
 	const database = req.app.locals.db;
 	const price = req.body.price;
 	const order = JSON.parse(req.body.order);
+	for (let i = 0; i < order.length; i++) {
+		order[i].reject = false;
+	}
 	const address = req.body.address;
 	try {
 		return request(
 			{
 				method: 'POST',
-				url: `https://rzp_test_pD7pyj5JpXOA5a:kxSNiaFxtvlBNBwXT7pBSp8f@api.razorpay.com/v1/payments/${req.params
-					.paymentId}/capture`,
+				url: `https://${process.env.RAZORPAY_ID}:${process.env
+					.RAZORPAY_SECRET}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
 				form: {
 					amount: price * 100,
 					currency: 'INR'
@@ -252,7 +255,7 @@ router.post('/capture/:paymentId', (req, res) => {
 						message: 'Something Went Wrong'
 					});
 				}
-				jwt.verify(req.body.token, 'secret', (err, decoded) => {
+				jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 					if (err) {
 						console.log(err.message);
 						res.sendStatus(401);
@@ -309,9 +312,12 @@ router.post('/capture/:paymentId', (req, res) => {
 router.post('/ordercod', (req, res) => {
 	const database = req.app.locals.db;
 	const order = JSON.parse(req.body.order);
+	for (let i = 0; i < order.length; i++) {
+		order[i].reject = false;
+	}
 	const price = req.body.price;
 	const address = req.body.address;
-	jwt.verify(req.body.token, 'secret', (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
@@ -365,7 +371,7 @@ router.post('/login/otp', async (req, res) => {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/send',
 				headers: {
-					Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+					Authorization: process.env.D7APIKEY
 				},
 				formData: {
 					mobile: phone,
@@ -386,7 +392,7 @@ router.post('/login/otp', async (req, res) => {
 							name: reslut.name,
 							id: reslut._id
 						},
-						'secret',
+						process.env.SECRET,
 						{ expiresIn: '600s' }
 					);
 					console.log(token);
@@ -407,7 +413,7 @@ router
 	.post('/login/verify', (req, res) => {
 		const token = req.body.token;
 		const otp = req.body.otp;
-		jwt.verify(token, 'secret', (err, decoded) => {
+		jwt.verify(token, process.env.SECRET, (err, decoded) => {
 			if (err) {
 				console.log(err.message);
 			} else {
@@ -416,7 +422,7 @@ router
 					method: 'POST',
 					url: 'https://d7networks.com/api/verifier/verify',
 					headers: {
-						Authorization: 'Token  44eb16ea4957f54679397bd892e0ef88fba3ca05'
+						Authorization: process.env.D7APIKEY
 					},
 					formData: {
 						otp_id: decoded.otp_id,
@@ -433,7 +439,7 @@ router
 								id: decoded._id,
 								phone: decoded.phone
 							},
-							'secret',
+							process.env.SECRET,
 							{ expiresIn: 60 * 60 }
 						);
 						res.json({ token });
@@ -461,7 +467,7 @@ router
 	});
 
 router.post('/orders', (req, res) => {
-	jwt.verify(req.body.token, 'secret', async (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);

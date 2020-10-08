@@ -11,7 +11,7 @@ router.post('/login', (req, res) => {
 			{
 				data: 'admin'
 			},
-			'secret',
+			process.env.SECRET,
 			{ expiresIn: 60 * 1600 }
 		);
 		res.json({ token });
@@ -22,7 +22,7 @@ router.post('/login', (req, res) => {
 
 //Check if the admin is authenticated
 router.post('/auth', (req, res) => {
-	jwt.verify(req.body.token, 'secret', (err, decoded) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
