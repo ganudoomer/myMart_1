@@ -1,0 +1,346 @@
+const jwt = require('jsonwebtoken');
+const ObjectID = require('mongodb').ObjectID;
+const bcrypt = require('bcrypt');
+const sharp = require('sharp');
+const upload = require('../common/multer.config');
+const multer = require('multer');
+
+module.exports.loginDealer = async (req, res) => {
+	const password = req.body.password;
+	const username = req.body.username;
+	try {
+		console.log(req.body);
+		const database = req.app.locals.db;
+		const collection = database.collection('dealer');
+		const reslut = await collection.findOne({ username: username });
+		if (reslut) {
+			bcrypt.compare(password, reslut.password).then((ress) => {
+				if (ress) {
+					const token = jwt.sign(
+						{
+							username: reslut.username,
+							id: reslut._id,
+							dealer: reslut.dealer_name
+						},
+						process.env.SECRET,
+						{ expiresIn: 60 * 1600 }
+					);
+					res.json({ token });
+				} else {
+					res.sendStatus(401);
+				}
+			});
+		} else {
+			res.sendStatus(401);
+		}
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+module.exports.dealerAuth = (req, res) => {
+	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
+			res.sendStatus(200);
+		}
+	});
+};
+
+module.exports.getAllProducts = (req, res) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const reslut = await collection
+					.find({ username: decoded.username })
+					.project({ products: 1, image: 1, color: 1, dealer_name: 1 });
+				const response = [];
+				await reslut.forEach((doc) => response.push(doc));
+				await res.json(response);
+			} catch (err) {
+				console(err);
+			}
+			console.log(decoded);
+		}
+	});
+};
+
+module.exports.createProduct = async (req, res) => {
+	const product = {
+		name: req.body.name,
+		_id: ObjectID(),
+		title: req.body.title,
+		description: req.body.description,
+		image: { imageName: req.body.image, thumbnail: req.body.thumbnail },
+		price: req.body.price,
+		unit: req.body.unit,
+		cat: req.body.cat,
+		stock: parseInt(req.body.stock)
+	};
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded + '[POST PRODUCt]');
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const reslut = await collection.updateOne(
+					{ username: decoded.username },
+					{ $push: { products: product } }
+				);
+				console.dir(reslut.insertedCount);
+				res.sendStatus(200);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+	});
+};
+
+module.exports.editProduct = async (req, res) => {
+	const filter = { 'products._id': ObjectID(req.params.id) };
+	console.log(filter);
+	const updateDoc = {
+		$set: {
+			'products.$.name': req.body.name,
+			'products.$.title': req.body.title,
+			'products.$.description': req.body.description,
+			'products.$.image': req.body.image,
+			'products.$.price': req.body.price,
+			'products.$.unit': req.body.unit,
+			'products.$.cat': req.body.cat,
+			'products.$.stock': parseInt(req.body.stock)
+		}
+	};
+
+	const options = { upsert: false };
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('dealer');
+		const result = await collection.updateOne(filter, updateDoc, options);
+		console.log(
+			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+		);
+		res.sendStatus(200);
+	} catch (err) {
+		console(err);
+	}
+};
+
+module.exports.deleteProduct = async (req, res) => {
+	const bearerHeader = req.headers['authorization'];
+	const bearer = bearerHeader.split(' ');
+	const bearerToken = bearer[1];
+	jwt.verify(bearerToken, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const result = await collection.updateOne(
+					{ username: decoded.username },
+					{ $pull: { products: { _id: ObjectID(req.params.id) } } }
+				);
+				console.log(
+					`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+				);
+				res.sendStatus(200);
+			} catch (err) {
+				console(err);
+			}
+		}
+	});
+};
+
+module.exports.getSingleDealer = (req, res) => {
+	const id = req.params.id;
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const result = await collection.findOne({
+					username: decoded.username,
+					'products._id': ObjectID(id)
+				});
+				const arr = result.products;
+				const response = arr.filter((products) => products._id == id);
+				res.json(response);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+	});
+};
+
+module.exports.getSettings = (req, res) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const reslut = await collection.find({ username: decoded.username }).project({ live: 1 });
+				const response = [];
+				await reslut.forEach((doc) => response.push(doc));
+				await res.json(response);
+				console.log(reslut);
+			} catch (err) {
+				console.log(err);
+			}
+			console.log(decoded);
+		}
+	});
+};
+
+module.exports.changeSetting = async (req, res) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			let set = false;
+			console.log(decoded);
+			if (req.body.set === 'true') {
+				set = true;
+			}
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('dealer');
+				const updateDoc = { $set: { live: set } };
+				const options = { upsert: true };
+				const result = await collection.updateOne({ username: decoded.username }, updateDoc, options);
+				console.log(
+					`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+				);
+				res.sendStatus(200);
+			} catch (err) {
+				console.log(err);
+			}
+		}
+	});
+};
+
+module.exports.getUnits = async (req, res) => {
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('unit');
+		const reslut = await collection.find({}).project({ units: 1 });
+		const response = [];
+		await reslut.forEach((doc) => response.push(doc));
+		await res.json(response);
+	} catch (err) {
+		console(err);
+	}
+};
+
+module.exports.uploadImage = (req, res) => {
+	const url = req.protocol + '://' + req.get('host') + '/images/';
+	upload(req, res, async function(err) {
+		if (!req.file) {
+			return { status: 'failed', message: 'No image to upload' };
+		}
+		if (err instanceof multer.MulterError) {
+			return res.status(500).json(err);
+		} else if (err) {
+			return res.status(500).json(err);
+		}
+
+		try {
+			const bismi = {
+				imageName: url + req.file.filename,
+				thumbnail: url + 'thumbnails/' + 'thumbnails-' + req.file.filename
+			};
+			sharp(req.file.path)
+				.resize(416, 234)
+				.toFile('public/images/thumbnails/' + 'thumbnails-' + req.file.filename, (err, resizeImage) => {
+					if (err) {
+						console.log(err);
+					} else {
+						console.log(resizeImage);
+						return res.json(bismi);
+					}
+				});
+		} catch (error) {
+			console.error(error);
+		}
+	});
+};
+
+module.exports.getOrder = (req, res) => {
+	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
+		if (err) {
+			console.log(err.message);
+			res.sendStatus(401);
+		} else {
+			console.log(decoded);
+			try {
+				const database = req.app.locals.db;
+				const collection = database.collection('orders');
+				const reslut = await collection.find({ 'order.dealer_name': decoded.dealer });
+				const response = [];
+				await reslut.forEach((doc) => response.push(doc));
+				await res.json(response);
+			} catch (err) {
+				console(err);
+			}
+		}
+	});
+};
+
+module.exports.editOrderStatus = async (req, res) => {
+	const status = req.body.status;
+	const id = req.body.id;
+	try {
+		const database = req.app.locals.db;
+		const collection = database.collection('orders');
+		const updateDoc = { $set: { status: status } };
+		const options = { upsert: false };
+		const result = await collection.updateOne({ _id: ObjectID(id) }, updateDoc, options);
+		console.log(
+			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+		);
+		res.sendStatus(200);
+	} catch (err) {
+		console(err);
+	}
+};
+
+module.exports.editItemStatus = async (req, res) => {
+	const database = req.app.locals.db;
+	try {
+		const collection = database.collection('orders');
+		const updateDoc = { $set: { 'order.$.reject': true } };
+		const options = { upsert: false };
+		const result = await collection.updateOne(
+			{ _id: ObjectID(req.body.orderId), 'order._id': req.body.id },
+			updateDoc,
+			options
+		);
+		console.log(
+			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
+		);
+		res.send(200);
+	} catch (err) {
+		console.log(err);
+	}
+};
