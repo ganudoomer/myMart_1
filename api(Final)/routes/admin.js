@@ -20,7 +20,7 @@ router
 	//Edit a vendor
 	.put('/dealers/:id', isAuthAdmin, adminController.editDealer)
 	// Delete a vendor
-	.delete('/dealers/:id', isAuthHeaderAdmin, adminController.editDealer);
+	.delete('/dealers/:id', isAuthHeaderAdmin, adminController.deleteDelaer);
 
 //=============================Unit=================================//
 router

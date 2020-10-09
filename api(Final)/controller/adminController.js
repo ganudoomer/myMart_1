@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
-const bcrpy = require('bcrypt');
+const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectID;
+const Admin = require('../mongodb/Admin');
 
 module.exports.login = (req, res) => {
 	if (req.body.username === 'admin' && req.body.password === 'admin') {
@@ -28,29 +29,24 @@ module.exports.checkAuth = (req, res) => {
 };
 
 module.exports.getAllDealer = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const reslut = await collection.find();
-		const response = [];
-		await reslut.forEach((doc) => response.push(doc));
-		await res.json(response);
-	} catch (err) {
-		next(err);
-	}
+	Admin.getAllDealer()
+		.then((dealer) => {
+			return res.json(dealer);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.getSingleDealer = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		console.log(req.params.id);
-		const collection = database.collection('dealer');
-		const reslut = await collection.findOne({ _id: ObjectID(req.params.id) });
-		await res.json(reslut);
-	} catch (err) {
-		res.sendStatus(200);
-		console.log(err);
-	}
+	Admin.getSingleDealer(req.params.id)
+		.then((dealer) => {
+			return res.json(dealer);
+		})
+		.catch((err) => {
+			res.sendStatus(200);
+			console.log(err);
+		});
 };
 
 module.exports.createNewDealer = async (req, res) => {
@@ -68,20 +64,17 @@ module.exports.createNewDealer = async (req, res) => {
 		color: req.body.color,
 		image: { imageName: req.body.image, thumbnail: req.body.thumbnail }
 	};
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const reslut = await collection.insertOne(dealer);
-		console.dir(reslut.insertedCount);
-		res.sendStatus(200);
-	} catch (err) {
-		next(err);
-	}
+	Admin.addNewDealer(dealer)
+		.then(() => {
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.editDealer = async (req, res) => {
 	const filter = { _id: ObjectID(req.params.id) };
-	console.log(filter);
 	const color = req.body.color;
 	const image = req.body.image;
 	let updateDoc = {
@@ -113,57 +106,43 @@ module.exports.editDealer = async (req, res) => {
 		};
 	}
 	const options = { upsert: false };
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const result = await collection.updateOne(filter, updateDoc, options);
-		console.log(
-			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-		);
-		res.sendStatus(200);
-	} catch (err) {
-		next(err);
-	}
+	Admin.editDealer(filter, updateDoc, options)
+		.then(() => {
+			return res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.deleteDelaer = async (req, res) => {
+	console.log('delete');
 	const query = { _id: ObjectID(req.params.id) };
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const result = await collection.deleteOne(query);
-		if (result.deletedCount === 1) {
-			console.dir('Successfully deleted one document.');
-		} else {
-			console.log('No documents matched the query. Deleted 0 documents.');
-		}
-		res.sendStatus(200);
-	} catch (err) {
-		next(err);
-	}
+	Admin.deleteDealer(query)
+		.then(() => {
+			return res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.getUnit = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('unit');
-		const reslut = await collection.find({}).project({ units: 1 });
-		const response = [];
-		await reslut.forEach((doc) => response.push(doc));
-		await res.json(response);
-	} catch (err) {
-		console(err);
-	}
+	Admin.getUnit()
+		.then((units) => {
+			res.json(units);
+		})
+		.catch((err) => {
+			console(err);
+		});
 };
 
 module.exports.addUnit = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('unit');
-		const reslut = await collection.updateOne({}, { $push: { units: req.body.unit } });
-		console.dir(reslut.insertedCount);
-		res.sendStatus(200);
-	} catch (err) {
-		console.log(err);
-	}
+	Admin.addUnit(req.body.unit)
+		.then(() => {
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };

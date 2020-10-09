@@ -1,3 +1,6 @@
 module.exports = {
-	database: 'myMart'
+	database: 'myMart',
+	dealerCollection: 'dealer',
+	unitCollection: 'unit',
+	orderCollection: 'orders'
 };

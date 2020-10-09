@@ -2,38 +2,33 @@ const jwt = require('jsonwebtoken');
 const ObjectID = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
 const { upload } = require('../common/multer.config');
+const Dealer = require('../mongodb/Dealer');
 
 module.exports.loginDealer = async (req, res) => {
 	const password = req.body.password;
 	const username = req.body.username;
-	try {
-		console.log(req.body);
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const reslut = await collection.findOne({ username: username });
-		if (reslut) {
-			bcrypt.compare(password, reslut.password).then((ress) => {
+	Dealer.find(username).then((result) => {
+		if (result) {
+			bcrypt.compare(password, result.password).then((ress) => {
 				if (ress) {
 					const token = jwt.sign(
 						{
-							username: reslut.username,
-							id: reslut._id,
-							dealer: reslut.dealer_name
+							username: result.username,
+							id: result._id,
+							dealer: result.dealer_name
 						},
 						process.env.DEALER_SECRET,
 						{ expiresIn: 60 * 1600 }
 					);
-					res.json({ token });
+					return res.json({ token });
 				} else {
-					res.sendStatus(401);
+					return res.sendStatus(401);
 				}
 			});
 		} else {
-			res.sendStatus(401);
+			return res.sendStatus(401);
 		}
-	} catch (err) {
-		console.log(err);
-	}
+	});
 };
 
 module.exports.dealerAuth = (req, res) => {
