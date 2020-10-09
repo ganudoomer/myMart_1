@@ -49,19 +49,13 @@ module.exports.getAllProducts = (req, res) => {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const reslut = await collection
-					.find({ username: decoded.username })
-					.project({ products: 1, image: 1, color: 1, dealer_name: 1 });
-				const response = [];
-				await reslut.forEach((doc) => response.push(doc));
-				await res.json(response);
-			} catch (err) {
-				console(err);
-			}
-			console.log(decoded);
+			Dealer.getAllProducts(decoded.username)
+				.then((result) => {
+					res.json(result);
+				})
+				.catch((err) => {
+					console(err);
+				});
 		}
 	});
 };
@@ -84,18 +78,13 @@ module.exports.createProduct = async (req, res) => {
 			res.sendStatus(401);
 		} else {
 			console.log(decoded + '[POST PRODUCt]');
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const reslut = await collection.updateOne(
-					{ username: decoded.username },
-					{ $push: { products: product } }
-				);
-				console.dir(reslut.insertedCount);
-				res.sendStatus(200);
-			} catch (err) {
-				console.log(err);
-			}
+			Dealer.addProduct(decoded.username, product)
+				.then(() => {
+					res.sendStatus(200);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		}
 	});
 };
@@ -115,19 +104,14 @@ module.exports.editProduct = async (req, res) => {
 			'products.$.stock': parseInt(req.body.stock)
 		}
 	};
-
 	const options = { upsert: false };
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const result = await collection.updateOne(filter, updateDoc, options);
-		console.log(
-			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-		);
-		res.sendStatus(200);
-	} catch (err) {
-		console(err);
-	}
+	Dealer.editProduct(filter, updateDoc, options)
+		.then(() => {
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console(err);
+		});
 };
 
 module.exports.deleteProduct = async (req, res) => {
@@ -140,20 +124,13 @@ module.exports.deleteProduct = async (req, res) => {
 			res.sendStatus(401);
 		} else {
 			console.log(decoded);
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const result = await collection.updateOne(
-					{ username: decoded.username },
-					{ $pull: { products: { _id: ObjectID(req.params.id) } } }
-				);
-				console.log(
-					`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-				);
-				res.sendStatus(200);
-			} catch (err) {
-				console(err);
-			}
+			Dealer.deleteProduct(decoded.username, req.params.id)
+				.then(() => {
+					res.sendStatus(200);
+				})
+				.catch((err) => {
+					console(err);
+				});
 		}
 	});
 };
@@ -165,20 +142,13 @@ module.exports.getSingleDealer = (req, res) => {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
-			console.log(decoded);
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const result = await collection.findOne({
-					username: decoded.username,
-					'products._id': ObjectID(id)
+			Dealer.getSingleProduct(decoded.username, id)
+				.then((result) => {
+					res.json(result);
+				})
+				.catch((err) => {
+					console.log(err);
 				});
-				const arr = result.products;
-				const response = arr.filter((products) => products._id == id);
-				res.json(response);
-			} catch (err) {
-				console.log(err);
-			}
 		}
 	});
 };
@@ -189,61 +159,48 @@ module.exports.getSettings = (req, res) => {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const reslut = await collection.find({ username: decoded.username }).project({ live: 1 });
-				const response = [];
-				await reslut.forEach((doc) => response.push(doc));
-				await res.json(response);
-				console.log(reslut);
-			} catch (err) {
-				console.log(err);
-			}
-			console.log(decoded);
+			Dealer.getSettings(decoded.username)
+				.then((result) => {
+					res.json(result);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		}
 	});
 };
 
-module.exports.changeSetting = async (req, res) => {
+module.exports.changeSetting = (req, res) => {
 	jwt.verify(req.body.token, process.env.DEALER_SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
 			let set = false;
-			console.log(decoded);
 			if (req.body.set === 'true') {
 				set = true;
 			}
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('dealer');
-				const updateDoc = { $set: { live: set } };
-				const options = { upsert: true };
-				const result = await collection.updateOne({ username: decoded.username }, updateDoc, options);
-				console.log(
-					`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-				);
-				res.sendStatus(200);
-			} catch (err) {
-				console.log(err);
-			}
+			const updateDoc = { $set: { live: set } };
+			const options = { upsert: true };
+			Dealer.changeSettings(decoded.username, updateDoc, options)
+				.then(() => {
+					res.sendStatus(200);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		}
 	});
 };
 
-module.exports.getUnits = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('unit');
-		const reslut = await collection.find({}).project({ units: 1 });
-		const response = [];
-		await reslut.forEach((doc) => response.push(doc));
-		await res.json(response);
-	} catch (err) {
-		console(err);
-	}
+module.exports.getUnits = (req, res) => {
+	Dealer.getUnit()
+		.then(() => {
+			res.json(response);
+		})
+		.catch((err) => {
+			console(err);
+		});
 };
 
 module.exports.uploadImage = (req, res) => {
@@ -256,55 +213,39 @@ module.exports.getOrder = (req, res) => {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
-			console.log(decoded);
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('orders');
-				const reslut = await collection.find({ 'order.dealer_name': decoded.dealer });
-				const response = [];
-				await reslut.forEach((doc) => response.push(doc));
-				await res.json(response);
-			} catch (err) {
-				console(err);
-			}
+			Dealer.getOrder(decoded.dealer)
+				.then((result) => {
+					res.json(result);
+				})
+				.catch((err) => {
+					console(err);
+				});
 		}
 	});
 };
 
-module.exports.editOrderStatus = async (req, res) => {
+module.exports.editOrderStatus = (req, res) => {
 	const status = req.body.status;
 	const id = req.body.id;
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('orders');
-		const updateDoc = { $set: { status: status } };
-		const options = { upsert: false };
-		const result = await collection.updateOne({ _id: ObjectID(id) }, updateDoc, options);
-		console.log(
-			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-		);
-		res.sendStatus(200);
-	} catch (err) {
-		console(err);
-	}
+	const updateDoc = { $set: { status: status } };
+	const options = { upsert: false };
+	Dealer.editOrderStatus(id, updateDoc, options)
+		.then(() => {
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console(err);
+		});
 };
 
-module.exports.editItemStatus = async (req, res) => {
-	const database = req.app.locals.db;
-	try {
-		const collection = database.collection('orders');
-		const updateDoc = { $set: { 'order.$.reject': true } };
-		const options = { upsert: false };
-		const result = await collection.updateOne(
-			{ _id: ObjectID(req.body.orderId), 'order._id': req.body.id },
-			updateDoc,
-			options
-		);
-		console.log(
-			`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
-		);
-		res.send(200);
-	} catch (err) {
-		console.log(err);
-	}
+module.exports.editItemStatus = (req, res) => {
+	const updateDoc = { $set: { 'order.$.reject': true } };
+	const options = { upsert: false };
+	Dealer.editItemStatus(req.body.id, req.body.orderId, updateDoc, options)
+		.then(() => {
+			res.sendStatus(200);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
