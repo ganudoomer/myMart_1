@@ -12,10 +12,9 @@ module.exports.connect = function() {
 		client
 			.connect()
 			.then((client) => {
-				console.log('Mongodb has connected');
 				const db = client.db(monogoConfig.database);
-				resolve(db);
 				state.db = db;
+				resolve();
 			})
 			.catch((err) => {
 				reject(err);

@@ -19,8 +19,8 @@ app.use(express.static('public'));
 
 //Connecting to MongoClient and passing an instance to app.locals
 connect()
-	.then((database) => {
-		app.locals.db = database;
+	.then(() => {
+		console.log('Mongodb connected ');
 	})
 	.catch((err) => {
 		console.log(err);

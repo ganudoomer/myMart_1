@@ -3,56 +3,42 @@ const ObjectID = require('mongodb').ObjectID;
 const request = require('request');
 const bcrypt = require('bcrypt');
 const Razorpay = require('razorpay');
+const User = require('../mongodb/User');
 
 module.exports.getItems = async (req, res) => {
 	const store = req.params.store;
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const reslut = await collection
-			.find({ dealer_name: store })
-			.project({ products: 1, _id: 0, live: 1, image: 1 });
-		const response = [];
-		await reslut.forEach((doc) => response.push(doc));
-		await res.json(response);
-	} catch (err) {
-		console.log(err);
-	}
+	User.getItems(store)
+		.then((result) => {
+			res.json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.getStore = async (req, res) => {
-	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('dealer');
-		const reslut = await collection.find({}).project({ dealer_name: 1, _id: 0 });
-		const response = [];
-		await reslut.forEach((doc) => response.push(doc));
-		await res.json(response);
-	} catch (err) {
-		console.log(err);
-	}
+	User.getStore()
+		.then((result) => {
+			res.json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.getUserInfo = (req, res) => {
-	const database = req.app.locals.db;
 	jwt.verify(req.body.token, process.env.SECRET, async (err, decoded) => {
 		if (err) {
 			console.log(err.message);
 			res.json({ status: 'error', message: 'Error' });
 		} else {
-			try {
-				const collection = database.collection('users');
-				const result = await collection.find({ phone: decoded.phone }).project({ location: 1, _id: 0 });
-				const response = [];
-				await result.forEach((data) => {
-					console.log(data);
-					response.push(data);
+			User.getUserInfo(decoded.phone)
+				.then((result) => {
+					res.send(result);
+				})
+				.catch((err) => {
+					console.log(err);
 				});
-				console.log(response);
-				await res.send(response[0]);
-			} catch (err) {
-				console.log(err);
-			}
 		}
 	});
 };
@@ -71,11 +57,8 @@ module.exports.authUser = (req, res) => {
 
 module.exports.registerUser = async (req, res) => {
 	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('users');
-		const reslut = await collection.findOne({ phone: req.body.phone });
-		console.log(req.body);
-		if (!reslut) {
+		const result = await User.getUserInfo(req.body.phone);
+		if (!result) {
 			const name = req.body.name;
 			const location = req.body.location;
 			const phone = req.body.phone;
@@ -124,7 +107,6 @@ module.exports.registerUser = async (req, res) => {
 };
 
 module.exports.registerUserAuth = (req, res) => {
-	const database = req.app.locals.db;
 	const otp = req.body.otp;
 	console.log(otp);
 	jwt.verify(req.body.token, process.env.SECRET, (err, decoded) => {
@@ -156,15 +138,13 @@ module.exports.registerUserAuth = (req, res) => {
 						password: hash,
 						orders: []
 					};
-					try {
-						const collection = database.collection('users');
-						const reslut = await collection.insertOne(user);
-						console.dir(reslut.insertedCount);
-						res.sendStatus(200);
-					} catch (err) {
-						console.log(err);
-						res.sendStatus(501);
-					}
+					User.addtUser(user)
+						.then(() => {
+							res.sendStatus(200);
+						})
+						.catch((err) => {
+							res.sendStatus(501);
+						});
 				} else {
 					res.json({ status: 'error', message: JSON.parse(response.body).otp_code });
 				}
@@ -175,9 +155,7 @@ module.exports.registerUserAuth = (req, res) => {
 
 module.exports.login = async (req, res) => {
 	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('users');
-		const result = await collection.findOne({ phone: req.body.phone });
+		const result = await User.getUserInfoLogin(req.body.phone);
 		if (result) {
 			bcrypt.compare(req.body.password, result.password).then((ress) => {
 				if (ress) {
@@ -228,8 +206,6 @@ module.exports.orderOnline = (req, res) => {
 };
 
 module.exports.capturePayment = (req, res) => {
-	// db.dealer.update({ 'products._id': ObjectId('5f7839c8f8516a2a6fcc6fa2') }, { $inc: { 'products.$.stock': -20 } });
-
 	const database = req.app.locals.db;
 	const price = req.body.price;
 	const order = JSON.parse(req.body.order);
@@ -262,16 +238,12 @@ module.exports.capturePayment = (req, res) => {
 					} else {
 						order.map((item) => {
 							try {
-								const collection = database.collection('dealer');
 								const filter = { 'products._id': ObjectID(item._id) };
 								const updateDoc = { $inc: { 'products.$.stock': -parseInt(item.count) } };
-								const result = collection.update(filter, updateDoc);
-								console.log(result);
+								const result = User.updateStock(filter, updateDoc);
 							} catch (err) {
 								console.log(err);
 							}
-
-							console.log(item._id + ' ' + item.count);
 						});
 
 						const user = {
@@ -279,25 +251,17 @@ module.exports.capturePayment = (req, res) => {
 							name: decoded.name
 						};
 						try {
-							const collection = database.collection('orders');
-							const result = collection.insertOne({
-								order,
-								price,
-								address,
-								user,
-								createdOn: new Date(),
-								status: 'Pending',
-								payment: { mode: 'Online ', id: req.params.paymentId }
+							const result = User.addOrder(order, price, address, user, {
+								mode: 'Online ',
+								id: req.params.paymentId
 							});
-							console.dir(result.insertedCount);
 						} catch (err) {
 							console.log(err);
 						}
 					}
 				});
 				console.log('Status:', response.statusCode);
-				console.log('Headers:', JSON.stringify(response.headers));
-				console.log('Response:', body);
+
 				return res.status(200).json(body);
 			}
 		);
@@ -310,7 +274,6 @@ module.exports.capturePayment = (req, res) => {
 };
 
 module.exports.codPayment = (req, res) => {
-	const database = req.app.locals.db;
 	const order = JSON.parse(req.body.order);
 	for (let i = 0; i < order.length; i++) {
 		order[i].reject = false;
@@ -328,29 +291,15 @@ module.exports.codPayment = (req, res) => {
 			};
 			order.map((item) => {
 				try {
-					const collection = database.collection('dealer');
 					const filter = { 'products._id': ObjectID(item._id) };
 					const updateDoc = { $inc: { 'products.$.stock': -parseInt(item.count) } };
-					const result = collection.update(filter, updateDoc);
-					console.log(result);
+					const result = User.updateStock(filter, updateDoc);
 				} catch (err) {
 					console.log(err);
 				}
-
-				console.log(item._id + ' ' + item.count);
 			});
 			try {
-				const collection = database.collection('orders');
-				const result = collection.insertOne({
-					order,
-					price,
-					address,
-					user,
-					createdOn: new Date(),
-					status: 'Pending',
-					payment: { mode: 'COD' }
-				});
-				console.dir(result.insertedCount);
+				const result = User.addOrder(order, price, address, user, { mode: 'COD' });
 				res.json({ message: 'Order Placed' });
 			} catch (err) {
 				console.log(err);
@@ -362,11 +311,8 @@ module.exports.codPayment = (req, res) => {
 module.exports.otpLogin = async (req, res) => {
 	const phone = req.body.phone;
 	try {
-		const database = req.app.locals.db;
-		const collection = database.collection('users');
-		const reslut = await collection.findOne({ phone: phone });
-		console.log(reslut);
-		if (reslut) {
+		const result = await User.getUserInfoLogin(phone);
+		if (result) {
 			const options = {
 				method: 'POST',
 				url: 'https://d7networks.com/api/verifier/send',
@@ -389,8 +335,8 @@ module.exports.otpLogin = async (req, res) => {
 						{
 							phone: phone,
 							otp_id: data.otp_id,
-							name: reslut.name,
-							id: reslut._id
+							name: result.name,
+							id: result._id
 						},
 						process.env.SECRET,
 						{ expiresIn: '600s' }
@@ -451,19 +397,13 @@ module.exports.otpLoginVerify = (req, res) => {
 };
 
 module.exports.dealerLiveChecker = async (req, res) => {
-	const database = req.app.locals.db;
-
-	try {
-		const collection = database.collection('dealer');
-		const result = await collection.find({ dealer_name: req.body.dealer }).project({ live: 1 });
-		const response = [];
-		await result.forEach((doc) => response.push(doc));
-		console.log(req.body.dealer);
-		console.log(response);
-		await res.json(response);
-	} catch (err) {
-		console.log(err);
-	}
+	User.dealerLiveCheck(req.body.dealer)
+		.then((result) => {
+			res.json(result);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 module.exports.getAllOrder = (req, res) => {
@@ -472,17 +412,13 @@ module.exports.getAllOrder = (req, res) => {
 			console.log(err.message);
 			res.sendStatus(401);
 		} else {
-			console.log(decoded);
-			try {
-				const database = req.app.locals.db;
-				const collection = database.collection('orders');
-				const reslut = await collection.find({ 'user.phone': decoded.phone });
-				const response = [];
-				await reslut.forEach((doc) => response.push(doc));
-				await res.json(response);
-			} catch (err) {
-				console(err);
-			}
+			User.getAllOrder(decoded.phone)
+				.then((result) => {
+					res.json(result);
+				})
+				.catch((err) => {
+					console(err);
+				});
 		}
 	});
 };
