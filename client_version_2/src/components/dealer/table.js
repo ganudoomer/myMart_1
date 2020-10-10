@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Avatar from '@material-ui/core/Avatar';
-import axios from 'axios';
+import { deleteItem } from '../../fetchApi/dealerAxios';
 import Deletemodel from './model';
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -52,16 +52,10 @@ const Tables = (props) => {
 	const onDeleteHandler = (id) => {
 		const token = localStorage.getItem('dToken');
 		console.log(token);
-		axios
-			.delete(`http://localhost:5050/dealer/product/${id}`, {
-				headers: {
-					authorization: `Brearer ${token}`
-				}
-			})
-			.then((res) => {
-				props.del(id);
-				console.log(res);
-			});
+		deleteItem(id, token).then((res) => {
+			props.del(id);
+			console.log(res);
+		});
 	};
 
 	const classes = useStyles();

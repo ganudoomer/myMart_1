@@ -12,11 +12,11 @@ import {
 } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
 import clsx from 'clsx';
 import { SliderPicker } from 'react-color';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../common/createImage';
+import { upload, submitEdit, getSingleDealer } from '../../fetchApi/adminAxios';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -131,7 +131,7 @@ const Edit = (props) => {
 				const data = {
 					token: localStorage.getItem('aToken')
 				};
-				const result = await axios.post(`http://localhost:5050/admin/dealers/${params}`, data);
+				const result = await getSingleDealer(params, data);
 				setState({
 					dealer_name: result.data.dealer_name,
 					username: result.data.username,
@@ -177,8 +177,7 @@ const Edit = (props) => {
 			color: state.color,
 			image: state.image
 		};
-		axios
-			.put(`http://localhost:5050/admin/dealers/${props.match.params.id}`, data)
+		submitEdit(props.match.params.id, data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/admin/dash/');
@@ -223,7 +222,7 @@ const Edit = (props) => {
 		};
 		const data = new FormData();
 		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
+		upload(data, config).then((res) => {
 			console.log(res.data.imageName);
 			console.log(res.data.thumbnail);
 			setState({

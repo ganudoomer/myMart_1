@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Table from './table';
 import * as actionCreators from '../../store/actions/dealer/action';
-import axios from 'axios';
+import * as Axios from '../../fetchApi/dealerAxios';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -39,7 +39,7 @@ const Dashboard = (props) => {
 			const data = {
 				token: localStorage.getItem('dToken')
 			};
-			axios.post('http://localhost:5050/dealer/products', data).then((res) => {
+			Axios.getAllProducts(data).then((res) => {
 				setState({
 					data: res.data[0].products
 				});

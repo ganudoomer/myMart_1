@@ -106,6 +106,8 @@ export const getOrders = (token) => {
 	});
 };
 
+//==============LOGIN AND SIGN UP===========================//
+
 export const authUser = (data) => {
 	return new Promise((resolve, reject) => {
 		axios
@@ -148,6 +150,32 @@ export const otpVerify = (data) => {
 	return new Promise((resolve, reject) => {
 		axios
 			.post(`${uri}/login/verify`, data)
+			.then((result) => {
+				resolve(result);
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
+};
+
+export const register = (data) => {
+	return new Promise((resolve, reject) => {
+		axios
+			.post(`${uri}/register`, data)
+			.then((result) => {
+				resolve(result);
+			})
+			.catch((err) => {
+				reject(err);
+			});
+	});
+};
+
+export const registerVerify = (data) => {
+	return new Promise((resolve, reject) => {
+		axios
+			.post(`${uri}/register/auth`, data)
 			.then((result) => {
 				resolve(result);
 			})

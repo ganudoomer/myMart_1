@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
+import * as Axios from '../../fetchApi/dealerAxios';
 import clsx from 'clsx';
 import getCroppedImg from '../common/createImage';
 import Cropper from 'react-easy-crop';
@@ -164,7 +164,7 @@ const Add = (props) => {
 		};
 		const data = new FormData();
 		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
+		Axios.upload(data, config).then((res) => {
 			console.log(res.data.imageName);
 			console.log(res.data.thumbnail);
 
@@ -191,7 +191,7 @@ const Add = (props) => {
 		const data = {
 			token: localStorage.getItem('dToken')
 		};
-		axios.post('http://localhost:5050/dealer/unit', data).then((res) => {
+		Axios.getUnit(data).then((res) => {
 			console.log(res.data[0].units);
 			setUnit({
 				units: res.data[0].units
@@ -222,8 +222,7 @@ const Add = (props) => {
 			image: images.image,
 			thumbnail: images.thumbnail
 		};
-		axios
-			.post('http://localhost:5050/dealer/product', data)
+		Axios.submitProduct(data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/dealer/dash/');

@@ -13,7 +13,7 @@ import {
 	Select
 } from '@material-ui/core';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
+import * as Axios from '../../fetchApi/dealerAxios';
 import Model from './ItemModel';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -55,7 +55,7 @@ const Test = () => {
 	}, []);
 
 	const getData = () => {
-		axios.post('http://localhost:5050/dealer/orders', { token: localStorage.getItem('dToken') }).then((res) => {
+		Axios.getAllOrder({ token: localStorage.getItem('dToken') }).then((res) => {
 			console.log(res.data);
 			setState({ data: res.data });
 		});
@@ -67,7 +67,7 @@ const Test = () => {
 			status: value,
 			id: id
 		};
-		axios.put('http://localhost:5050/dealer/orders', data).then(() => {
+		Axios.changeOrderStatus(data).then(() => {
 			alert('Status Changed');
 		});
 

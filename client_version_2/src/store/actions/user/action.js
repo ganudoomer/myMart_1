@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-
 import * as Axios from '../../../fetchApi/userAxios';
 
 //Login

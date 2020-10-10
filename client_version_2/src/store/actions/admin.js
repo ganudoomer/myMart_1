@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from 'axios';
+import { login } from '../../fetchApi/adminAxios';
 
 export const authStart = () => {
 	return {
@@ -35,8 +35,7 @@ export const auth = (username, password) => {
 			username: username,
 			password: password
 		};
-		axios
-			.post('http://localhost:5050/admin/login', authData)
+		login(authData, 'login')
 			.then((response) => {
 				console.log(response);
 				localStorage.setItem('aToken', response.data.token);
@@ -55,8 +54,7 @@ export const check = () => {
 		const data = {
 			token: localStorage.getItem('aToken')
 		};
-		axios
-			.post('http://localhost:5050/admin/auth', data)
+		login(data, 'auth')
 			.then((response) => {
 				console.log(response);
 				const token = localStorage.getItem('aToken');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { Container, Select, Paper, Checkbox, makeStyles, Button } from '@material-ui/core';
-import axiois from 'axios';
+import { getSettings, editSettings } from '../../fetchApi/dealerAxios';
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		margin: 100,
@@ -24,7 +24,7 @@ const Settings = () => {
 		const data = {
 			token: localStorage.getItem('dToken')
 		};
-		axiois.post('http://localhost:5050/dealer/settings', data).then((res) => {
+		getSettings(data).then((res) => {
 			console.log(res);
 			setState({
 				live: res.data[0]['live']
@@ -33,11 +33,10 @@ const Settings = () => {
 	}, []);
 	const on = () => {
 		console.log(state.live);
-		axiois
-			.put('http://localhost:5050/dealer/settings', { set: state.live, token: localStorage.getItem('dToken') })
-			.then((res) => {
-				console.log(res);
-			});
+		editSettings({ set: state.live, token: localStorage.getItem('dToken') }).then((res) => {
+			alert('Status Changed');
+			console.log(res);
+		});
 	};
 	const classes = useStyles();
 	const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);

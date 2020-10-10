@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectID;
 const Admin = require('../mongodb/Admin');
-
+const { upload } = require('../common/multer.config');
 module.exports.login = (req, res) => {
 	if (req.body.username === 'admin' && req.body.password === 'admin') {
 		const token = jwt.sign(
@@ -145,4 +145,7 @@ module.exports.addUnit = async (req, res) => {
 		.catch((err) => {
 			console.log(err);
 		});
+};
+module.exports.uploadImage = (req, res) => {
+	upload(req, res);
 };

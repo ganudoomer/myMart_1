@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/dealer/action';
 import clsx from 'clsx';
@@ -32,6 +31,8 @@ import ProductForm from '../../components/dealer/ProductForm';
 import Settings from '../../components/admin/settings';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Orders from '../../components/dealer/Orders';
+import * as Axios from '../../fetchApi/dealerAxios';
+
 const drawerWidth = 240;
 
 const Dealer = (props) => {
@@ -40,7 +41,7 @@ const Dealer = (props) => {
 			const data = {
 				token: localStorage.getItem('dToken')
 			};
-			axios.post('http://localhost:5050/dealer/products', data).then((res) => {
+			Axios.getAllProducts(data).then((res) => {
 				console.log(res.data[0]);
 				const color = invertColor(res.data[0].color);
 				function invertColor(hex) {

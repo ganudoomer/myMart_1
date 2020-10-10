@@ -27,6 +27,8 @@ router
 	//View Units
 	.post('/unit', isAuthAdmin, adminController.getUnit)
 	//Add unit
-	.post('/addunit', isAuthAdmin, adminController.addUnit);
+	.post('/addunit', isAuthAdmin, adminController.addUnit)
+	//Upload
+	.post('/upload', adminController.uploadImage);
 
 module.exports = router;

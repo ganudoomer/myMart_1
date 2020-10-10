@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from 'axios';
+import * as Axios from '../../../fetchApi/userAxios';
 
 export const registerStart = () => {
 	return {
@@ -29,8 +29,7 @@ export const register = (phone, name, location, password) => {
 			location: location,
 			password: password
 		};
-		axios
-			.post('http://localhost:5050/user/register/', authData)
+		Axios.register(authData)
 			.then((response) => {
 				localStorage.setItem('OToken', response.data.temp);
 				if (response.data.status === 'error') {
@@ -56,8 +55,7 @@ export const UserOtpVerify = (otp) => {
 			token: localStorage.getItem('OToken'),
 			otp: otp
 		};
-		axios
-			.post('http://localhost:5050/user/register/auth', authData)
+		Axios.registerVerify(authData)
 			.then((response) => {
 				if (response.data.status === 'error') {
 					dispatch(failUserOtp(response.data.message));

@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import axios from 'axios';
+import { login } from '../../../fetchApi/dealerAxios';
 
 export const authStartDealer = () => {
 	return {
@@ -35,8 +35,8 @@ export const authDealer = (username, password) => {
 			username: username,
 			password: password
 		};
-		axios
-			.post('http://localhost:5050/dealer/login', authData)
+
+		login(authData, 'login')
 			.then((response) => {
 				console.log(response);
 				localStorage.setItem('dToken', response.data.token);
@@ -54,8 +54,7 @@ export const check = () => {
 		const data = {
 			token: localStorage.getItem('dToken')
 		};
-		axios
-			.post('http://localhost:5050/dealer/auth', data)
+		login(data, 'auth')
 			.then((response) => {
 				console.log(response);
 				const token = localStorage.getItem('dToken');

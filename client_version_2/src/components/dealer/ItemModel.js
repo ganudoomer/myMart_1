@@ -16,7 +16,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import axios from 'axios';
+import { rejectItem } from '../../fetchApi/dealerAxios';
 const useStyles = makeStyles({
 	table: {
 		minWidth: 650
@@ -41,7 +41,7 @@ export default function AlertDialog(props) {
 			orderId: props.orderId,
 			id: itemid
 		};
-		axios.put('http://localhost:5050/dealer/item', data).then((res) => {
+		rejectItem(data).then((res) => {
 			alert('The Item has been rejected ');
 			handleClose();
 			props.getData();

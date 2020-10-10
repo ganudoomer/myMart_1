@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
+import { submit, upload } from '../../fetchApi/adminAxios';
 import clsx from 'clsx';
 import { SliderPicker } from 'react-color';
 import Cropper from 'react-easy-crop';
@@ -153,8 +153,7 @@ const Add = (props) => {
 			image: images.image,
 			thumbnail: images.thumbnail
 		};
-		axios
-			.post('http://localhost:5050/admin/dealer', data)
+		submit(data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/admin/dash/');
@@ -199,7 +198,7 @@ const Add = (props) => {
 		};
 		const data = new FormData();
 		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
+		upload(data, config).then((res) => {
 			console.log(res.data.imageName);
 			console.log(res.data.thumbnail);
 

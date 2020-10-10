@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core/';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
+import * as Axios from '../../fetchApi/dealerAxios';
 import clsx from 'clsx';
 import getCroppedImg from '../common/createImage';
 import Cropper from 'react-easy-crop';
@@ -154,7 +154,7 @@ const Edit = (props) => {
 			}
 		};
 		data.append('file', file.select);
-		axios.post('http://localhost:5050/dealer/upload', data, config).then((res) => {
+		Axios.upload(data, config).then((res) => {
 			console.log(res.data.imageName);
 			console.log(res.data.thumbnail);
 			setState({
@@ -174,7 +174,7 @@ const Edit = (props) => {
 				const data = {
 					token: localStorage.getItem('dToken')
 				};
-				const res = await axios.post(`http://localhost:5050/dealer/productsingle/${params}`, data);
+				const res = await Axios.getSingelProduct(params, data);
 				const result = res.data[0];
 				console.log(result);
 				setState({
@@ -191,7 +191,7 @@ const Edit = (props) => {
 			const data = {
 				token: localStorage.getItem('dToken')
 			};
-			axios.post('http://localhost:5050/dealer/unit', data).then((res) => {
+			Axios.getUnit(data).then((res) => {
 				console.log(res.data[0].units);
 				setUnit({
 					units: res.data[0].units
@@ -235,8 +235,7 @@ const Edit = (props) => {
 			cat: state.cat,
 			stock: state.inventory
 		};
-		axios
-			.put(`http://localhost:5050/dealer/product/${props.match.params.id}`, data)
+		Axios.submitEdit(props.match.params.id, data)
 			.then((res) => {
 				console.log(res);
 				props.history.push('/dealer/dash/');

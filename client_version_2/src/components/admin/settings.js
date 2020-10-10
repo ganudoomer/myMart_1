@@ -12,7 +12,7 @@ import {
 	ListItem,
 	ListItemText
 } from '@material-ui/core';
-import axios from 'axios';
+import { getUnit } from '../../fetchApi/adminAxios';
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		margin: 100,
@@ -52,7 +52,7 @@ function Settings() {
 				token: localStorage.getItem('aToken'),
 				unit: uni.unit
 			};
-			axios.post('http://localhost:5050/admin/addunit', data).then((res) => {
+			getUnit(data, 'addunit').then((res) => {
 				setUni({ unit: '' });
 			});
 		}
@@ -61,7 +61,7 @@ function Settings() {
 		const data = {
 			token: localStorage.getItem('aToken')
 		};
-		axios.post('http://localhost:5050/admin/unit', data).then((res) => {
+		getUnit(data, 'unit').then((res) => {
 			console.log(res.data[0].units);
 			setUnit({
 				units: res.data[0].units

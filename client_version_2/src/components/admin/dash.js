@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/admin';
-import axios from 'axios';
+import { getDealer } from '../../fetchApi/adminAxios';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -102,7 +102,7 @@ const Dashboard = (props) => {
 			const data = {
 				token: localStorage.getItem('aToken')
 			};
-			const result = await axios.post('http://localhost:5050/admin/dealers', data);
+			const result = await getDealer(data);
 			setState({
 				data: result.data
 			});
