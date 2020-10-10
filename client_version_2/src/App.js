@@ -8,7 +8,6 @@ import Logout from './container/admin/logout';
 import LoginDealer from './container/dealer/login';
 import DashDealer from './container/dealer/dealer';
 import LogoutDealer from './container/dealer/logout';
-import Home from './container/user/home';
 import LoginUser from './container/user/login';
 import RegisterUser from './container/user/register';
 import LogoutUser from './container/user/logout';
@@ -18,10 +17,10 @@ import UserProtectedRoute from './components/hoc/UserAuth';
 import * as dealerAction from './store/actions/dealer/action';
 import * as adminAction from './store/actions/admin';
 import * as userAction from './store/actions/user/action';
-import Cart from './container/user/cart';
-import History from './container/user/history';
-import Live from './container/user/Live';
-import Test from './Test';
+import Cart from './container/user/cart/cart';
+import History from './container/user/history/history';
+import Live from './container/user/Live /Live';
+import Layout from './container/user/home/home';
 function App(props) {
 	const admin = props.checkAdmin;
 	const dealer = props.checkDealer;
@@ -35,14 +34,13 @@ function App(props) {
 	return (
 		<div className="App">
 			<Switch>
-				<Route path="/" exact component={Home} />
+				<Route path="/" exact component={Layout} />
 				<Route path="/cart" exact component={Cart} />
 				<UserProtectedRoute path="/history" auth={props.userAuth} exact component={History} />
 				<UserProtectedRoute path="/live" auth={props.userAuth} exact component={Live} />
-				<Route path="/test" exact component={Test} />
-				<Route path="/logout" exact component={LogoutUser} />
-				<Route path="/login" exact component={LoginUser} />
-				<Route path="/register" exact component={RegisterUser} />
+				<Route path="/logout" component={LogoutUser} />
+				<Route path="/login" component={LoginUser} />
+				<Route path="/register" component={RegisterUser} />
 				<Route path="/dealer/login" component={LoginDealer} />
 				<DealerProtectedRoute path="/dealer/" auth={props.dealerAuth} component={DashDealer} />
 				<Route path="/dealer/logout" component={LogoutDealer} />

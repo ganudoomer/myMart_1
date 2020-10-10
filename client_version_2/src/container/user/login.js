@@ -62,7 +62,9 @@ const Dealer = (props) => {
 				<Avatar className={classes.avatar}>
 					<AccountCircleIcon />
 				</Avatar>
-				<img alt="logo" src={logo} />
+				<Link to="/">
+					<img alt="logo" src={logo} />
+				</Link>
 				{props.error ? <Typography>Wrong Password or Username or Server Down</Typography> : null}
 				<Typography component="h1" variant="h5">
 					Login if you have an account

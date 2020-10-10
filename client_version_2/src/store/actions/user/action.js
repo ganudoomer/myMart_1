@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
-import axios from 'axios';
+
+import * as Axios from '../../../fetchApi/userAxios';
 
 //Login
 
@@ -37,10 +38,8 @@ export const authUSer = (phone, password) => {
 			phone: phone,
 			password: password
 		};
-		axios
-			.post('http://localhost:5050/user/login', authData)
+		Axios.authUser(authData)
 			.then((response) => {
-				console.log(response);
 				localStorage.setItem('uToken', response.data.token);
 				dispatch(authSuccessUser(response.data.token));
 			})
@@ -56,10 +55,8 @@ export const check = () => {
 		const data = {
 			token: localStorage.getItem('uToken')
 		};
-		axios
-			.post('http://localhost:5050/user/auth', data)
+		Axios.checkAuth(data)
 			.then((response) => {
-				console.log('mass');
 				const token = localStorage.getItem('uToken');
 				dispatch(authSuccessUser(token));
 			})
@@ -96,8 +93,7 @@ export const loginOTP = (phone) => {
 		const authData = {
 			phone: phone
 		};
-		axios
-			.post('http://localhost:5050/user/login/otp', authData)
+		Axios.otpLogin(authData)
 			.then((response) => {
 				localStorage.setItem('LToken', response.data.temp);
 				if (response.data.status === 'error') {
@@ -123,8 +119,7 @@ export const UserOtpVerify = (otp) => {
 			token: localStorage.getItem('LToken'),
 			otp: otp
 		};
-		axios
-			.post('http://localhost:5050/user/login/verify', authData)
+		Axios.otpVerify(authData)
 			.then((response) => {
 				if (response.data.status === 'error') {
 					dispatch(failUserOtp(response.data.message));

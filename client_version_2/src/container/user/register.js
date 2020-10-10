@@ -78,7 +78,9 @@ const Dealer = (props) => {
 				<Avatar className={classes.avatar}>
 					<AccountCircleIcon />
 				</Avatar>
-				<img alt="" src={logo} />
+				<Link to="/">
+					<img alt="" src={logo} />
+				</Link>
 				{props.verifyError ? <Typography>{props.verifyError}</Typography> : null}
 				{props.errorOtp ? <Typography>{props.errorOtp}</Typography> : null}
 				{props.error ? <Typography>Server Down Try again after some time</Typography> : null}

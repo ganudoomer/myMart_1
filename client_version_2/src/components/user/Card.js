@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
+import { CardContent, Container } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import axios from 'axios';
 import Model from './ItemModel';
+import * as Axios from '../../fetchApi/userAxios';
 
 const useStyles = makeStyles({
 	root: {
@@ -30,7 +28,7 @@ const useStyles = makeStyles({
 export default function SimpleCard() {
 	const [ state, setstate ] = useState({ data: null });
 	useEffect(() => {
-		axios.post('http://localhost:5050/user/orders', { token: localStorage.getItem('uToken') }).then((res) => {
+		Axios.getOrders({ token: localStorage.getItem('uToken') }).then((res) => {
 			setstate({ data: res.data });
 		});
 	}, []);
@@ -38,45 +36,47 @@ export default function SimpleCard() {
 	const bull = <span className={classes.bullet}>•</span>;
 
 	return (
-		<div
-			style={{
-				width: 600,
-				height: 500,
-				overflow: 'scroll'
-			}}
-		>
-			{state.data ? (
-				state.data.map((data) => {
-					const date = new Date(data.createdOn);
-					if (data.status === 'Delivered' || data.status === 'Rejected') {
-						return (
-							<Card raised className={classes.root}>
-								<Model data={data.order}>
-									<CardContent>
-										<Typography className={classes.title} color="textSecondary" gutterBottom>
-											{data.status}
-										</Typography>
-										<Typography className={classes.title} color="textSecondary" gutterBottom>
-											{date.toLocaleDateString()}
-										</Typography>
-										<Typography className={classes.title} color="textSecondary" gutterBottom>
-											{data.address}
-										</Typography>
-										<Typography className={classes.title} color="textSecondary" gutterBottom>
-											{'₹' + data.price + ' Paid via ' + data.payment.mode}
-										</Typography>
-										<Typography className={classes.title} color="textSecondary" gutterBottom>
-											{data.order.length + ' Items from  ' + data.order[0].dealer_name}
-										</Typography>
-									</CardContent>
-								</Model>
-							</Card>
-						);
-					} else {
-						return null;
-					}
-				})
-			) : null}
-		</div>
+		<Container>
+			<div
+				style={{
+					width: 600,
+					height: 500,
+					overflow: 'scroll'
+				}}
+			>
+				{state.data ? (
+					state.data.map((data) => {
+						const date = new Date(data.createdOn);
+						if (data.status === 'Delivered' || data.status === 'Rejected') {
+							return (
+								<Card raised className={classes.root}>
+									<Model data={data.order}>
+										<CardContent>
+											<Typography className={classes.title} color="textSecondary" gutterBottom>
+												{data.status}
+											</Typography>
+											<Typography className={classes.title} color="textSecondary" gutterBottom>
+												{date.toLocaleDateString()}
+											</Typography>
+											<Typography className={classes.title} color="textSecondary" gutterBottom>
+												{data.address}
+											</Typography>
+											<Typography className={classes.title} color="textSecondary" gutterBottom>
+												{'₹' + data.price + ' Paid via ' + data.payment.mode}
+											</Typography>
+											<Typography className={classes.title} color="textSecondary" gutterBottom>
+												{data.order.length + ' Items from  ' + data.order[0].dealer_name}
+											</Typography>
+										</CardContent>
+									</Model>
+								</Card>
+							);
+						} else {
+							return null;
+						}
+					})
+				) : null}
+			</div>
+		</Container>
 	);
 }

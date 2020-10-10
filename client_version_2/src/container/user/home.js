@@ -20,7 +20,6 @@ import Select from '@material-ui/core/Select';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import DescriptionIcon from '@material-ui/icons/Description';
 import logo from '../../SuperMart.svg';
-import axios from 'axios';
 import Model from '../../components/user/model';
 import { connect } from 'react-redux';
 import * as actionCreators from '../../store/actions/user/action';
@@ -31,6 +30,7 @@ import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 import Open from '../../images/open-sign.png';
 import Close from '../../images/closed.svg';
 import { Avatar } from '@material-ui/core';
+import { getStore, getItems } from '../../fetchApi/userAxios';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -104,12 +104,10 @@ const Home = (props) => {
 			setCount(totalCount);
 		}
 		(function getData() {
-			axios.get('http://localhost:5050/user/store/').then((res) => {
-				console.log(res.data);
-
+			getStore().then((res) => {
 				setState({
 					...state,
-					store: res.data
+					store: res
 				});
 			});
 		})();
@@ -131,7 +129,7 @@ const Home = (props) => {
 			...state,
 			select: e.target.value
 		});
-		axios.get(`http://localhost:5050/user/items/${e.target.value}`).then((res) => {
+		getItems(e).then((res) => {
 			console.log(res.data);
 			setState({
 				...state,

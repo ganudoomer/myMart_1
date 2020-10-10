@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
 import confirmed from '../../images/tick.svg';
 import pending from '../../images/pending.png';
 import ontheway from '../../images/ontheway.png';
 import packing from '../../images/packing.png';
 import Model from './ItemModel';
+import * as Axios from '../../fetchApi/userAxios';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -40,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SimpleCard() {
 	const [ state, setstate ] = useState({ data: null });
 	useEffect(() => {
-		axios.post('http://localhost:5050/user/orders', { token: localStorage.getItem('uToken') }).then((res) => {
+		Axios.getOrders({ token: localStorage.getItem('uToken') }).then((res) => {
 			console.log(res.data);
 			setstate({ data: res.data });
 		});

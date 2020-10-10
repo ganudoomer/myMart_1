@@ -112,7 +112,7 @@ const Add = (props) => {
 				console.error(e);
 			}
 		},
-		[ croppedAreaPixels, rotation ]
+		[ croppedAreaPixels, rotation, url ]
 	);
 
 	const onClose = useCallback(() => {
@@ -128,11 +128,11 @@ const Add = (props) => {
 		if (event.target.files[0].size > 2000000) {
 			alert('File is too big!');
 		} else if (
-			Extension == 'gif' ||
-			Extension == 'png' ||
-			Extension == 'bmp' ||
-			Extension == 'jpeg' ||
-			Extension == 'jpg'
+			Extension === 'gif' ||
+			Extension === 'png' ||
+			Extension === 'bmp' ||
+			Extension === 'jpeg' ||
+			Extension === 'jpg'
 		) {
 			const file = URL.createObjectURL(event.target.files[0]);
 			setUrl(file);

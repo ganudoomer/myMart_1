@@ -10,13 +10,12 @@ import { Toolbar, ListItem, IconButton, Card, CardContent, TextField, Select } f
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import logo from '../../SuperMart.svg';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import * as actionCreators from './../../store/actions/user/action';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Layout from '../layout/layout';
+import { getUserInfo, getOrderId, capturePayment, getLiveInfo, placeOrder } from '../../../fetchApi/userAxios';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -45,9 +44,9 @@ const Cart = (props) => {
 	const [ count, setCount ] = useState();
 	const [ select, setSelect ] = useState();
 	const [ address, setAddress ] = useState({ data: null });
-	props.checkAuth();
+
 	useEffect(() => {
-		axios.post('http://localhost:5050/user/userinfo', { token: localStorage.getItem('uToken') }).then((res) => {
+		getUserInfo(localStorage.getItem('uToken')).then((res) => {
 			console.log(res.data);
 			setAddress({ data: res.data.location });
 		});
@@ -68,11 +67,10 @@ const Cart = (props) => {
 
 	//=======================================================================//
 	const paymentHandler = async () => {
-		const API_URL = 'http://localhost:5050/user/';
 		const datas = {
 			price: price
 		};
-		const response = await axios.post('http://localhost:5050/user/order', datas);
+		const response = await getOrderId(datas);
 		const { data } = response;
 		const options = {
 			key: 'rzp_test_pD7pyj5JpXOA5a',
@@ -88,9 +86,7 @@ const Cart = (props) => {
 						token: localStorage.getItem('uToken')
 					};
 					const paymentId = response.razorpay_payment_id;
-					const url = `${API_URL}capture/${paymentId}`;
-					const captureResponse = await axios.post(url, data);
-					console.log(captureResponse.data);
+					const captureResponse = await capturePayment(paymentId, data);
 					alert(`Your order has been placed `);
 					localStorage.removeItem('cart');
 					props.history.push('/');
@@ -111,7 +107,7 @@ const Cart = (props) => {
 		const order = JSON.parse(localStorage.getItem('cart'));
 		const dealer = order[0].dealer_name;
 		console.log(dealer);
-		axios.post('http://localhost:5050/user/live', { dealer: dealer }).then((res) => {
+		getLiveInfo({ dealer: dealer }).then((res) => {
 			if (res.data[0].live) {
 				if (select === 'ONLINE') {
 					paymentHandler();
@@ -122,10 +118,10 @@ const Cart = (props) => {
 						address: address.data,
 						token: localStorage.getItem('uToken')
 					};
-					axios.post('http://localhost:5050/user/ordercod', data).then((res) => {
+					placeOrder(data).then((res) => {
 						console.log(res);
-						props.history.push('/');
 						localStorage.removeItem('cart');
+						props.history.push('/');
 						alert(`Your order has been placed `);
 					});
 				}
@@ -207,23 +203,6 @@ const Cart = (props) => {
 		setSelect(e.target.value);
 	};
 	const classes = useStyles();
-	let button = (
-		<Fragment>
-			<Link style={{ textDecoration: 'none' }} to="/login">
-				<Button className={classes.button}>Login</Button>
-			</Link>
-			<Link style={{ textDecoration: 'none' }} to="/register">
-				<Button className={classes.button}>Register</Button>
-			</Link>
-		</Fragment>
-	);
-	if (props.token) {
-		button = (
-			<Link style={{ textDecoration: 'none' }} onClick={() => props.onLogout()} to="/logout">
-				<Button className={classes.button}>Logout</Button>
-			</Link>
-		);
-	}
 	let cards = <h1>....Add items to use the cart</h1>;
 	if (order.data) {
 		cards = (
@@ -358,18 +337,7 @@ const Cart = (props) => {
 	}
 	return (
 		<Fragment>
-			<CssBaseline />
-			<AppBar color="transparent" position="relative">
-				<Toolbar>
-					<Typography variant="h6" color="inherit" noWrap>
-						<Link to="/">
-							<img alt="logo" src={logo} />
-						</Link>
-					</Typography>
-					<div style={{ marginLeft: 'auto' }}>{button}</div>
-				</Toolbar>
-			</AppBar>
-			{cards}
+			<Layout count={count}>{cards}</Layout>
 		</Fragment>
 	);
 };
@@ -382,11 +350,4 @@ const mapStateToProps = (state) => {
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		onLogout: () => dispatch(actionCreators.logoutUser()),
-		checkAuth: () => dispatch(actionCreators.check())
-	};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default connect(mapStateToProps)(Cart);

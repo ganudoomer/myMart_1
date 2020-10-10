@@ -195,11 +195,11 @@ module.exports.changeSetting = (req, res) => {
 
 module.exports.getUnits = (req, res) => {
 	Dealer.getUnit()
-		.then(() => {
+		.then((response) => {
 			res.json(response);
 		})
 		.catch((err) => {
-			console(err);
+			console.log(err);
 		});
 };
 
