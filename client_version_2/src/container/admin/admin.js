@@ -134,7 +134,7 @@ const Admin = (props) => {
 					<Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
 						Dashboard
 					</Typography>
-					<a href="/admin/logout">
+					<a href="/">
 						<IconButton onClick={props.logoutHandler} color="inherit">
 							<ExitToAppIcon />
 						</IconButton>

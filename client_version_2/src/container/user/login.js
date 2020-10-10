@@ -114,6 +114,8 @@ const Dealer = (props) => {
 							>
 								Sign In
 							</Button>
+							<Link to="/admin/login">Admin</Link>
+							<Link to="/dealer/login">Dealer</Link>
 						</React.Fragment>
 					) : null}
 				</form>

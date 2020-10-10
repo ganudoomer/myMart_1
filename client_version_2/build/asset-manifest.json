@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.266173d9.chunk.css",
+    "main.js": "/static/js/main.feb6cb45.chunk.js",
+    "main.js.map": "/static/js/main.feb6cb45.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.907a9558.js",
+    "runtime-main.js.map": "/static/js/runtime-main.907a9558.js.map",
+    "static/js/2.ce7a05b5.chunk.js": "/static/js/2.ce7a05b5.chunk.js",
+    "static/js/2.ce7a05b5.chunk.js.map": "/static/js/2.ce7a05b5.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.8e909e05d9d1b9c9a19d456e15cd3b3a.js": "/precache-manifest.8e909e05d9d1b9c9a19d456e15cd3b3a.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.266173d9.chunk.css.map": "/static/css/main.266173d9.chunk.css.map",
+    "static/js/2.ce7a05b5.chunk.js.LICENSE.txt": "/static/js/2.ce7a05b5.chunk.js.LICENSE.txt",
+    "static/media/Buy.svg": "/static/media/Buy.15bffe58.svg",
+    "static/media/SuperMart.svg": "/static/media/SuperMart.36bdf564.svg",
+    "static/media/closed.svg": "/static/media/closed.cd6f8b96.svg",
+    "static/media/open-sign.png": "/static/media/open-sign.e4b8f225.png",
+    "static/media/tick.svg": "/static/media/tick.3e81d0d4.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.907a9558.js",
+    "static/js/2.ce7a05b5.chunk.js",
+    "static/css/main.266173d9.chunk.css",
+    "static/js/main.feb6cb45.chunk.js"
+  ]
+}

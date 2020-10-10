@@ -196,7 +196,7 @@ const Dealer = (props) => {
 						Dashboard
 					</Typography>
 					<IconButton onClick={props.logoutHandler} color="inherit">
-						<a href="/dealer/logout">
+						<a href="/">
 							<ExitToAppIcon />
 						</a>
 					</IconButton>

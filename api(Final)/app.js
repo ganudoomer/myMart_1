@@ -26,6 +26,10 @@ connect()
 		console.log(err);
 	});
 
+app.get('/', (req, res) => {
+	res.json({ message: 'Hello Welcome to my mart server ' });
+});
+
 app.use('/admin', admin);
 app.use('/dealer', dealer);
 app.use('/user', user);
