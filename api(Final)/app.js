@@ -7,12 +7,7 @@ const admin = require('./routes/admin');
 const dealer = require('./routes/dealer');
 const user = require('./routes/user');
 // create a custom timestamp format for log statements
-const SimpleNodeLogger = require('simple-node-logger'),
-	opts = {
-		logFilePath: 'mylogfile.log',
-		timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
-	},
-	log = SimpleNodeLogger.createSimpleLogger(opts);
+
 app.use(cros());
 app.use(express.json());
 app.use(express.static('public'));
