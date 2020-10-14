@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const uri = 'http://localhost:5050/dealer/';
+const uri = 'https://api.sreeganesh.co/dealer/';
 
 export const getAllProducts = (data) => {
 	return new Promise((resolve, reject) => {

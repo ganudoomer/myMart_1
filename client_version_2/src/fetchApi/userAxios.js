@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const uri = 'http://localhost:5050/user/';
+const uri = 'https://api.sreeganesh.co/user/';
 
 export const getStore = () => {
 	return new Promise((resolve, reject) => {
