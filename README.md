@@ -15,7 +15,7 @@ Username:-bismi Password:- 123
 
 ### ✨  [Admin](https://mymart.sreeganesh.co/#/admin/login) 
 ```
-Username:-admin Password:- 123 
+Username:-admin Password:- admin 
 ```
 
 
